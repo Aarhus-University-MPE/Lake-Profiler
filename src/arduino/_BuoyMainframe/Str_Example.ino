@@ -5,25 +5,30 @@
 
 // Start sequence of strategy
 void StartStrategyExample() {
-  DEBUG_PRINT("Strategy: Emergency Starting...");
-  DBG_ONLY(delay(500));
-
-  delay(20);
+  DEBUG_PRINTLINE();
+  DEBUG_PRINT("Strategy (Example): Emergency Starting...");
 
   // Disable all outputs
+  ModuleDisable();
+  delay(20);
 
-  DEBUG_PRINTLN("all outputs disabled.");
+  ModuleEnableMode(MODE_IDLE);
+
+  DEBUG_PRINTLN("Strategy (Idle): Initialized");
+  DEBUG_PRINTLINE();
 }
 
 // Main sequence of strategy
 void RunStrategyExample() {
-  // Blink light
+  //
 
 }
 
 // End sequence of strategy
 void FinishStrategyExample() {
-  DEBUG_PRINTLN("Strategy: Emergency ending.");
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN("Strategy (Example): Ending");
+  ModuleDisable();
 
-  // Disable light
+  DEBUG_PRINTLN("Strategy (Example): Finished");
 }

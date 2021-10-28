@@ -1,5 +1,5 @@
 /*
-  GeoRover system constants
+  Lake Profiler system constants
 
   Mads Rosenhøj Jepepsen
   Aarhus University
@@ -59,64 +59,51 @@
 #define SYSTEM_CHECK_DT       1000
 #define SYSTEM_REBOOT_DT      5000
 
-#define MODULE_COUNT          17
+#define MODULE_COUNT          16
 
-#define MODULE_PWR            0
-#define MODULE_PWR_5V         1
-#define MODULE_PWR_12V        2
-#define MODULE_PWR_MOTOR      3
-#define MODULE_MOTORS         4
-#define MODULE_MOTOR_ACT      5
-#define MODULE_CANBUS         6
-#define MODULE_RF             7
-#define MODULE_IRIDIUM        8
-#define MODULE_GNSS           9
-#define MODULE_ACCEL          10
-#define MODULE_SD             11
-#define MODULE_BLACKBOX       12
-#define MODULE_DBGCOMM        13
-#define MODULE_BACKUPCPU      14
-#define MODULE_ESTOP          15
-#define MODULE_RESERVED       16
+#define MODULE_PWR_PRIMARY    0
+#define MODULE_PWR_SECONDARY  1
+#define MODULE_PWR_MOTOR      2
+#define MODULE_PWR_CANISTER   3
+#define MODULE_MOTOR          4
+#define MODULE_SD             5
+#define MODULE_CLOCK          6
+#define MODULE_NA2            7
+#define MODULE_NA3            8
+#define MODULE_NA4            9
+#define MODULE_NA5            10
+#define MODULE_COMM_LORA      11
+#define MODULE_COMM_CANISTER  12
+#define MODULE_COMM_DBG       13
+#define MODULE_BLACKBOX       14
+#define MODULE_RESERVED       15
 
-const unsigned long SYSREQ_REMOTE_CONTROL = \
-(1L << MODULE_PWR)             + \
-(1L << MODULE_PWR_MOTOR)       + \
-(1L << MODULE_MOTORS)          + \
-(1L << MODULE_CANBUS)          + \
-(1L << MODULE_RF)              + \
-(1L << MODULE_ESTOP);
 
-const unsigned long SYSREQ_AUTONOMOUS =  \
-(1L << MODULE_PWR)           + \
-(1L << MODULE_PWR_MOTOR)     + \
-(1L << MODULE_MOTORS)        + \
-(1L << MODULE_CANBUS)        + \
-(1L << MODULE_IRIDIUM)       + \
-(1L << MODULE_GNSS)          + \
-(1L << MODULE_ACCEL)         + \
-(1L << MODULE_SD)            + \
-(1L << MODULE_BLACKBOX)      + \
-(1L << MODULE_BACKUPCPU)     + \
-(1L << MODULE_ESTOP);
+// Requirements to run a sample
+const unsigned long SYSREQ_SAMPLE =  \
+(1L << MODULE_PWR_PRIMARY)    + \
+(1L << MODULE_PWR_MOTOR)      + \
+(1L << MODULE_PWR_CANISTER)   + \
+(1L << MODULE_MOTOR)          + \
+(1L << MODULE_SD)             + \
+(1L << MODULE_COMM_CANISTER);
 
 
 // ------------------------------------------------------------ //
 //                       STRATEGY MODES                         //
 // ------------------------------------------------------------ //
 
-#define MODES_MAX           6 // Total number of modes
-#define MODES_MIN_BROWSABLE 2 // Minimum mode index, that could be set via mode button.
+#define MODES_MAX           4 // Total number of modes
+#define MODES_MIN_BROWSABLE 1 // Minimum mode index, that could be set via mode button.
 
-#define MODE_EMERGENCY      0 // Emergency Stop Mode
-#define MODE_MODELIBRARY    1 // Mode Library
-#define MODE_IDLE           2 // Standby mode
-#define MODE_SYSTEMTEST     3 // Test main systems
-#define MODE_REMOTECONTROL  4 // System remotely controllable 
-#define MODE_AUTONOMOUS     5 // Autonomous driving mode
+#define MODE_SYSTEMTEST     0 // Test main systems 
+#define MODE_IDLE           1 // Standby mode
+#define MODE_AUTONOMOUS     2 // Autonomous driving mode
+#define MODE_SERVICE        3 // Service mode
 
-#define ModeToString(m) ((m) == 0 ? "Emergency" : ((m) == 1 ? "Mode Library" : ((m) == 2 ? "Idle" : \
-((m) == 3 ? "System Test" : ((m) == 4 ? "Remote Control" : ((m) == 5 ? "Autonomous" : "Unknown"))))))
+#define ModeToString(m) ((m) == 0 ? "Systesm Test" : ((m) == 1 ? "Idle" : ((m) == 2 ? "Autonomous" : \
+((m) == 3 ? "Service" : "Unknown"))))
+
 
 // ------------------------------------------------------------ //
 //                         HEARTBEAT                            //
@@ -131,44 +118,19 @@ const unsigned long SYSREQ_AUTONOMOUS =  \
 #define HRTBEAT_DT_LOG      300000  // Time between system status log
 
 
-// ------------------------------------------------------------ //
-//                         NAVIGATION                           //
-// ------------------------------------------------------------ //
-
-// Orientation calculations
-#define MIN_DISTANCE_VALID_BEARING      1           // min valid distance to calculate bearing (meters)
-#define MAX_DISTANCE_VALID_WAYPOINT     1000        // max valid waypoint distance (meters)
-#define MIN_DISTANCE_WAYPOINT_ACCEPT    5           // max distance in to accept waypoint (meters)
-
-#define EARTH_RADIUS                    6371000     // (meters)
-
-#define BINARY_CODE_PRECHECK_REQUIRED   B11111100
-#define BINARY_CODE_PRECHECK_OPTIONAL   B00000011
-#define BINARY_CODE_PRECHECK_FULL       B11111111
-
-#define GNSS_QUERY_UPDATE_FREQUENCY     1000        // in milliseconds
-
-
-// ------------------------------------------------------------ //
-//                       REMOTE CONTROL                         //
-// ------------------------------------------------------------ //
-#define REMOTE_CHANNEL_THROTTLE   0
-#define REMOTE_CHANNEL_STEER      1
-#define REMOTE_CHANNEL_ENABLE     2
-
-#define REMOTE_PROCESS_DT         250
-
-#define REMOTE_SIGNAL_SCALE       100.0/87.0
-
 
 // ------------------------------------------------------------ //
 //                           MOTORS                             //
 // ------------------------------------------------------------ //
 
-#define MOTOR_MAX_SPEED_FWD             10
-#define MOTOR_MAX_SPEED_BWD             5
-#define MOTOR_LEFT                      true
-#define MOTOR_RIGHT                     false
+#define MOTOR_SPEED             100
+#define MOTOR_ACCEL             20
+#define MOTOR_STEPS             5
+#define MOTOR_POS_TOP           500
+#define MOTOR_POS_BOT           -500
+#define MOTOR_DIR_UP            1
+#define MOTOR_DIR_DOWN          2
+#define MOTOR_DIR_HALT          0
 
 
 
@@ -184,19 +146,9 @@ const unsigned long SYSREQ_AUTONOMOUS =  \
 // DEBUG
 #define DEBUG_BAUDRATE          115200
 
-// Iridium
-#define IRID_BAUDRATE           19200
-#define IRID_START_TIMEOUT      2     // default value = 240 sec
-#define IRID_ATT_TIMEOUT        2     // default value = 20 sec
+// Canister Comm (RS232)
+#define CANISTER_BAUDRATE       115200
 
-
-// CAN BUS
-#define CANBUS_ID_MOTOR1        0x036
-#define CANBUS_ID_MOTOR2        0x037
-
-#define CANBUS_DATA_LENGTH      8
-
-#define CANBBUS_SPEED           CAN_500KBPS
 
 // ------------------------------------------------------------ //
 //                           EEPROM                             //
@@ -207,16 +159,6 @@ const unsigned long SYSREQ_AUTONOMOUS =  \
 #define MEMADDR_LASTMODE 0
 // motor calibration cache
 
-#define MEMADDR_MOTORCACHE_START 1
-#define MEMADDR_MOTORCACHE_END MEMADDR_MOTORCACHE_START + 160
-
-// analog IR cache
-#define MEMADDR_IRCACHE_START MEMADDR_MOTORCACHE_END
-#define MEMADDR_IRCACHE_END MEMADDR_IRCACHE_START + 32
-
-// compass and accelerometer cache
-#define MEMADDR_FREEIMU_START MEMADDR_IRCACHE_END //!important - this constant is also in Freeimu.cpp
-#define MEMADDR_FREEIMU_END MEMADDR_FREEIMU_START + 36 + 1 + 3  //36 bytes for values , 1 for signature, 3 empty space
 
 // ------------------------------------------------------------ //
 //                          COMMANDS                            //

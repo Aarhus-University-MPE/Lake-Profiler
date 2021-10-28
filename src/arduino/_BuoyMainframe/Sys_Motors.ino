@@ -1,91 +1,86 @@
 /*
-  GeoRover Motor control
+  Lake Profiler Motor control
 
   Mads Rosenhøj Jepepsen
   Aarhus University
   2021
 */
 
-#include <mcp2515.h> //Library for using CAN Communication
+#include <AccelStepper.h>
+AccelStepper stepper(MOTOR_STEPS, PO_MOTOR_P1, PO_MOTOR_P2);
+bool motorState = false;
 
-bool InitializeMotors(bool RF_Control) {
-  InitializeCanBus();
-  if (RF_Control) InitializeSBUS();
+bool InitializeMotors()
+{
+  // set the speed of the motor to 30 RPMs
+  stepper.setMaxSpeed(MOTOR_SPEED);
+  stepper.setAcceleration(MOTOR_ACCEL);
 
-  if (MotorStatus()) {
+  if (MotorStatus())
+  {
     return true;
   }
-  else {
+  else
+  {
     return false;
   }
-
 }
 
-
-
-void TerminateMotors(bool RF_Control) {
-  TerminateCanBus();
-  if (RF_Control) TerminateSBUS();
+void TerminateMotors()
+{
+  //
 }
 
-// Moves motors based on direction and speed input within the range of [-1 and 1]
-// -1 full left, 1 full right (dir)
-// -1 full reverse, 1 full forward (speed)
-void MotorMove(float dir, float speed, float enable) {
-  // Move, handle direction
-  float steerFactorLeft = 1;
-  float steerFactorRight = 1;
-
-  // turn right
-  if (dir > 0) {
-    steerFactorRight = steerFactor(dir);
+// Move motors
+// dir: true = up, false = down
+void MotorSet(byte dir)
+{
+  motorState = true;
+  SetStatus(MODULE_MOTOR, true);
+  switch (dir)
+  {
+  case MOTOR_DIR_UP:
+    stepper.moveTo(MOTOR_POS_TOP);
+    break;
+  case MOTOR_DIR_DOWN:
+    stepper.moveTo(MOTOR_POS_BOT);
+    break;
+  case MOTOR_DIR_HALT:
+    stepper.stop();
+  default:
+    break;
   }
-  // turn left
-  else if (dir < 0) {
-    steerFactorLeft = steerFactor(dir);
-  }
-
-  float speedLeft = speed * steerFactorLeft;
-  float speedRight = speed * steerFactorRight;
-
-  float velocityLeft;
-  float velocityRight;
-
-  if (speedLeft < 0) velocityLeft = MOTOR_MAX_SPEED_BWD * speedLeft;
-  else              velocityLeft = MOTOR_MAX_SPEED_FWD * speedLeft;
-
-  if (speedRight < 0)  velocityRight = MOTOR_MAX_SPEED_BWD * speedRight;
-  else                velocityRight = MOTOR_MAX_SPEED_FWD * speedRight;
-
-  // Send command via CanBUS
 }
 
-bool MotorState(){
-  bool motorState = false;
+// move motors
+void MotorMove()
+{
+  if (motorState){
+    stepper.run();
+    if(stepper.distanceToGo() == 0 || MotorStall()){
+      motorState = false;
+      SetStatus(MODULE_MOTOR, false);
+    }
+  }  
+}
 
-  // motor currently running?
+// Measure motor stall
+bool MotorStall(){
+  DEBUG_PRINTLN("Motor Stall!");
+  return false;
+}
 
+// motor currently running?
+bool GetMotorState()
+{
   return motorState;
 }
 
-
-bool MotorStatus() {
+bool MotorStatus()
+{
   bool valid = true;
 
   // Motors operational?
 
   return valid;
-}
-
-// Calculates steering factor from 2nd order function (-2x^2 + 1), used in skid steering
-float steerFactor(float dir) {
-  float scale;
-
-  if (dir >= 1) scale = -1;
-
-  else if (dir <= -1) scale = -1;
-
-  else scale = -2.0 * (dir * dir) + 1;
-
-  return scale;
 }

@@ -8,16 +8,15 @@
     Query data from Drill Logger SD card
 */
 
-const byte numChars = 32;
 char receivedCMD[numChars];
 
 void initializeDebugComm()
 {
   Serial.begin(DEBUG_BAUDRATE);
   if (COM_SERIAL_DBG)
-    SetStatus(MODULE_DBGCOMM, true);
+    SetStatus(MODULE_COMM_DBG, true);
   else
-    SetStatus(MODULE_DBGCOMM, false);
+    SetStatus(MODULE_COMM_DBG, false);
 
   DEBUG_PRINTLN("#--------------------------------#");
   DEBUG_PRINTLN("#     Lake-Profiler Firmware     #");
@@ -89,9 +88,6 @@ void parseCommand()
   case CMD_STRATEGY:
     parseCommandStrategy();
     break;
-  case CMD_BACKUP:
-    parseCommandBackup();
-    break;
   case CMD_MODULE:
     parseCommandModule();
   case '\0':
@@ -154,30 +150,6 @@ void parseCommandStrategy()
   }
 }
 
-void parseCommandBackup()
-{
-  switch (receivedCMD[1])
-  {
-  case CMD_BACKUP_RST:
-    DEBUG_PRINTLN("Manual Reset of Backup System.");
-    ResetBackupCPU();
-    break;
-  case CMD_BACKUP_PRIMSTATUS:
-    DEBUG_PRINT("Backup System Status: ");
-    DEBUG_PRINTLN(GetStatus(MODULE_BACKUPCPU));
-    break;
-  case CMD_BACKUP_HB:
-    DEBUG_PRINTLN("Virtual Heartbeat");
-    HeartBeatInInterrupt();
-    break;
-  case '\0':
-    break;
-  default:
-    DEBUG_PRINTLN("NACK");
-    break;
-  }
-}
-
 void parseCommandModule()
 {
   char *modulePtr = receivedCMD + 2;
@@ -192,13 +164,9 @@ void parseCommandModule()
     DEBUG_PRINT("Manual Enable of Module: ");
     switch (receivedCMD[2])
     {
-    case '\0':
-      DEBUG_PRINTLN("ALL SYSTEMS");
-      SystemEnable();
-      break;
     default:
       DEBUG_PRINTLN(moduleSlct);
-      SystemEnable(moduleSlct);
+      ModuleEnable(moduleSlct);
       break;
     }
     break;
@@ -208,11 +176,11 @@ void parseCommandModule()
     {
     case '\0':
       DEBUG_PRINTLN("ALL SYSTEMS");
-      SystemDisable();
+      ModuleDisable();
       break;
     default:
       DEBUG_PRINTLN(moduleSlct);
-      SystemDisable(moduleSlct);
+      ModuleDisable(moduleSlct);
       break;
     }
     break;
@@ -222,7 +190,7 @@ void parseCommandModule()
     {
     case '\0':
       DEBUG_PRINTLN("NACK");
-      //SystemDisable();
+      //ModuleDisable();
       break;
     default:
       DEBUG_PRINT(moduleSlct);

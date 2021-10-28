@@ -1,39 +1,36 @@
 /*  Idle mode
 
-    Description...
+    Strategy for Idle mode
+    - Disables all systems
 */
 
 // Start sequence of strategy
 void StartStrategyIdle() {
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN("Strategy (Idle): Starting");
-  StrategyStartLed(MODE_IDLE);
 
   // Disable all outputs
-  SystemDisable();
-
-  AttachSelectButton();
+  ModuleEnableMode(MODE_IDLE);
 
   DEBUG_PRINTLN("Strategy (Idle): Initialized");
   DEBUG_PRINTLINE();
-  LedBlinkDoubleShort(BINARY_CODE_LED_GRN);
 }
 
 // Main sequence of strategy
 void RunStrategyIdle() {
-  StrategyRunLed(MODE_IDLE);
+  //
 }
 
 // End sequence of strategy
 void FinishStrategyIdle() {
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN("Strategy (Idle): Ending");
-  SystemDisable();
+  ModuleDisable();
 
   DEBUG_PRINTLN("Strategy (Idle): Finished");
 }
 
-// Selecet button function
+// Strategy function
 void SelectFunctionIdle(){
-  StrategyStartLed(MODE_IDLE);
+  //
 }

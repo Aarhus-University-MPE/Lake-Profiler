@@ -1,5 +1,6 @@
 /*
-  GeoRover mainframe - Manages primary systems as the Rover backbone.
+  Lake Profiler mainframe
+  - Manages primary systems
 
   Mads Rosenhøj Jepepsen
   Aarhus University
@@ -25,15 +26,11 @@ void setup()
   // System initialization
   InitAllPins();
   InitButtons();
-  InitStatusLed();
 
   // Strategy initialization
   InitStrategyMethods();
   InitMode();
 
-  // Setup finished
-  LedBlinkDoubleShort(BINARY_CODE_LED_GRN);
-  
 }
 
 // ------------------------------------------------------------ //
@@ -45,7 +42,7 @@ void loop()
 
   strategyMethods[1][mode]();
 
-  HeartBeat();
+  HeartbeatBlackBox();
 
   DBG_ONLY(recvWithStartEndMarkers());
 }

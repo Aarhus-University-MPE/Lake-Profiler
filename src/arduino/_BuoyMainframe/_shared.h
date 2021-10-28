@@ -4,66 +4,41 @@
 #include <SD.h>
 #include <Wire.h>
 #include <EEPROM.h>
+#include "_GeneralFunctions.h"
 
+
+// System
 void(* systemReset) (void) = 0;
-
-bool MotorState();
 void InitAllPins();
 void InitButtons();
-void InitServiceInterrupt();
-void EstopButtonInterruptHandler();
-void ModeButtonInterruptHandler();
-void InitStatusLed();
 void InitMode();
 void InitStrategyMethods();
-void LedBlink(byte color, unsigned int onDuration, unsigned int offDuration);
-void LedSet(byte color);
-void LedBlinkHalt(byte color, unsigned int duration, unsigned int afterHalt);
-void recvWithStartEndMarkers();
-bool SDReaderStatus();
-void SDQuery();
-void SDSize(char fileName[]);
-void SDDownload(char fileName[]);
-void SDDelete(char fileName[]);
-void SDCreate(char fileName[]);
-void printFiles(File dir);
-void initializeDebugComm();
-bool InitializeIridium();
-void ModeUpdater();
 unsigned long ToLong(bool b[]);
-bool AccelStatus();
-void CountDownPrint();
-bool SystemCheck(int mode);
-void SystemEnableMode(int mode);
 
-bool IridiumStatus();
-bool GnssStatus();
-void TerminateAccel();
 
-bool InitializeSBUS();
-void TerminateSBUS();
-bool SBusStatus();
-
-bool VoltageCheck();  
-bool BatteryStatus();
-
-bool MotorState();
-bool MotorStatus();
-
-void HeartBeat();
-void HeartBeatOut();
-void HeartBeatIn();
-void HeartBeatInInterrupt();
-void ResetBackupCPU();
-
-void appendCharArray(char *s, char c);
-void appendCsv(char *s);
-
+// USB Comm
 bool DebugCommStatus();
-void LedBlinkDoubleShort(byte color);
-void LedBlinkDoubleShort(byte color1, byte color2);
-void LedBlinkTripleShort(byte color);
-void LedBlinkTripleShort(byte color1, byte color2, byte color3);
+void recvWithStartEndMarkers();
+void initializeDebugComm();
+void CountDownPrint();
+const byte numChars = 32;
+
+// Canister Comm
+void recvWithStartEndMarkersCanister();
+void CanisterLogStart();
+void CanisterLogRead();
+bool InitializeCanister();
+bool CanisterCommStatus();
+void parseCommandCan();
+
+
+// Strategies
+byte mode;
+byte modeCycle;
+byte prevMode;
+boolean isModeUpdated = false;
+boolean SetMode(byte newMode);
+void ModeUpdater();
 
 typedef void (*functionPtr)();
 
@@ -71,38 +46,25 @@ typedef void (*functionPtr)();
 // [0][MODES_MAX] - start sequence
 // [1][MODES_MAX] - main sequence
 // [2][MODES_MAX] - end sequence
-// [2][MODES_MAX] - Select button function
+// [3][MODES_MAX] - function
 functionPtr strategyMethods[4][MODES_MAX];
 
-static double DistanceBetween(double lat1, double long1, double lat2, double long2);
-static double CourseTo(double lat1, double long1, double lat2, double long2);
-static const char Cardinal(double course);
 
-boolean SetMode(byte newMode);
+// Motors
+void MotorMove();
+void MotorSet(byte dir);
+bool MotorStall();
+bool GetMotorState();
+bool MotorStatus();
+
+
+// Power
+bool VoltageCheck();  
+bool BatteryStatus();
+
+
+// System Status
 bool SystemStatus[MODULE_COUNT];
-
-bool HeartBeatStatus();
-bool BlackBoxStatus();
-
-void EstopButtonInterruptHandler();
-void ModeButtonInterruptHandler();
-
-void InitBluetooth(unsigned long baudRate = 115200);
-
-//current and previous mode (strategy)
-unsigned long lastMillisSelect = 0;
-unsigned long lastMillisMode = 0;
-unsigned long lastMillisEstop = 0;
-unsigned long lastMillistModeBlink = 0;
-unsigned long lastSystemReboot = 9999999;
-
-byte mode;
-byte modeCycle;
-byte prevMode;
-
-boolean isModeUpdated = false;
-
-
 bool GetStatus(int module)
 {
   return SystemStatus[module];
@@ -117,18 +79,26 @@ void SetStatus(bool status)
   {
     SystemStatus[i] = status;
   }
-  SystemStatus[MODULE_ESTOP] = digitalRead(PI_BUTTON_ESTOP); // E_STOP STAUTS FUNCTION()?
   SystemStatus[MODULE_RESERVED] = true;
 }
+bool SystemCheck(int mode);
+void ModuleEnableMode(int mode);
 
 
-// Run full system check
-void GetStatus(bool printRes);
+// SD Reader
+bool SDReaderStatus();
+void SDQuery();
+void SDSize(char fileName[]);
+void SDDownload(char fileName[]);
+void SDDelete(char fileName[]);
+void SDCreate(char fileName[]);
+void printFiles(File dir);
+void appendCharArray(char *s, char c);
+void appendCsv(char *s);
 
-bool AccelTest(bool printRes);
 
-
-
+// Blackbox
+bool BlackBoxStatus();
 void BlackBoxAppendln();
 void BlackBoxAppendln(String blackBoxInput);
 void BlackBoxAppendln(byte blackBoxInput);
@@ -138,8 +108,6 @@ void BlackBoxAppendln(int blackBoxInput);
 void BlackBoxAppendln(long int blackBoxInput);
 void BlackBoxAppendln(unsigned long blackBoxInput);
 void BlackBoxAppendln(long int blackBoxInput, int Type);
-
-
 
 void BlackBoxAppend(String blackBoxInput);
 void BlackBoxAppend(byte blackBoxInput);

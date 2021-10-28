@@ -1,5 +1,5 @@
 /*
-  GeoRover Blackbox protocols
+  Lake Profiler Blackbox protocols
 
   Mads Rosenhøj Jepepsen
   Aarhus University
@@ -39,6 +39,18 @@ void InitBlackBox()
 bool BlackBoxStatus()
 {
     return GetStatus(MODULE_BLACKBOX);
+}
+
+unsigned long lastMillisHeartbeatBlackbox = 0;
+void HeartbeatBlackBox(){
+  if (millis() - lastMillisHeartbeatBlackbox > HRTBEAT_DT_LOG)
+  {
+    lastMillisHeartbeatBlackbox = millis();
+    DEBUG_PRINTLINE();
+    DEBUG_PRINT("Heartbeat System Status: ");
+    DEBUG_PRINTLN(String(ToLong(SystemStatus)));
+    DEBUG_PRINTLINE();
+  }
 }
 
 void BlackBoxAppendln()
