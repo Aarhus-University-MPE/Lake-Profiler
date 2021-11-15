@@ -142,12 +142,14 @@ const unsigned long SYSREQ_SAMPLE =  \
 #define BTN_DEBOUNCE_TIME       500
 #define ESTOP_DEBOUNCE_TIME     1000
 
-
 // DEBUG
 #define DEBUG_BAUDRATE          115200
 
 // Canister Comm (RS232)
 #define CANISTER_BAUDRATE       115200
+
+// LORA
+#define LORA_FREQUENCY          868.0
 
 
 // ------------------------------------------------------------ //

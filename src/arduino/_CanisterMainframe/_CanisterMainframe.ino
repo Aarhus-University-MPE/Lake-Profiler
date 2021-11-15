@@ -37,7 +37,7 @@ void loop()
 {
   HeartBeat();
 
-  recvWithStartEndMarkers();
+  DBG_ONLY(recvWithStartEndMarkers());
 
   delay(100);
 }

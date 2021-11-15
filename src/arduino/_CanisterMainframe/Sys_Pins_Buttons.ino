@@ -1,6 +1,8 @@
 // Sets pinmode of all pins and writes initial values for outputs
 void InitAllPins()
 {
+  Wire.begin();
+  
   // Heartbeat
   pinMode(PI_PRIMARY_HRTBEAT, INPUT_PULLUP);
   pinMode(PO_PRIMARY_HRTBEAT, OUTPUT);

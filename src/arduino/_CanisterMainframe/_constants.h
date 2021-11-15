@@ -51,10 +51,15 @@
 #define DEBUG_BAUDRATE          115200
 
 // Sensor and Modules
-#define MODULE_COUNT            5
+#define MODULE_COUNT            7
 
 #define MODULE_DEBUGCOMM        0
 #define MODULE_PRIMARYCPU       1
+#define MODULE_CH4              2
+#define MODULE_CO2              3
+#define MODULE_LUM              4
+#define MODULE_DEPTH            5
+#define MODULE_RESERVE          6
 
 
 // ------------------------------------------------------------ //

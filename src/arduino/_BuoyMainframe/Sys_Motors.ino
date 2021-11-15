@@ -60,6 +60,7 @@ void MotorMove()
     if(stepper.distanceToGo() == 0 || MotorStall()){
       motorState = false;
       SetStatus(MODULE_MOTOR, false);
+      DEBUG_PRINTLN("Motor Position Reached!");
     }
   }  
 }

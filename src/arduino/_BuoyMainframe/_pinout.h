@@ -30,6 +30,7 @@
 
 // Communication
 #define PO_SPISS_SDCARD       28
+#define PO_SPISS_LORA         12
 
 #define COM_SERIAL_DBG        Serial
 #define COM_SERIAL_CANISTER   Serial2
