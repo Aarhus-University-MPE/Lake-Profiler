@@ -5,39 +5,32 @@
 
   Mads Rosenhøj Jepepsen
   Aarhus University
-  2021s
+  2021
 */
 
-#include "_constants.h"
-#include "_shared.h"
-#include "_pinout.h"
+#include "Packages.h"
+
 
 // ------------------------------------------------------------ //
 //                            SETUP                             //
 // ------------------------------------------------------------ //
-void setup()
-{
-  // Debug
-  DBG_ONLY(initializeDebugComm());
-  DEBUG_PRINT("Debug mode. Entered Setup... ");
-
+void setup() {
   // System initialization
   InitAllPins();
 
-  // Setup finished
-  DEBUG_PRINTLN("Setup complete.");
+  // Debug
+  DBG_ONLY(DebugCommInitialize());
+  DEBUG_PRINT(F("Debug mode. Entered Setup... "));
 
-  delay(1000);
+  // Setup finished
+  DEBUG_PRINTLN(F("Setup complete."));
 }
 
 // ------------------------------------------------------------ //
 //                          MAIN LOOP                           //
 // ------------------------------------------------------------ //
-void loop()
-{
+void loop() {
   HeartBeat();
 
-  DBG_ONLY(recvWithStartEndMarkers());
-
-  delay(100);
+  DBG_ONLY(recvWithStartEndMarkersDebug());
 }

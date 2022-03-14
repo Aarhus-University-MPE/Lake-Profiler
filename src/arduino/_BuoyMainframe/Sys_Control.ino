@@ -98,7 +98,7 @@ void ModuleEnable(int module)
 }
 
 // Enable systems for specified mode
-void ModuleEnableMode(int mode){
+void ModuleEnableMode(){
   ModuleDisable(); // Disable secondary systems
   switch (mode)
   {

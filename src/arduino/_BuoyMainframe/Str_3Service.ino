@@ -11,7 +11,7 @@ void StartStrategyService() {
   DEBUG_PRINTLN("Strategy (Service): Starting");
 
   // Disable all secondary outputs
-  ModuleEnableMode(MODE_SERVICE);
+  ModuleEnableMode();
 
   MotorSet(MOTOR_DIR_UP);
 

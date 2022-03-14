@@ -10,7 +10,7 @@ void StartStrategyIdle() {
   DEBUG_PRINTLN("Strategy (Idle): Starting");
 
   // Disable all outputs
-  ModuleEnableMode(MODE_IDLE);
+  ModuleEnableMode();
 
   DEBUG_PRINTLN("Strategy (Idle): Initialized");
   DEBUG_PRINTLINE();

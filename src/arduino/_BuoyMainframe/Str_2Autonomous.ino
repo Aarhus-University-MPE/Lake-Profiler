@@ -10,7 +10,7 @@ void StartStrategyAutonomous() {
   DEBUG_PRINTLN("Strategy (Autonomous): Starting");
 
   // Disable all outputs
-  ModuleEnableMode(MODE_AUTONOMOUS);
+  ModuleEnableMode();
 
   DEBUG_PRINTLN("Strategy (Autonomous): Initialized");
   DEBUG_PRINTLINE();

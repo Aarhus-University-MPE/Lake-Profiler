@@ -13,13 +13,13 @@
 */
 
 // Heartbeat
-#define PI_PRIMARY_HRTBEAT  2
-#define PO_PRIMARY_HRTBEAT  3
-#define PI_INT_HRTBEAT      digitalPinToInterrupt(PI_PRIMARY_HRTBEAT)
+#define PI_BUOY_HRTBEAT 2
+#define PO_BUOY_HRTBEAT 3
+#define PI_INT_HRTBEAT  digitalPinToInterrupt(PI_BUOY_HRTBEAT)
 
 // Reset pin
-#define PI_PRIMARY_RST       RESET
-#define PO_PRIMARY_RST       4
+#define PI_BUOY_RST     RESET
+#define PO_BUOY_RST     4
 
 // Communication
-#define COM_SERIAL_PC       Serial
+#define COM_SERIAL_PC   Serial

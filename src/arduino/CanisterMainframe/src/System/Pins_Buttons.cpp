@@ -1,15 +1,17 @@
+#include "Pins_Buttons.h"
+
 // Sets pinmode of all pins and writes initial values for outputs
 void InitAllPins()
 {
   Wire.begin();
   
   // Heartbeat
-  pinMode(PI_PRIMARY_HRTBEAT, INPUT_PULLUP);
-  pinMode(PO_PRIMARY_HRTBEAT, OUTPUT);
-  pinMode(PO_PRIMARY_RST,     OUTPUT);
+  digitalWrite(PO_BUOY_HRTBEAT, true);
+  digitalWrite(PO_BUOY_RST, true);
 
-  digitalWrite(PO_PRIMARY_HRTBEAT, true);
-  digitalWrite(PO_PRIMARY_RST, true);
+  pinMode(PI_BUOY_HRTBEAT, INPUT_PULLUP);
+  pinMode(PO_BUOY_HRTBEAT, OUTPUT);
+  pinMode(PO_BUOY_RST,     OUTPUT);
 
    // Assign heartbeat interrupt
   attachInterrupt(PI_INT_HRTBEAT, HeartBeatInInterrupt, FALLING);
