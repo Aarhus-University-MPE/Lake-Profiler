@@ -1,6 +1,5 @@
 /*
-    RS232 communication, handles reading serial and parsing commands.
-    Transmits data to and from Buoy.
+    USB communication, handles reading serial and parsing commands.
 
     By
     Mads Rosenhoej Jeppesen - Aarhus 2021
@@ -9,20 +8,24 @@
     Query data from Drill Logger SD card
 */
 
-#include "Buoy.h"
+const byte numChars = 32;
+char receivedCMD[numChars];
 
-bool BuoyCommInitialize() {
-  Serial.begin(BUOY_BAUDRATE);
+bool DebugCommInitialize() {
+  Serial.begin(DEBUG_BAUDRATE);
 
   return Serial;
 }
 
-void BuoyCommTerminate(){
+void DebugCommTerminate() {
   Serial.end();
 }
 
+bool DebugCommStatus() {
+  return GetStatus(MODULE_DEBUGCOMM);
+}
 // Receive Commands
-void recvWithStartEndMarkers() {
+void recvWithStartEndMarkersDebug() {
   static boolean recvInProgress = false;
   static byte ndx               = 0;
   char startMarker              = '<';
@@ -34,13 +37,13 @@ void recvWithStartEndMarkers() {
 
     if (recvInProgress == true) {
       if (rc != endMarker) {
-        receivedCMDDBG[ndx] = rc;
+        receivedCMD[ndx] = rc;
         ndx++;
-        if (ndx >= numCharsDbg) {
-          ndx = numCharsDbg - 1;
+        if (ndx >= numChars) {
+          ndx = numChars - 1;
         }
       } else {
-        receivedCMDDBG[ndx] = '\0';  // terminate the string
+        receivedCMD[ndx] = '\0';  // terminate the string
         recvInProgress   = false;
         ndx              = 0;
         parseCommand();
@@ -54,38 +57,38 @@ void recvWithStartEndMarkers() {
 }
 
 // Parse read Command
-void parseCommand() {
-  switch (receivedCMDDBG[0]) {
+void parseCommandDebug() {
+  DEBUG_PRINT(F("Received command (DBG_PRT): \""));
+  DEBUG_PRINT(receivedCMD);
+  DEBUG_PRINTLN(F("\""));
+  switch (receivedCMD[0]) {
     case CMD_BACKUP:
       parseCommandBackup();
       break;
     case '\0':
       break;
     default:
+      DEBUG_PRINTLN("NACK");
       break;
   }
 }
 
-void parseCommandBackup() {
-  switch (receivedCMDDBG[1]) {
+void parseCommandBackupDebug() {
+  switch (receivedCMD[1]) {
     case CMD_BACKUP_RST:
+      DEBUG_PRINTLN(F("Manual Reset of Primary System."));
       ResetBuoy();
       break;
     case CMD_BACKUP_BCKUPSTATUS:
+      DEBUG_PRINT(F("Primary System Status: "));
       DEBUG_PRINTLN(GetStatus(MODULE_BUOY_HRTBEAT));
       break;
     case CMD_BACKUP_HB:
+      DEBUG_PRINTLN(F("Virtual Heartbeat"));
       HeartBeatInInterrupt();
       break;
     default:
+      DEBUG_PRINTLN(F("NACK"));
       break;
   }
-}
-
-bool BuoyCommStatus(){
-  return GetStatus(MODULE_BUOY_COMM);
-}
-
-bool BuoyCommTest(){
-  return true;
 }

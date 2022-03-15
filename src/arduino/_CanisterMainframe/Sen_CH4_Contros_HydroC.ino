@@ -8,7 +8,6 @@
     mrj@mpe.au.dk
 */
 
-#include "CH4_Contros_HydroC.h"
 
 bool CH4Initialize() {
   return true;

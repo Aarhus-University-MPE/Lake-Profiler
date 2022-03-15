@@ -8,14 +8,21 @@
     mrj@mpe.au.dk
 */
 
-#include "Arduino.h"
 
-bool LumInitialize();
+bool LumInitialize() {
+  return true;
+}
 
-void LumTerminate();
+void LumTerminate() {
+}
 
-bool LumStatus();
+bool LumStatus() {
+  return GetStatus(MODULE_LUM);
+}
 
-bool LumTest();
+bool LumTest() {
+  return true;
+}
 
-void LumRead();
+void LumRead() {
+}

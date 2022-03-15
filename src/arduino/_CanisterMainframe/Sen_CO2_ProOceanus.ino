@@ -8,7 +8,6 @@
     mrj@mpe.au.dk
 */
 
-#include "CO2_ProOceanus.h"
 
 bool CO2Initialize(){
 

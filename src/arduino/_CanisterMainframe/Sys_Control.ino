@@ -5,8 +5,8 @@
   Aarhus University
   2022
 */
+unsigned long lastSystemCheck = 9999999;
 
-#include "Control.h"
 
 void SystemEnable(int module) {
   if (GetStatus(module)) return;

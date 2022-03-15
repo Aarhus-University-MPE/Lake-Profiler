@@ -10,7 +10,9 @@
     mrj@mpe.au.dk
 */
 
-#include "Depth_BR_Bar100.h"
+#include "KellerLD.h"
+
+KellerLD bar100Sensor;
 
 bool DepthInitialize() {
   bar100Sensor.init();

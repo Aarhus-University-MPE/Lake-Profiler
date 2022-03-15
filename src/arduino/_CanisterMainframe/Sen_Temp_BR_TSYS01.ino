@@ -10,17 +10,33 @@
     mrj@mpe.au.dk
 */
 
-#include "Arduino.h"
 #include "TSYS01.h"
 
 TSYS01 sensorTSY01;
 
-bool TempInitialize();
+bool TempInitialize() {
+  sensorTSY01.init();
 
-void TempTerminate();
+  return true;
+}
 
-bool TempStatus();
+void TempTerminate() {
+}
 
-bool TempTest();
+bool TempStatus() {
+  return GetStatus(MODULE_TEMP);
+}
 
-void TempRead();
+bool TempTest() {
+  return true;
+}
+
+void TempRead() {
+  sensorTSY01.read();
+
+  DEBUG_PRINT(F("Temperature: "));
+
+  DEBUG_PRINT(sensorTSY01.temperature());
+
+  DEBUG_PRINTLN(F(" deg C"));
+}

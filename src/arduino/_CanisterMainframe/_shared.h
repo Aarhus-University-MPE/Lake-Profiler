@@ -1,5 +1,6 @@
-#include "constants.h"
-#include "pinout.h"
+#include <Arduino.h>
+#include <Wire.h>
+#include <EEPROM.h>
 
 bool SystemStatus[MODULE_COUNT];
 

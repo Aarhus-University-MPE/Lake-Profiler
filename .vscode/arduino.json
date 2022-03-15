@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:mega",
-    "sketch": "src\\arduino\\CanisterMainframe\\CanisterMainframe.ino",
+    "sketch": "src\\arduino\\Test_Functions\\CH4_RS232\\CH4_RS232.ino",
     "port": "COM12",
     "programmer": "AVR ISP",
     "output": "src/arduino/Output",

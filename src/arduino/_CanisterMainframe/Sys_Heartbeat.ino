@@ -7,7 +7,8 @@
   2021
 */
 
-#include "Heartbeat.h"
+unsigned long lastMillisHeartbeatOut, lastMillisHeartbeatIn, lastMillisResetBuoy, lastMillisHeartbeatInt;
+bool receivedHeartBeat;
 
 // Runs heartbeat in and out
 void HeartBeat() {

@@ -1,14 +1,14 @@
 /*
-  GeoRover Backup CPU
-  Detects and sends heartbeat to mainframe of GeoRover.
-  Resets system if no heartbeat detected within limit.
+  Lake Profiler Canister
 
   Mads Rosenhøj Jepepsen
   Aarhus University
-  2021
+  2022
 */
 
-#include "Packages.h"
+#include "_constants.h"
+#include "_pinout.h"
+#include "_shared.h"
 
 
 // ------------------------------------------------------------ //
