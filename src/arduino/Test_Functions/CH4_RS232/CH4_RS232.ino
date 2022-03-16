@@ -6,15 +6,15 @@
   2022
 */
 
+//const String testCMD = "WTF\r\n";
 const String testCMD = "CODPV,0,0,R\r\n";
 bool msgSent         = false;
 
 void setup() {
   Serial.begin(115200);
   Serial.print(F("Initializing RS232... "));
-  Serial1.begin(115200);
 
-  if (Serial1) {
+  if (RS232Initialize()) {
     Serial.println(F("Success"));
   } else {
     Serial.println("Error");
@@ -32,13 +32,25 @@ void setup() {
   }
 }
 
+unsigned long lastMillisSent;
+char data[10];
 void loop() {
-  if (!msgSent) {
-    Serial2.print(testCMD);
+  // if (millis() - lastMillisSent > 1000) {
+  //   lastMillisSent = millis();
+  //   Serial1.print(testCMD);
+  //   msgSent = true;
+  //   Serial.println();
+  //   Serial.println("--------");
+  //   Serial.println("Sent msg");
+  // }
+  if(Serial1.available()>0) {
+    Serial.write(Serial1.read());
   }
-  if (Serial2.available()) {
-    Serial.print(Serial2.read());
-  }
+}
+
+bool RS232Initialize() {
+  Serial1.begin(9600);
+  return Serial1;
 }
 
 bool CH4Initialize() {
