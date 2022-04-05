@@ -34,9 +34,9 @@ void HeartBeatOut() {
 void HeartBeatTimeout() {
   if (millis() - lastMillisHeartbeatIn > HRTBEAT_TRESHOLD) {
     // Reset Canister CPU
-    if (GetStatus(MODULE_CANISTER)) {
+    if (GetStatus(MODULE_CANISTER_HRTBEAT)) {
       lastMillisResetCanister = millis();
-      SetStatus(MODULE_CANISTER, false);
+      SetStatus(MODULE_CANISTER_HRTBEAT, false);
       DEBUG_PRINTLN(F("Error: Canister System offline, attempting to Reset."));
       ResetCanisterCPU();
     } else {
@@ -61,8 +61,8 @@ void HeartBeatIn() {
 
   lastMillisHeartbeatIn = millis();
   DEBUG_PRINTLN(F("Heartbeat Received!"));
-  if (!GetStatus(MODULE_CANISTER)) {
-    SetStatus(MODULE_CANISTER, true);
+  if (!GetStatus(MODULE_CANISTER_HRTBEAT)) {
+    SetStatus(MODULE_CANISTER_HRTBEAT, true);
     DEBUG_PRINTLN(F("Canister online"));
   }
 }

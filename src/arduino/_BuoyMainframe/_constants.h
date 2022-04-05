@@ -46,7 +46,7 @@
 // ------------------------------------------------------------ //
 //                           SYSTEM                             //
 // ------------------------------------------------------------ //
-#define SystemVersion           "0.1.1"
+#define SystemVersion           "0.1.5"
 
 // Binary codes for Status LED flags, Red Yellow Green
 #define BINARY_CODE_LED_GRN     B001  // 001
@@ -100,15 +100,15 @@ const unsigned long SYSREQ_SAMPLE =
 //                       STRATEGY MODES                         //
 // ------------------------------------------------------------ //
 
-#define MODES_MAX             4  // Total number of modes
+#define MODES_MAX             3  // Total number of modes
 #define MODES_MIN_BROWSABLE   1  // Minimum mode index, that could be set via mode button.
 
 #define MODE_SYSTEMTEST       0  // Test main systems
-#define MODE_IDLE             1  // Standby mode
-#define MODE_AUTONOMOUS       2  // Autonomous driving mode
-#define MODE_SERVICE          3  // Service mode
+#define MODE_AUTONOMOUS       1  // Autonomous driving mode
+#define MODE_SERVICE          2  // Service mode
 
-#define ModeToString(m)       ((m) == 0 ? "System Test" : ((m) == 1 ? "Idle" : ((m) == 2 ? "Autonomous" : ((m) == 3 ? "Service" : "Unknown"))))
+#define ModeToString(m)       ((m) == 0 ? "System Test" : ((m) == 1 ? "Autonomous" : ((m) == 2 ? "Service" : "Unknown")))
+
 
 // ------------------------------------------------------------ //
 //                         HEARTBEAT                            //
@@ -121,6 +121,13 @@ const unsigned long SYSREQ_SAMPLE =
 #define BACKUP_RST_DT         300000  // Time between each reset attempt
 
 #define HRTBEAT_DT_LOG        300000  // Time between system status log
+
+
+// ------------------------------------------------------------ //
+//                           BATTERY                            //
+// ------------------------------------------------------------ //
+
+#define BATTERY_MIN_LEVEL     50
 
 // ------------------------------------------------------------ //
 //                           MOTORS                             //

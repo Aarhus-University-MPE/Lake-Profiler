@@ -12,7 +12,8 @@
 
 #include <RH_RF95.h>
 
-RH_RF95 rf95(PO_SPISS_LORA)
+// TODO: rewrite to uart version
+RH_RF95 rf95(COM_SERIAL_LORA);
 
 bool InitializeLora(){
   bool status = rf95.init();
@@ -26,14 +27,14 @@ bool LoraStatus(){
   return true;
 }
 
-void LoraSendMsg(uint8_t data[]){
-  rf95.send(data,sizeof(data));
+void LoraSendMsg(uint8_t data[], uint8_t size){
+  rf95.send(data, size);
   rf95.waitPacketSent();
 }
 
 void LoraRecMsg(){
   uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-  uint8_t len = sifeof(buf);
+  uint8_t len = sizeof(buf);
 
   if(rf95.recv(buf, &len)){
     DEBUG_PRINTLN((char*)buf);

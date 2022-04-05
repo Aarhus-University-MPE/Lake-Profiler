@@ -25,7 +25,6 @@ void setup()
 
   // System initialization
   InitAllPins();
-  InitButtons();
 
   // Strategy initialization
   InitStrategyMethods();

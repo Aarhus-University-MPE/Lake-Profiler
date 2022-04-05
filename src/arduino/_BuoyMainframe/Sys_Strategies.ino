@@ -1,6 +1,5 @@
 // Set pointers for strategies methods
-void InitStrategyMethods()
-{
+void InitStrategyMethods() {
   strategyMethods[0][MODE_SYSTEMTEST] = StartStrategySystemTest;
   strategyMethods[1][MODE_SYSTEMTEST] = RunStrategySystemTest;
   strategyMethods[2][MODE_SYSTEMTEST] = FinishStrategySystemTest;
@@ -22,67 +21,44 @@ void InitStrategyMethods()
   strategyMethods[3][MODE_SERVICE] = SelectFunctionService;
 }
 
-// Set last mode from EEPROM
-void InitMode()
-{
-  if(!digitalRead(PI_BUTTON_MODE_SERVICE)){
-    mode = MODE_SERVICE;
-  }
-  else if(!digitalRead(PI_BUTTON_MODE_AUTONOMOUS))
-  {
-    mode = MODE_AUTONOMOUS;
-  }
-  else
-  {
-    mode = MODE_IDLE;
-  }
-  
+// Initialize system mode
+void InitMode() {
+  mode = ModeRead();
+
   strategyMethods[0][mode]();
 }
 
-// Reads mode selector pins 
-byte ModeRead(){
+// Reads mode selector pins
+byte ModeRead() {
   byte readMode;
-  if(!digitalRead(PI_BUTTON_MODE_SERVICE)){
+  if (digitalRead(PI_BUTTON_MODE_SERVICE)) {
     readMode = MODE_SERVICE;
-  }
-  else if(!digitalRead(PI_BUTTON_MODE_AUTONOMOUS))
-  {
+  } else {
     readMode = MODE_AUTONOMOUS;
   }
-  else
-  {
-    readMode = MODE_IDLE;
-  }
-
   return readMode;
 }
 
 // Checks if mode is updated and finish exit operations before changing
-void ModeUpdater()
-{
-  if(mode != ModeRead()){
+void ModeUpdater() {
+  if (mode != ModeRead()) {
     SetMode(ModeRead());
   }
-  while (isModeUpdated)
-  {
+  while (isModeUpdated) {
     isModeUpdated = false;
-    
-    strategyMethods[2][prevMode](); // finish any operations for prevMode here
-    
-    strategyMethods[0][mode](); // init new strategy according to the new mode value
+
+    strategyMethods[2][prevMode]();  // finish any operations for prevMode here
+
+    strategyMethods[0][mode]();  // init new strategy according to the new mode value
   }
 }
 
 // Tries set the mode and isModeUpdated flag
-boolean SetMode(byte newMode)
-{
-  if (newMode < MODES_MAX)
-  {
-    prevMode = mode;
-    mode = newMode;
+boolean SetMode(byte &newMode) {
+  if (newMode < MODES_MAX) {
+    mode          = newMode;
     isModeUpdated = true;
-    EEPROM.write(MEMADDR_LASTMODE, mode);
+    // EEPROM.write(MEMADDR_LASTMODE, mode);
     DEBUG_PRINT("Mode is set to: ");
     DEBUG_PRINTLN(ModeToString(mode));
     return true;
