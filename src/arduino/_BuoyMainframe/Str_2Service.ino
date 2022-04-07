@@ -1,45 +1,39 @@
 /*  Service mode
 
     Strategy for Service mode.
-    - Disables logging 
+    - Disables logging
     - Activates motor for surfacing Cansiter
 */
 
 // Start sequence of strategy
 void StartStrategyService() {
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN("Strategy (Service): Starting");
+  DEBUG_PRINTLN(F("Strategy (Service): Starting"));
 
   // Disable all secondary outputs
+  ModuleDisable();
+
   ModuleEnableMode();
 
-  MotorSet(MOTOR_DIR_UP);
-
-  DEBUG_PRINTLN("Strategy (Service): Initialized");
+  DEBUG_PRINTLN(F("Strategy (Service): Initialized"));
   DEBUG_PRINTLINE();
 }
 
 // Main sequence of strategy
 void RunStrategyService() {
   // Lift motor to surface
-  MotorMove();
+  MotorProcess();
 }
 
 // End sequence of strategy
 void FinishStrategyService() {
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN("Strategy (Service): Ending");
-  
-  // Halt motor
-  MotorSet(MOTOR_DIR_HALT);
-  while(GetStatus(MODULE_MOTOR)){
-    MotorMove();
-  }
+  DEBUG_PRINTLN(F("Strategy (Service): Ending"));
 
-  DEBUG_PRINTLN("Strategy (Service): Finished");
+  DEBUG_PRINTLN(F("Strategy (Service): Finished"));
 }
 
 // Strategy function
-void SelectFunctionService(){
+void SelectFunctionService() {
   //
 }

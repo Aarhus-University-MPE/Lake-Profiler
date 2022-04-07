@@ -25,6 +25,7 @@ void FinishStrategySystemTest() {
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN("Strategy (System Test): Ending");
   
+  ModuleDisable();
   ModuleEnableMode();
 
   DEBUG_PRINTLN("Strategy (System Test): Finished");

@@ -7,90 +7,65 @@
 */
 
 // Enable individual module
-void ModuleEnable(int module)
-{
+void ModuleEnable(int module) {
   if (GetStatus(module))
     return;
 
   bool status = true;
 
-  switch (module)
-  {
-  case MODULE_PWR_PRIMARY:
-    status = BatteryStatus();
-    break;
-  case MODULE_PWR_SECONDARY:
-    DEBUG_PRINTLN("Power (Secondary): Enabled");
-    break;
-  case MODULE_PWR_MOTOR:
-    DEBUG_PRINTLN("Power (Motor): Enabled");
-    break;
-  case MODULE_PWR_CANISTER:
-    DEBUG_PRINTLN("Power (Canister): Enabled");
-    break;
-  case MODULE_MOTOR:
-    DEBUG_PRINT("Motor Controller: ");
-    if (InitializeMotors())
-    {
-      DEBUG_PRINTLN("Enabled");
-    }
-    else
-    {
-      DEBUG_PRINTLN("Error");
-      status = false;
-    }
-    break;
-  case MODULE_SD:
-    DEBUG_PRINT("Local Storage: ");
-    if (InitializeSDReader())
-    {
-      DEBUG_PRINTLN("Enabled");
-    }
-    else
-    {
-      DEBUG_PRINTLN("Error");
-      status = false;
-    }
-    break;
-  case MODULE_CLOCK:
-    DEBUG_PRINT("Real Time Clock: ");
-    if (InitializeRTC())
-    {
-      DEBUG_PRINTLN("Enabled");
-    }
-    else
-    {
-      DEBUG_PRINTLN("Error");
-      status = false;
-    }
-    break;
-  case MODULE_COMM_LORA:
-    DEBUG_PRINT("Communication (LORA): ");
-    if (InitializeLora())
-    {
-      DEBUG_PRINTLN("Enabled");
-    }
-    else
-    {
-      DEBUG_PRINTLN("Error");
-      status = false;
-    }
-    break;
-  case MODULE_COMM_CANISTER:
-    DEBUG_PRINT("Communication (Canister): ");
-    if (InitializeCanister())
-    {
-      DEBUG_PRINTLN("Enabled");
-    }
-    else
-    {
-      DEBUG_PRINTLN("Error");
-      status = false;
-    }
-    break;  
-  default:
-    DEBUG_PRINTLN("Unknown Module");
-    break;
+  DEBUG_PRINT(F("Module Enable - "));
+  DEBUG_PRINT(ModuleToString(module));
+
+  switch (module) {
+    case MODULE_PWR_PRIMARY:
+      status = BatteryStatus();
+      break;
+    case MODULE_PWR_MOTOR:
+      // TODO: enable motor power
+      digitalWrite(PO_POWER_ENCODER, true);
+      break;
+    case MODULE_PWR_CANISTER:
+      digitalWrite(PO_POWER_CANISTER, true);
+      break;
+    case MODULE_MOTOR:
+      status = InitializeMotors();
+      break;
+    case MODULE_SD:
+      status = InitializeSDReader();
+      break;
+    case MODULE_CLOCK:
+      status = InitializeRTC();
+      break;
+    case MODULE_NA2:
+      break;
+    case MODULE_NA3:
+      break;
+    case MODULE_NA4:
+      break;
+    case MODULE_NA5:
+      break;
+    case MODULE_COMM_LORA:
+      status = InitializeLora();
+      break;
+    case MODULE_COMM_CANISTER:
+      status = InitializeCanister();
+      break;
+    case MODULE_BLACKBOX:
+      status = InitBlackBox();
+      break;
+    case MODULE_CANISTER_HRTBEAT:
+      break;
+    case MODULE_RESERVED:
+      status = true;
+      break;
+    default:
+      break;
+  }
+
+  if (!status) {
+    DEBUG_PRINTLN(F(": Error"));
+  } else {
+    DEBUG_PRINTLN(F(": Enabled"));
   }
 
   SetStatus(module, status);
@@ -98,104 +73,128 @@ void ModuleEnable(int module)
 }
 
 // Enable systems for specified mode
-void ModuleEnableMode(){
-  ModuleDisable(); // Disable secondary systems
-  switch (mode)
-  {
-  case MODE_SYSTEMTEST:
-    break;
-  case MODE_IDLE:
-    break;
-  case MODE_AUTONOMOUS:
-    ModuleEnable(MODULE_COMM_LORA);
-    ModuleEnable(MODULE_CLOCK);
-    break;
-  case MODE_SERVICE:
-    ModuleEnable(MODULE_PWR_MOTOR);
-    ModuleEnable(MODULE_MOTOR);
-    break;
-  default:
-    break;
+void ModuleEnableMode() {
+  ModuleDisable();  // Disable secondary systems
+  switch (mode) {
+    case MODE_SYSTEMTEST:
+      break;
+    case MODE_AUTONOMOUS:
+      ModuleEnable(MODULE_COMM_LORA);
+      ModuleEnable(MODULE_CLOCK);
+      break;
+    case MODE_SERVICE:
+      ModuleEnable(MODULE_PWR_MOTOR);
+      ModuleEnable(MODULE_MOTOR);
+      break;
+    default:
+      break;
   }
 }
 
 // Disables individual module
-void ModuleDisable(int module)
-{
+void ModuleDisable(int module) {
   if (!GetStatus(module))
     return;
 
-  switch (module)
-  {
-  case MODULE_PWR_SECONDARY:
-    DEBUG_PRINTLN("Power (Secondary): Terminated");
-    break;
-  case MODULE_PWR_MOTOR:
-    DEBUG_PRINTLN("Power (Motor): Terminated");
-    break;
-  case MODULE_PWR_CANISTER:
-    DEBUG_PRINTLN("Power (Canister): Terminated");
-    break;
-  case MODULE_MOTOR:
-    DEBUG_PRINT("Motor Controller: Terminated");
-    break;
-  case MODULE_COMM_LORA:
-    DEBUG_PRINT("Communication (LORA): Terminated");
-    break;
-  case MODULE_COMM_CANISTER:
-    DEBUG_PRINT("Communication (Canister): Terminated");
-    break;  
-  default:
-    DEBUG_PRINTLN("Unknown Module");
-    break;
+  bool status = false;
+
+  DEBUG_PRINT(F("Module Disable - "));
+  DEBUG_PRINT(ModuleToString(module));
+
+  switch (module) {
+    case MODULE_PWR_PRIMARY:
+      status = BatteryStatus();
+      break;
+    case MODULE_PWR_MOTOR:
+      // TODO: disable motor power
+      digitalWrite(PO_POWER_ENCODER, false);
+      break;
+    case MODULE_PWR_CANISTER:
+      digitalWrite(PO_POWER_CANISTER, false);
+      break;
+    case MODULE_MOTOR:
+      TerminateMotors();
+      break;
+    case MODULE_SD:
+      TerminateSDReader();
+      break;
+    case MODULE_CLOCK:
+      TerminateRTC();
+      break;
+    case MODULE_NA2:
+      break;
+    case MODULE_NA3:
+      break;
+    case MODULE_NA4:
+      break;
+    case MODULE_NA5:
+      break;
+    case MODULE_COMM_LORA:
+      TerminateLora();
+      break;
+    case MODULE_COMM_CANISTER:
+      TerminateCanister();
+      break;
+    case MODULE_BLACKBOX:
+      break;
+    case MODULE_CANISTER_HRTBEAT:
+      break;
+    case MODULE_RESERVED:
+      status = true;
+      break;
+    default:
+      break;
   }
 
+  if (status) {
+    DEBUG_PRINTLN(F(": Unable to disable"));
+  } else {
+    DEBUG_PRINTLN(F(": Disabled"));
+  }
 
-  SetStatus(module, false);
+  SetStatus(module, status);
 }
 
 // Disables secondary systems
-void ModuleDisable()
-{
-  ModuleDisable(MODULE_PWR_SECONDARY);
+void ModuleDisable() {
   ModuleDisable(MODULE_PWR_MOTOR);
   ModuleDisable(MODULE_PWR_CANISTER);
   ModuleDisable(MODULE_MOTOR);
+  ModuleDisable(MODULE_CLOCK);
   ModuleDisable(MODULE_COMM_LORA);
 }
 
 // Runs system check and compares active modules to required
-bool SystemCheck(int mode){
+bool SystemCheck(int mode) {
   static bool status = false;
   SystemTest(false);
-  
-  switch (mode)
-  {
-  case MODE_AUTONOMOUS:
-    status = (((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) & SYSREQ_SAMPLE) | (1L << MODULE_RESERVED)) == (1L << MODULE_RESERVED);
-    if(!status){
-      DEBUG_PRINT("ERROR Code: ")
-      DEBUG_PRINTLN(String(((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) & SYSREQ_SAMPLE) | (1L << MODULE_RESERVED)));
-    }
-    break;
-  default:
-    break;
+
+  switch (mode) {
+    case MODE_AUTONOMOUS:
+      status = (((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) & SYSREQ_SAMPLE) | (1L << MODULE_RESERVED)) == (1L << MODULE_RESERVED);
+      if (!status) {
+        DEBUG_PRINT("ERROR Code: ")
+        DEBUG_PRINTLN(String(((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) & SYSREQ_SAMPLE) | (1L << MODULE_RESERVED)));
+      }
+      break;
+    default:
+      break;
   }
 
   return status;
 }
 
 // Run full system check
-void SystemTest(bool printRes){
-  SetStatus(MODULE_PWR_PRIMARY,     BatteryStatus());
-  SetStatus(MODULE_PWR_SECONDARY,   digitalRead(PO_POWER_SECONDARY));
-  SetStatus(MODULE_PWR_MOTOR,       digitalRead(PO_POWER_MOTOR));
-  SetStatus(MODULE_PWR_CANISTER,    digitalRead(PO_POWER_MOTOR));
-  SetStatus(MODULE_MOTOR,           GetMotorState());
-  SetStatus(MODULE_SD,              SDReaderStatus());
-  SetStatus(MODULE_COMM_LORA,       LoraStatus());
-  SetStatus(MODULE_COMM_CANISTER,   CanisterCommStatus());
-  SetStatus(MODULE_COMM_DBG,        DebugCommStatus());
-  SetStatus(MODULE_BLACKBOX,        BlackBoxStatus());
-  SetStatus(MODULE_RESERVED,        true);
+void SystemTest(bool printRes) {
+  SetStatus(MODULE_PWR_PRIMARY, BatteryStatus());
+  SetStatus(MODULE_PWR_MOTOR, GetStatus(MODULE_PWR_MOTOR));
+  SetStatus(MODULE_PWR_CANISTER, GetStatus(MODULE_PWR_CANISTER));
+  SetStatus(MODULE_MOTOR, MotorStatus());
+  SetStatus(MODULE_SD, SDReaderStatus());
+  SetStatus(MODULE_CLOCK, RTCStatus());
+  SetStatus(MODULE_COMM_LORA, LoraStatus());
+  SetStatus(MODULE_COMM_CANISTER, CanisterCommStatus());
+  SetStatus(MODULE_COMM_DBG, DebugCommStatus());
+  SetStatus(MODULE_BLACKBOX, BlackBoxStatus());
+  SetStatus(MODULE_RESERVED, true);
 }

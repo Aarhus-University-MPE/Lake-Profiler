@@ -60,8 +60,8 @@
 #define LED_BLINK_VERY_SHORT    100
 
 // Button debounce
-#define BUTTON_DBOUNCE_TIME     200
-#define BTN_DEBOUNCE_TIME_LONG  2500
+#define BUTTON_DBOUNCE_TIME     50
+#define BUTTON_DBOUNCE_TIME_LONG  1000
 
 // Sensor and Module status
 #define SYSTEM_CHECK_DT         1000
@@ -70,22 +70,21 @@
 #define MODULE_COUNT            17
 
 #define MODULE_PWR_PRIMARY      0
-#define MODULE_PWR_SECONDARY    1
-#define MODULE_PWR_MOTOR        2
-#define MODULE_PWR_CANISTER     3
-#define MODULE_MOTOR            4
-#define MODULE_SD               5
-#define MODULE_CLOCK            6
-#define MODULE_NA2              7
-#define MODULE_NA3              8
-#define MODULE_NA4              9
-#define MODULE_NA5              10
-#define MODULE_COMM_LORA        11
-#define MODULE_COMM_CANISTER    12
-#define MODULE_COMM_DBG         13
-#define MODULE_BLACKBOX         14
-#define MODULE_CANISTER_HRTBEAT 15
-#define MODULE_RESERVED         16
+#define MODULE_PWR_MOTOR        1
+#define MODULE_PWR_CANISTER     2
+#define MODULE_MOTOR            3
+#define MODULE_SD               4
+#define MODULE_CLOCK            5
+#define MODULE_NA2              6
+#define MODULE_NA3              7
+#define MODULE_NA4              8
+#define MODULE_NA5              9
+#define MODULE_COMM_LORA        10
+#define MODULE_COMM_CANISTER    11
+#define MODULE_COMM_DBG         12
+#define MODULE_BLACKBOX         13
+#define MODULE_CANISTER_HRTBEAT 14
+#define MODULE_RESERVED         15
 
 // Requirements to run a sample
 const unsigned long SYSREQ_SAMPLE =
@@ -95,6 +94,25 @@ const unsigned long SYSREQ_SAMPLE =
     (1L << MODULE_MOTOR) +
     (1L << MODULE_SD) +
     (1L << MODULE_COMM_CANISTER);
+
+#define ModuleToString(m)       \
+((m) == 0 ? "Primary Power" : \
+((m) == 1 ? "Motor Power" : \
+((m) == 2 ? "Canister Power" : \
+((m) == 3 ? "Motor" : \
+((m) == 4 ? "SD reader" : \
+((m) == 5 ? "Realtime Clock" : \
+((m) == 6 ? "NA2" : \
+((m) == 7 ? "NA3" : \
+((m) == 8 ? "NA4" : \
+((m) == 9 ? "NA5" : \
+((m) == 10 ? "Long Range Communication (LORA)" : \
+((m) == 11 ? "Canister Communication" : \
+((m) == 12 ? "Debug Communication" : \
+((m) == 13 ? "Blackbox" : \
+((m) == 14 ? "Canister Heartbeat" : \
+((m) == 15 ? "Reserved" : \
+"Unknown"))))))))))))))))
 
 // ------------------------------------------------------------ //
 //                       STRATEGY MODES                         //
@@ -109,7 +127,6 @@ const unsigned long SYSREQ_SAMPLE =
 
 #define ModeToString(m)       ((m) == 0 ? "System Test" : ((m) == 1 ? "Autonomous" : ((m) == 2 ? "Service" : "Unknown")))
 
-
 // ------------------------------------------------------------ //
 //                         HEARTBEAT                            //
 // ------------------------------------------------------------ //
@@ -121,7 +138,6 @@ const unsigned long SYSREQ_SAMPLE =
 #define BACKUP_RST_DT         300000  // Time between each reset attempt
 
 #define HRTBEAT_DT_LOG        300000  // Time between system status log
-
 
 // ------------------------------------------------------------ //
 //                           BATTERY                            //

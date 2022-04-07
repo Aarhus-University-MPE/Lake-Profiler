@@ -131,10 +131,10 @@ void parseCommandStrategy()
   switch (receivedCMD[1])
   {
   case CMD_STRATEGY_SET:
-    DEBUG_PRINT("Manual Strategy Set to: ");
-    DEBUG_PRINTLN((int)(receivedCMD[2] - '0'));
-    if (!SetMode((int)(receivedCMD[2] - '0')))
-      DEBUG_PRINTLN("Mode not found!");
+    // DEBUG_PRINT("Manual Strategy Set to: ");
+    // DEBUG_PRINTLN((int)(receivedCMD[2] - '0'));
+    // if (!SetModeManual((int)(receivedCMD[2] - '0')))
+      // DEBUG_PRINTLN("Mode not found!");
     break;
   case CMD_STRATEGY_FUNCTION:
     strategyMethods[3][mode]();

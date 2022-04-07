@@ -14,8 +14,8 @@
 
 // User Inputs
 #define PI_SWITCH_MODE            3
-#define PI_BUTTON_MOTOR_UP        5
 #define PI_BUTTON_MOTOR_DOWN      4
+#define PI_BUTTON_MOTOR_UP        5
 
 #define PT_SWITCH_MODE            digitalPinToInterrupt(PI_SWITCH_MODE)
 

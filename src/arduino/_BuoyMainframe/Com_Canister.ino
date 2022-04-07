@@ -9,77 +9,68 @@
 */
 char receivedCMDCan[numChars];
 
-bool InitializeCanister(){
+bool InitializeCanister() {
   COM_SERIAL_CANISTER.begin(115200);
-  
+
   return COM_SERIAL_CANISTER;
 }
 
-bool CanisterCommStatus(){
-  
+void TerminateCanister() {
+  COM_SERIAL_CANISTER.end();
+}
+
+bool CanisterCommStatus() {
   return COM_SERIAL_CANISTER;
 }
 
 // Take data log sample
-void CanisterLogStart(){
+void CanisterLogStart() {
   COM_SERIAL_CANISTER.println("<L>");
 }
 
-
 // Reads data log
-void CanisterLogRead(){
+void CanisterLogRead() {
   COM_SERIAL_CANISTER.read();
 }
 
-
-
 // Receive Commands
-void recvWithStartEndMarkersCanister()
-{
+void recvWithStartEndMarkersCanister() {
   static boolean recvInProgressCan = false;
-  static byte ndxCan = 0;
-  char startMarker = '<';
-  char endMarker = '>';
+  static byte ndxCan               = 0;
+  char startMarker                 = '<';
+  char endMarker                   = '>';
   char rc;
 
-  while (COM_SERIAL_CANISTER.available() > 0)
-  {
+  while (COM_SERIAL_CANISTER.available() > 0) {
     rc = COM_SERIAL_CANISTER.read();
 
-    if (recvInProgressCan == true)
-    {
-      if (rc != endMarker)
-      {
+    if (recvInProgressCan == true) {
+      if (rc != endMarker) {
         receivedCMDCan[ndxCan] = rc;
         ndxCan++;
-        if (ndxCan >= numChars)
-        {
+        if (ndxCan >= numChars) {
           ndxCan = numChars - 1;
         }
-      }
-      else
-      {
-        receivedCMDCan[ndxCan] = '\0'; // terminate the string
-        recvInProgressCan = false;
-        ndxCan = 0;
+      } else {
+        receivedCMDCan[ndxCan] = '\0';  // terminate the string
+        recvInProgressCan      = false;
+        ndxCan                 = 0;
         parseCommandCan();
       }
     }
 
-    else if (rc == startMarker)
-    {
+    else if (rc == startMarker) {
       recvInProgressCan = true;
     }
   }
 }
 
 // Parse read Command
-void parseCommandCan()
-{
+void parseCommandCan() {
   DEBUG_PRINT("Received data (Canister): \"");
   DEBUG_PRINT(receivedCMDCan);
   DEBUG_PRINTLN("\"");
 
   // Log Data
-  //receivedCMDCan
+  // receivedCMDCan
 }

@@ -7,81 +7,74 @@
 */
 
 #include <AccelStepper.h>
-AccelStepper stepper(MOTOR_STEPS, PO_MOTOR_P1, PO_MOTOR_P2);
-bool motorState = false;
+// AccelStepper stepper(MOTOR_STEPS, PO_MOTOR_P1, PO_MOTOR_P2);
+byte motorState;
 
-bool InitializeMotors()
-{
+bool InitializeMotors() {
   // set the speed of the motor to 30 RPMs
-  stepper.setMaxSpeed(MOTOR_SPEED);
-  stepper.setAcceleration(MOTOR_ACCEL);
+  // stepper.setMaxSpeed(MOTOR_SPEED);
+  // stepper.setAcceleration(MOTOR_ACCEL);
 
-  if (MotorStatus())
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return true;
 }
 
-void TerminateMotors()
-{
+void TerminateMotors() {
   //
 }
 
-// Move motors
-// dir: true = up, false = down
-void MotorSet(byte dir)
-{
-  motorState = true;
-  SetStatus(MODULE_MOTOR, true);
-  switch (dir)
-  {
-  case MOTOR_DIR_UP:
-    stepper.moveTo(MOTOR_POS_TOP);
-    break;
-  case MOTOR_DIR_DOWN:
-    stepper.moveTo(MOTOR_POS_BOT);
-    break;
-  case MOTOR_DIR_HALT:
-    stepper.stop();
-  default:
-    break;
+unsigned long lastMillisRead;
+void MotorProcess() {
+  if(millis() - lastMillisRead < BUTTON_DBOUNCE_TIME){
+    return;
+  }
+  // DEBUG_PRINTLN(F("Reading... "));
+  
+  lastMillisRead = millis();
+  if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
+    MotorMove(MOTOR_DIR_UP);
+  } else if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+    MotorMove(MOTOR_DIR_DOWN);
+  } else {
+    MotorMove(MOTOR_DIR_HALT);
   }
 }
 
 // move motors
-void MotorMove()
-{
-  if (motorState){
-    stepper.run();
-    if(stepper.distanceToGo() == 0 || MotorStall()){
-      motorState = false;
-      SetStatus(MODULE_MOTOR, false);
-      DEBUG_PRINTLN("Motor Position Reached!");
-    }
-  }  
+void MotorMove(byte dir) {
+  if (dir == motorState) {
+    return;
+  }
+  motorState = dir;
+  switch (dir) {
+    case MOTOR_DIR_UP:
+      DEBUG_PRINTLN(F("Moving Up"));
+      digitalWrite(LED_BUILTIN, true);
+      break;
+    case MOTOR_DIR_DOWN:
+      DEBUG_PRINTLN(F("Moving Down"));
+      digitalWrite(LED_BUILTIN, true);
+      break;
+    case MOTOR_DIR_HALT:
+      DEBUG_PRINTLN(F("Moving Halt"));
+      digitalWrite(LED_BUILTIN, false);
+      break;
+    default:
+      break;
+  }
 }
 
 // Measure motor stall
-bool MotorStall(){
-  DEBUG_PRINTLN("Motor Stall!");
+bool MotorStall() {
+  DEBUG_PRINTLN(F("Motor Stall!"));
   return false;
 }
 
-// motor currently running?
-bool GetMotorState()
-{
-  return motorState;
-}
+// // motor currently running?
+// bool GetMotorState() {
+//   return motorState;
+// }
 
-bool MotorStatus()
-{
-  bool valid = true;
-
-  // Motors operational?
-
-  return valid;
+// Motors operational?
+bool MotorStatus() {
+  return GetStatus(MODULE_MOTOR) && GetStatus(MODULE_PWR_MOTOR);
 }

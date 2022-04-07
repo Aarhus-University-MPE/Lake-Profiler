@@ -6,15 +6,14 @@
 // Start sequence of strategy
 void StartStrategyExample() {
   DEBUG_PRINTLINE();
-  DEBUG_PRINT("Strategy (Example): Emergency Starting...");
+  DEBUG_PRINT(F("Strategy (Example): Emergency Starting..."));
 
   // Disable all outputs
   ModuleDisable();
-  delay(20);
 
-  ModuleEnableMode(MODE_IDLE);
+  ModuleEnableMode();
 
-  DEBUG_PRINTLN("Strategy (Idle): Initialized");
+  DEBUG_PRINTLN(F("Strategy (Idle): Initialized"));
   DEBUG_PRINTLINE();
 }
 
@@ -27,8 +26,8 @@ void RunStrategyExample() {
 // End sequence of strategy
 void FinishStrategyExample() {
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN("Strategy (Example): Ending");
+  DEBUG_PRINTLN(F("Strategy (Example): Ending"));
   ModuleDisable();
 
-  DEBUG_PRINTLN("Strategy (Example): Finished");
+  DEBUG_PRINTLN(F("Strategy (Example): Finished"));
 }

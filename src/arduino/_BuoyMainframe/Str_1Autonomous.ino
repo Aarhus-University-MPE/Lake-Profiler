@@ -7,12 +7,13 @@
 // Start sequence of strategy
 void StartStrategyAutonomous() {
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN("Strategy (Autonomous): Starting");
+  DEBUG_PRINTLN(F("Strategy (Autonomous): Starting"));
 
   // Disable all outputs
+  ModuleDisable();
   ModuleEnableMode();
 
-  DEBUG_PRINTLN("Strategy (Autonomous): Initialized");
+  DEBUG_PRINTLN(F("Strategy (Autonomous): Initialized"));
   DEBUG_PRINTLINE();
 }
 
@@ -24,9 +25,9 @@ void RunStrategyAutonomous() {
 // End sequence of strategy
 void FinishStrategyAutonomous() {
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN("Strategy (Autonomous): Ending");
+  DEBUG_PRINTLN(F("Strategy (Autonomous): Ending"));
 
-  DEBUG_PRINTLN("Strategy (Autonomous): Finished");
+  DEBUG_PRINTLN(F("Strategy (Autonomous): Finished"));
 }
 
 // Strategy function

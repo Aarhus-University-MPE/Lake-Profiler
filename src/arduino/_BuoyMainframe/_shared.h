@@ -37,7 +37,7 @@ byte mode;
 byte modeCycle;
 byte prevMode;
 boolean isModeUpdated = false;
-boolean SetMode(byte newMode);
+boolean SetMode();
 void ModeUpdater();
 
 typedef void (*functionPtr)();

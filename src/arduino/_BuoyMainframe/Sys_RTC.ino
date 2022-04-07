@@ -8,6 +8,14 @@
     Query data from Drill Logger SD card
 */
 
-bool InitializeRTC(){
+bool InitializeRTC() {
   return true;
+}
+
+bool TerminateRTC() {
+  return true;
+}
+
+bool RTCStatus(){
+  return GetStatus(MODULE_CLOCK);
 }

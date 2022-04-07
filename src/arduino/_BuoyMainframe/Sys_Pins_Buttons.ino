@@ -7,7 +7,7 @@ void InitAllPins() {
 
   // Power control (Relays)
   digitalWrite(PO_POWER_CANISTER, LOW);
-  digitalWrite(PO_POWER_SECONDARY, LOW);
+  digitalWrite(PO_POWER_ENCODER, LOW);
 
   pinMode(PO_POWER_CANISTER, OUTPUT);
   pinMode(PO_POWER_ENCODER, OUTPUT);
@@ -38,13 +38,15 @@ void InitAllPins() {
   pinMode(PO_CANISTER_HRTBEAT, OUTPUT);
   pinMode(PO_CANISTER_RST, OUTPUT);
 
+  pinMode(LED_BUILTIN, OUTPUT);
+
   InitInterrupts();
 }
 
 // Initialization of inputs
 void InitInterrupts() {
   // Switch Mode interrupt
-  attachInterrupt(PT_SWITCH_MODE, HeartBeatInInterrupt, CHANGE);
+  attachInterrupt(PT_SWITCH_MODE, ModeSwitchInterrupt, CHANGE);
 
   // Encoder interrupts
   attachInterrupt(PI_ENCODER_A, HeartBeatInInterrupt, FALLING);
