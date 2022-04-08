@@ -85,6 +85,7 @@ void ModuleEnableMode() {
     case MODE_SERVICE:
       ModuleEnable(MODULE_PWR_MOTOR);
       ModuleEnable(MODULE_MOTOR);
+      ModuleEnable(MODULE_CLOCK);
       break;
     default:
       break;
@@ -171,10 +172,14 @@ bool SystemCheck(int mode) {
 
   switch (mode) {
     case MODE_AUTONOMOUS:
-      status = (((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) & SYSREQ_SAMPLE) | (1L << MODULE_RESERVED)) == (1L << MODULE_RESERVED);
+      status =
+          ((((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) & SYSREQ_SAMPLE) |
+            (1L << MODULE_RESERVED)) == (1L << MODULE_RESERVED));
       if (!status) {
-        DEBUG_PRINT("ERROR Code: ")
-        DEBUG_PRINTLN(String(((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) & SYSREQ_SAMPLE) | (1L << MODULE_RESERVED)));
+        DEBUG_PRINT(F("ERROR Code: "));
+        DEBUG_PRINTLN(((ToLong(SystemStatus) ^ SYSREQ_SAMPLE) &
+                       SYSREQ_SAMPLE) |
+                      (1L << MODULE_RESERVED));
       }
       break;
     default:

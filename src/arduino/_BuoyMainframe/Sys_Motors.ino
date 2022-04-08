@@ -6,29 +6,34 @@
   2021
 */
 
-#include <AccelStepper.h>
-// AccelStepper stepper(MOTOR_STEPS, PO_MOTOR_P1, PO_MOTOR_P2);
 byte motorState;
+int encoderCount;
+byte motorDirection;
 
+// Initialize motors and turns on encoder power
 bool InitializeMotors() {
-  // set the speed of the motor to 30 RPMs
-  // stepper.setMaxSpeed(MOTOR_SPEED);
-  // stepper.setAcceleration(MOTOR_ACCEL);
+  digitalWrite(PO_POWER_ENCODER, true);
+
+  // TODO: motor initialization...
 
   return true;
 }
 
+// Disables motors and turns off encoder power
 void TerminateMotors() {
-  //
+  digitalWrite(PO_POWER_ENCODER, false);
+
+  // motor termination...
 }
 
+// Todo: test
 unsigned long lastMillisRead;
 void MotorProcess() {
-  if(millis() - lastMillisRead < BUTTON_DBOUNCE_TIME){
+  if (millis() - lastMillisRead < BUTTON_DBOUNCE_TIME) {
     return;
   }
-  // DEBUG_PRINTLN(F("Reading... "));
-  
+  // TODO: DEBUG_PRINTLN(F("Reading... "));
+
   lastMillisRead = millis();
   if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
     MotorMove(MOTOR_DIR_UP);
@@ -48,6 +53,7 @@ void MotorMove(byte dir) {
   switch (dir) {
     case MOTOR_DIR_UP:
       DEBUG_PRINTLN(F("Moving Up"));
+      RTCPrint();
       digitalWrite(LED_BUILTIN, true);
       break;
     case MOTOR_DIR_DOWN:
@@ -77,4 +83,35 @@ bool MotorStall() {
 // Motors operational?
 bool MotorStatus() {
   return GetStatus(MODULE_MOTOR) && GetStatus(MODULE_PWR_MOTOR);
+}
+
+// Increments encoder values
+void EncoderAInterrupt() {
+  motorDirection = digitalRead(PI_ENCODER_B);
+  encoderCount += motorDirection;
+}
+
+// Increments encoder values
+void EncoderBInterrupt() {
+  // motorDirection = digitalRead(PI_ENCODER_A);
+  // encoderCount += motorDirection;
+}
+
+int encoderRotations;
+// Increments encoder values
+void EncoderZInterrupt() {
+  encoderRotations += motorDirection;
+  encoderCount = 0;
+}
+
+// Save current position in EEPROM
+void EEPROMSetMotorPos() {
+  EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT, encoderCount);
+  EEPROM_WRITE_INT(MEMADDR_ENCODER_ROTATION, encoderRotations);
+}
+
+// Read latest position in EEPROM
+void EEPROMGetMotorPos() {
+  encoderCount     = EEPROM_READ_INT(MEMADDR_ENCODER_COUNT);
+  encoderRotations = EEPROM_READ_INT(MEMADDR_ENCODER_ROTATION);
 }

@@ -7,6 +7,8 @@
             "compilerArgs": [],
             "intelliSenseMode": "windows-msvc-x64",
             "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Libs/**",
                 "C:\\Program Files (x86)\\Arduino\\tools\\**",
                 "C:\\Program Files (x86)\\Arduino\\libraries\\**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\**",
@@ -42,7 +44,7 @@
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\EEPROM\\src",
                 "C:\\Program Files (x86)\\Arduino\\libraries\\RadioHead-master",
-                "C:\\Program Files (x86)\\Arduino\\libraries\\AccelStepper-master\\src",
+                "C:\\Program Files (x86)\\Arduino\\libraries\\RTCCI2C",
                 "c:\\program files (x86)\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include",
                 "c:\\program files (x86)\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include-fixed",
                 "c:\\program files (x86)\\arduino\\hardware\\tools\\avr\\avr\\include"

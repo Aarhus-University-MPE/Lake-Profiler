@@ -30,14 +30,6 @@ void InitAllPins() {
   // Communication
   pinMode(PO_SPISS_SDCARD, OUTPUT);
 
-  // Heartbeat
-  digitalWrite(PO_CANISTER_HRTBEAT, true);
-  digitalWrite(PO_CANISTER_RST, true);
-
-  pinMode(PI_CANISTER_HRTBEAT, INPUT_PULLUP);
-  pinMode(PO_CANISTER_HRTBEAT, OUTPUT);
-  pinMode(PO_CANISTER_RST, OUTPUT);
-
   pinMode(LED_BUILTIN, OUTPUT);
 
   InitInterrupts();
@@ -49,10 +41,7 @@ void InitInterrupts() {
   attachInterrupt(PT_SWITCH_MODE, ModeSwitchInterrupt, CHANGE);
 
   // Encoder interrupts
-  attachInterrupt(PI_ENCODER_A, HeartBeatInInterrupt, FALLING);
-  attachInterrupt(PI_ENCODER_B, HeartBeatInInterrupt, FALLING);
-  attachInterrupt(PI_ENCODER_Z, HeartBeatInInterrupt, FALLING);
-
-  // Heartbeat interrupt
-  attachInterrupt(PI_INT_HRTBEAT, HeartBeatInInterrupt, FALLING);
+  attachInterrupt(PI_ENCODER_A, EncoderAInterrupt, FALLING);  // Triggers 100 times per revolution (3.6° resolution)
+  // attachInterrupt(PI_ENCODER_B, EncoderBInterrupt, FALLING);  // Triggers 100 times per revolution (3.6° resolution)
+  attachInterrupt(PI_ENCODER_Z, EncoderZInterrupt, FALLING);  // Triggers once every revolution
 }

@@ -1,0 +1,55 @@
+#######################################
+# Syntax Coloring Map For RTCCI2C
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+RTCCI2C	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+startClock	KEYWORD2
+stopClock	KEYWORD2
+enableAlarm	KEYWORD2
+disableAlarm	KEYWORD2
+alarmOff	KEYWORD2
+checkFlag	KEYWORD2
+enableVbat	KEYWORD2
+disableVbat	KEYWORD2
+getSec	KEYWORD2
+getMin	KEYWORD2
+getHour	KEYWORD2
+getAmPm	KEYWORD2
+getDay	KEYWORD2
+getDate	KEYWORD2
+getMonth	KEYWORD2
+getYear	KEYWORD2
+setSec	KEYWORD2
+setMin	KEYWORD2
+setHour	KEYWORD2
+setDay	KEYWORD2
+setDate	KEYWORD2
+setMonth	KEYWORD2
+setYear	KEYWORD2
+
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+RTCC_RTCC	LITERAL1
+RTCC_ALM0	LITERAL1
+RTCC_ALM1	LITERAL1
+RTCC_PWRD	LITERAL1
+RTCC_PWRU	LITERAL1
+RTCC_ALM_POL	LITERAL1
+RTCC_ALMC2	LITERAL1
+RTCC_ALMC1	LITERAL1
+RTCC_ALMC0	LITERAL1
+RTCC_AM	LITERAL1
+RTCC_PM	LITERAL1

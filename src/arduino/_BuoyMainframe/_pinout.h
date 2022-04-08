@@ -46,12 +46,3 @@
 #define COM_SERIAL_DBG            Serial
 #define COM_SERIAL_CANISTER       Serial2
 #define COM_SERIAL_LORA           Serial3
-
-// Heartbeat
-#define PI_CANISTER_HRTBEAT       2
-#define PO_CANISTER_HRTBEAT       3
-#define PI_INT_HRTBEAT            digitalPinToInterrupt(PI_CANISTER_HRTBEAT)
-
-// Reset pin
-#define PI_CANISTER_RST           RESET
-#define PO_CANISTER_RST           4
