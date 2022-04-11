@@ -6,6 +6,8 @@
   2021
 */
 
+#include <LowPower.h>
+
 // BatteryReading = 19.2 kOhm / (19.2 kOhm + 110 kOhm) * Battery Voltage
 // 3.567 V -> ~5V ... 730 -> 1022 (int)
 // 24.0 V -> 33.6 V
@@ -43,4 +45,12 @@ int BatteryLevel() {
   }
 
   return batteryLevelPct[i];
+}
+
+void StandbyMode() {
+  LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
+}
+
+void wakeUp() {
+  // Just a handler for the pin interrupt.
 }

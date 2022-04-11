@@ -52,16 +52,17 @@ void MotorMove(byte dir) {
   motorState = dir;
   switch (dir) {
     case MOTOR_DIR_UP:
-      DEBUG_PRINTLN(F("Moving Up"));
+      // DEBUG_PRINTLN(F("Moving Up"));
+      digitalWrite(LED_BUILTIN, true);
+      StandbyMode();
+      break;
+    case MOTOR_DIR_DOWN:
+      // DEBUG_PRINTLN(F("Moving Down"));
       RTCPrint();
       digitalWrite(LED_BUILTIN, true);
       break;
-    case MOTOR_DIR_DOWN:
-      DEBUG_PRINTLN(F("Moving Down"));
-      digitalWrite(LED_BUILTIN, true);
-      break;
     case MOTOR_DIR_HALT:
-      DEBUG_PRINTLN(F("Moving Halt"));
+      // DEBUG_PRINTLN(F("Moving Halt"));
       digitalWrite(LED_BUILTIN, false);
       break;
     default:

@@ -14,6 +14,7 @@ void StartStrategyService() {
   ModuleDisable();
 
   ModuleEnableMode();
+  SetAlarm();
 
   DEBUG_PRINTLN(F("Strategy (Service): Initialized"));
   DEBUG_PRINTLINE();

@@ -15,57 +15,38 @@
 
 RTCCI2C RTCC;
 int year, mon, date, day, hour, minute, sec;
+byte alarmState;
+const byte maxAlarmStates = 2;
 
 bool InitializeRTC() {
   RTCC.begin();
 
   // print the power-fail time-stamp
-  Serial.print("Lost Power at: ");
-  printTime(RTCC_PWRD);
-  Serial.print("Power was back at: ");
-  printTime(RTCC_PWRU);
+  // Serial.print("Lost Power at: ");
+  // printTime(RTCC_PWRD);
+  // Serial.print("Power was back at: ");
+  // printTime(RTCC_PWRU);
 
   // set the real time clock
   RTCC.stopClock();
-  RTCC.setSec(RTCC_RTCC, 0x30);
-  RTCC.setMin(RTCC_RTCC, 0x39);
+  RTCC.setSec(RTCC_RTCC, 0x00);
+  RTCC.setMin(RTCC_RTCC, 0x59);
   RTCC.setHour(RTCC_RTCC, 0x13);
   RTCC.setDay(RTCC_RTCC, 0x05);
-  RTCC.setDate(RTCC_RTCC, 0x04);
-  RTCC.setMonth(RTCC_RTCC, 0x08);
+  RTCC.setDate(RTCC_RTCC, 0x08);
+  RTCC.setMonth(RTCC_RTCC, 0x04);
   RTCC.setYear(0x22);
   RTCC.startClock();
 
-  // set alarm 0
-  RTCC.setSec(RTCC_ALM0, 0x00);
-  RTCC.setMin(RTCC_ALM0, 0x40);
-  RTCC.setHour(RTCC_ALM0, 0x13);
-  RTCC.setDay(RTCC_ALM0, 0x05);
-  RTCC.setDate(RTCC_ALM0, 0x08);
-  RTCC.setMonth(RTCC_ALM0, 0x04);
-
-  // set alarm 1
-  RTCC.setSec(RTCC_ALM1, 0x00);
-  RTCC.setMin(RTCC_ALM1, 0x41);
-  RTCC.setHour(RTCC_ALM1, 0x13);
-  RTCC.setDay(RTCC_ALM1, 0x05);
-  RTCC.setDate(RTCC_ALM1, 0x08);
-  RTCC.setMonth(RTCC_ALM1, 0x04);
-
   // print current time
-  Serial.print("Current time is: ");
-  printTime(RTCC_RTCC);
-  // print alarm 0
-  Serial.print("Alarm 0 is set to : ");
-  printTime(RTCC_ALM0);
-  // print alarm 1
-  Serial.print("Alarm 1 is set to : ");
-  printTime(RTCC_ALM1);
-
-  // enables alarm 0
-  RTCC.enableAlarm(RTCC_ALM0, RTCC_ALMC2 | RTCC_ALMC1);
-
-  RTCC.enableAlarm(RTCC_ALM1, RTCC_ALMC2 | RTCC_ALMC1);
+  // Serial.print("Current time is: ");
+  // printTime(RTCC_RTCC);
+  // // print alarm 0
+  // Serial.print("Alarm 0 is set to : ");
+  // printTime(RTCC_ALM0);
+  // // print alarm 1
+  // Serial.print("Alarm 1 is set to : ");
+  // printTime(RTCC_ALM1);
 
   // enable back up battery
   // RTCC.enableVbat();
@@ -74,6 +55,7 @@ bool InitializeRTC() {
 }
 
 bool TerminateRTC() {
+  RTCC.stopClock();
   return true;
 }
 
@@ -82,13 +64,65 @@ bool RTCStatus() {
 }
 
 // Configs alarm
-void SetAlarm(uint8_t alarm) {
-  RTCC.setSec(alarm, 0x00);
-  RTCC.setMin(alarm, 0x40);
-  RTCC.setHour(alarm, 0x13);
-  RTCC.setDay(alarm, 0x05);
-  RTCC.setDate(alarm, 0x08);
-  RTCC.setMonth(alarm, 0x04);
+void SetAlarm() {
+  alarmState = 0;
+
+  // set alarm 0
+  RTCC.setSec(RTCC_ALM0, 0x00);
+  RTCC.setMin(RTCC_ALM0, 0x00);
+  RTCC.setHour(RTCC_ALM0, 0x13);
+  RTCC.setDay(RTCC_ALM0, 0x01);
+  RTCC.setDate(RTCC_ALM0, 0x01);
+  RTCC.setMonth(RTCC_ALM0, 0x01);
+
+  // enables alarm 0
+  RTCC.enableAlarm(RTCC_ALM0, RTCC_ALMC1);
+
+  // print current time
+  Serial.print("Current time is: ");
+  printTime(RTCC_RTCC);
+
+  // print alarm 0
+  Serial.print("Alarm 0 is set to : ");
+  printTime(RTCC_ALM0);
+}
+
+// set alarm 0 based on input hour
+void SetAlarm(byte hour) {
+  RTCC.setSec(RTCC_ALM0, 0x00);
+  RTCC.setMin(RTCC_ALM0, 0x00);
+  RTCC.setHour(RTCC_ALM0, hour);
+  RTCC.setDay(RTCC_ALM0, 0x01);
+  RTCC.setDate(RTCC_ALM0, 0x01);
+  RTCC.setMonth(RTCC_ALM0, 0x01);
+
+  RTCC.enableAlarm(RTCC_ALM0, RTCC_ALMC1);
+
+  // print alarm 1
+  Serial.print("Alarm 0 is set to : ");
+  printTime(RTCC_ALM0);
+}
+
+void UpdateAlarm() {
+  if (alarmState + 1 > maxAlarmStates) {
+    alarmState = 0;
+  } else {
+    alarmState += 1;
+  }
+
+  switch (alarmState) {
+    case 0:
+      SetAlarm(0x13);
+      break;
+    case 1:
+      SetAlarm(0x14);
+      break;
+    case 2:
+      SetAlarm(0x15);
+      break;
+    default:
+      break;
+  }
 }
 
 /*
@@ -114,14 +148,7 @@ void RTCPrint() {
     Serial.println("ALM0!!!");
     // disable alarm 0, alarm 0 will not be triggered anymore
     RTCC.disableAlarm(RTCC_ALM0);
-  }
-
-  // check if alarm 1 is triggered
-  if (RTCC.checkFlag(RTCC_ALM1)) {
-    // alarm 1 has been triggered
-    Serial.println("ALM1!!!");
-    // turn off alarm 1, alarm 1 will still be triggered on next match
-    RTCC.alarmOff(RTCC_ALM1);
+    UpdateAlarm();
   }
 }
 
