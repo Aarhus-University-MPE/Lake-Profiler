@@ -1,20 +1,22 @@
+#pragma once
+
 // Function Prototypes
 #include <Arduino.h>
-#include <SPI.h>
-#include <SD.h>
-#include <Wire.h>
 #include <EEPROM.h>
+#include <SD.h>
+#include <SPI.h>
+#include <Wire.h>
+
+#include "../modules/pinconfigs.h"
 #include "_GeneralFunctions.h"
 
-
 // System
-void(* systemReset) (void) = 0;
+void (*systemReset)(void) = 0;
 void InitAllPins();
 void InitButtons();
 void InitMode();
 void InitStrategyMethods();
 unsigned long ToLong(bool b[]);
-
 
 // USB Comm
 bool DebugCommStatus();
@@ -30,7 +32,6 @@ void CanisterLogRead();
 bool InitializeCanister();
 bool CanisterCommStatus();
 void parseCommandCan();
-
 
 // Strategies
 byte mode;
@@ -49,7 +50,6 @@ typedef void (*functionPtr)();
 // [3][MODES_MAX] - function
 functionPtr strategyMethods[4][MODES_MAX];
 
-
 // Motors
 void MotorMove();
 void MotorSet(byte dir);
@@ -57,33 +57,26 @@ bool MotorStall();
 bool GetMotorState();
 bool MotorStatus();
 
-
 // Power
-bool VoltageCheck();  
+bool VoltageCheck();
 bool BatteryStatus();
-
 
 // System Status
 bool SystemStatus[MODULE_COUNT];
-bool GetStatus(int module)
-{
+bool GetStatus(int module) {
   return SystemStatus[module];
 }
-void SetStatus(int module, bool status)
-{
+void SetStatus(int module, bool status) {
   SystemStatus[module] = status;
 }
-void SetStatus(bool status)
-{
-  for (int i = 0; i < MODULE_COUNT; i++)
-  {
+void SetStatus(bool status) {
+  for (int i = 0; i < MODULE_COUNT; i++) {
     SystemStatus[i] = status;
   }
   SystemStatus[MODULE_RESERVED] = true;
 }
 bool SystemCheck(int mode);
 void ModuleEnableMode(int mode);
-
 
 // SD Reader
 bool SDReaderStatus();
@@ -95,7 +88,6 @@ void SDCreate(char fileName[]);
 void printFiles(File dir);
 void appendCharArray(char *s, char c);
 void appendCsv(char *s);
-
 
 // Blackbox
 bool BlackBoxStatus();

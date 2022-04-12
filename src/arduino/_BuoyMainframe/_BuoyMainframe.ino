@@ -7,16 +7,14 @@
   2021s
 */
 
-#include "_constants.h"
-#include "_pinout.h"
-#include "_shared.h"
-
+#include "./config/_constants.h"
+#include "./config/_pinout.h"
+#include "./config/_shared.h"
 
 // ------------------------------------------------------------ //
 //                            SETUP                             //
 // ------------------------------------------------------------ //
-void setup()
-{
+void setup() {
   InitBlackBox();
   SetStatus(false);
 
@@ -29,14 +27,12 @@ void setup()
   // Strategy initialization
   InitStrategyMethods();
   InitMode();
-
 }
 
 // ------------------------------------------------------------ //
 //                          MAIN LOOP                           //
 // ------------------------------------------------------------ //
-void loop()
-{
+void loop() {
   ModeUpdater();
 
   strategyMethods[1][mode]();

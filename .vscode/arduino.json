@@ -1,8 +1,8 @@
 {
     "board": "arduino:avr:mega",
-    "sketch": "src\\arduino\\test\\PowerDownWake\\PowerDownWake.ino",
-    "port": "COM12",
+    "sketch": "src\\arduino\\_BuoyMainframe\\_BuoyMainframe.ino",
+    "port": "COM11",
     "programmer": "AVR ISP",
-    "output": "src/arduino/Output",
+    "output": "src/arduino/out",
     "configuration": "cpu=atmega2560"
 }
