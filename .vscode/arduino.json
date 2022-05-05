@@ -1,7 +1,7 @@
 {
     "board": "arduino:avr:mega",
-    "sketch": "src\\arduino\\_BuoyMainframe\\_BuoyMainframe.ino",
-    "port": "COM11",
+    "sketch": "src\\arduino\\BuoyMainframe\\BuoyMainframe.ino",
+    "port": "COM3",
     "programmer": "AVR ISP",
     "output": "src/arduino/out",
     "configuration": "cpu=atmega2560"
