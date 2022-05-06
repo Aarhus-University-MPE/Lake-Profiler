@@ -194,3 +194,5 @@ void LoggingProcess();
 
 void DataLogDeactivate();
 void DataLogActivate();
+
+void SetClock();

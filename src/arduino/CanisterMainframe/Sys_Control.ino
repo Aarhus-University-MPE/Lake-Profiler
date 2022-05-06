@@ -7,7 +7,6 @@
 */
 unsigned long lastSystemCheck = 9999999;
 
-
 void SystemEnable(int module) {
   if (GetStatus(module)) return;
   DEBUG_PRINT(F("SYS Enable: "));
@@ -18,9 +17,6 @@ void SystemEnable(int module) {
   switch (module) {
     case MODULE_BUOY_COMM:
       status = BuoyCommInitialize();
-      break;
-    case MODULE_BUOY_HRTBEAT:
-      status = HeartBeatStatus();
       break;
     case MODULE_CH4:
       status = CH4Initialize();
@@ -65,9 +61,6 @@ void SystemDisable(int module) {
   switch (module) {
     case MODULE_BUOY_COMM:
       BuoyCommTerminate();
-      break;
-    case MODULE_BUOY_HRTBEAT:
-      status = HeartBeatStatus();
       break;
     case MODULE_CH4:
       CH4Terminate();
@@ -128,7 +121,7 @@ bool SystemTest() {
       systemTestState++;
       break;
     case 2:
-      if(SystemTestModule(MODULE_CH4)) systemTestState++;
+      if (SystemTestModule(MODULE_CH4)) systemTestState++;
       break;
     case 3:
       DEBUG_PRINTLINE();
@@ -198,9 +191,6 @@ bool SystemTestModule(byte module) {
         testDone = BuoyCommTest();
         status   = BuoyCommStatus();
         break;
-      case MODULE_BUOY_HRTBEAT:
-        status = HeartBeatStatus();
-        break;
       case MODULE_CH4:
         testDone = CH4Test();
         status   = CH4Status();
@@ -253,22 +243,19 @@ bool SystemCheckModule(byte module) {
   if (GetStatus(module)) {
     switch (module) {
       case MODULE_BUOY_COMM:
-        status   = BuoyCommStatus();
-        break;
-      case MODULE_BUOY_HRTBEAT:
-        status = HeartBeatStatus();
+        status = BuoyCommStatus();
         break;
       case MODULE_CH4:
-        status   = CH4Status();
+        status = CH4Status();
         break;
       case MODULE_CO2:
-        status   = CO2Status();
+        status = CO2Status();
         break;
       case MODULE_LUM:
-        status   = LumStatus();
+        status = LumStatus();
         break;
       case MODULE_DEPTH:
-        status   = DepthStatus();
+        status = DepthStatus();
         break;
       case MODULE_DEBUGCOMM:
         status = DebugCommStatus();

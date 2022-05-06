@@ -12,11 +12,18 @@
   2021
 */
 
-// Communication
-#define COM_SERIAL_PC Serial
-#define COM_CH4       Serial1
-#define COM_CO2       Serial2
+// Sensors
+#define PA_LUM_SENSOR     A0
 
-#define COM_BAR100    Serial3
-#define COM_LUM       A0
-#define COM_TEMP      A1
+// Communication
+#define COM_SERIAL_PC     Serial
+#define COM_BUOY          Serial1
+#define COM_CH4           Serial2
+#define COM_CO2           Serial3
+
+#define COM_BAR100        Serial3
+#define COM_TEMP          A1
+
+#define SENSOR_LOG_PERIOD 1000
+
+#define COM_CH4_BAUDRATE  115200

@@ -47,6 +47,7 @@ void recvWithStartEndMarkersCanister() {
   char rc;
 
   while (COM_SERIAL_CANISTER.available() > 0) {
+    DEBUG_PRINTLN("Data Available!");
     rc = COM_SERIAL_CANISTER.read();
 
     if (recvInProgressCan == true) {
@@ -75,6 +76,17 @@ void parseCommandCan() {
   DEBUG_PRINT(F("Received data (Canister): \""));
   DEBUG_PRINT(receivedCMDCan);
   DEBUG_PRINTLN(F("\""));
+
+  switch (receivedCMDCan[0]) {
+    case 'H':
+      DEBUG_PRINT(F("Handshake Received"));
+      // Send startcommand
+      CanisterLogStart();
+      break;
+
+    default:
+      break;
+  }
 
   // Log Data
   // receivedCMDCan

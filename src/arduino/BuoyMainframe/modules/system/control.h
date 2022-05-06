@@ -21,7 +21,7 @@ void ModuleEnable(int module) {
 
   switch (module) {
     case MODULE_PWR_PRIMARY:
-      status = BatteryStatus();
+      status = BatteryStatus(true);
       break;
     case MODULE_PWR_MOTOR:
       // TODO: enable motor power

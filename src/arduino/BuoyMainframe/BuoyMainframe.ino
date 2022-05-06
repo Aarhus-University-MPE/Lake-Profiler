@@ -23,6 +23,8 @@ void setup() {
 
   SystemEnablePrimary();
 
+  SystemCheck();
+
   // Strategy initialization
   InitStrategyMethods();
   InitMode();

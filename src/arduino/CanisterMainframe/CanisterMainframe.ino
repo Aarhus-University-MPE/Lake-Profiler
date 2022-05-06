@@ -35,8 +35,12 @@ void loop() {
 
   recvWithStartEndMarkers();  // Scan commands from Buoy
 
+  if (!systemActive) {
+    BuoyCommHandshake();
+  }
+
   if (systemActive) {
     //
-    // SensorProcess();
+    SensorProcess();
   }
 }

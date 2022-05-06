@@ -19,8 +19,8 @@ void DataLogStart() {
   DEBUG_PRINTLINE();
   ModuleEnable(MODULE_PWR_CANISTER);
   ModuleEnable(MODULE_COMM_CANISTER);
-  CanisterLogStart();
   DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("Awaiting Handshake... "));
 }
 
 void DataLogStop() {
@@ -41,10 +41,10 @@ void LoggingProcess() {
     DataLogStart();
   }
 
+  recvWithStartEndMarkersCanister();
+
   if (autonomyStop) {
     autonomyStop = false;
     DataLogStop();
   }
-
-  recvWithStartEndMarkersCanister();
 }

@@ -12,7 +12,7 @@ bool DebugInitialize() {
   // DEBUG_PRINTLINE();
   // DEBUG_PRINTLN(F("Debug Function - Sample Override START"));
   // DEBUG_PRINTLINE();
-
+  SetClock();
   DataLogActivate();
   return true;
 }

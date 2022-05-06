@@ -8,17 +8,17 @@
     Query data from Drill Logger SD card
 */
 
-const byte numChars = 32;
-char receivedCMD[numChars];
+const byte numCharsDebug = 32;
+char receivedCMDDebug[numCharsDebug];
 
 bool DebugCommInitialize() {
-  Serial.begin(DEBUG_BAUDRATE);
+  COM_SERIAL_PC.begin(DEBUG_BAUDRATE);
 
-  return Serial;
+  return COM_SERIAL_PC;
 }
 
 void DebugCommTerminate() {
-  Serial.end();
+  COM_SERIAL_PC.end();
 }
 
 bool DebugCommStatus() {
@@ -32,20 +32,20 @@ void recvWithStartEndMarkersDebug() {
   char endMarker                = '>';
   char rc;
 
-  while (Serial.available() > 0) {
-    rc = Serial.read();
+  while (COM_SERIAL_PC.available() > 0) {
+    rc = COM_SERIAL_PC.read();
 
     if (recvInProgress == true) {
       if (rc != endMarker) {
-        receivedCMD[ndx] = rc;
+        receivedCMDDebug[ndx] = rc;
         ndx++;
-        if (ndx >= numChars) {
-          ndx = numChars - 1;
+        if (ndx >= numCharsDebug) {
+          ndx = numCharsDebug - 1;
         }
       } else {
-        receivedCMD[ndx] = '\0';  // terminate the string
-        recvInProgress   = false;
-        ndx              = 0;
+        receivedCMDDebug[ndx] = '\0';  // terminate the string
+        recvInProgress        = false;
+        ndx                   = 0;
         parseCommand();
       }
     }
@@ -59,33 +59,10 @@ void recvWithStartEndMarkersDebug() {
 // Parse read Command
 void parseCommandDebug() {
   DEBUG_PRINT(F("Received command (DBG_PRT): \""));
-  DEBUG_PRINT(receivedCMD);
+  DEBUG_PRINT(receivedCMDDebug);
   DEBUG_PRINTLN(F("\""));
-  switch (receivedCMD[0]) {
-    case CMD_BACKUP:
-      parseCommandBackup();
-      break;
+  switch (receivedCMDDebug[0]) {
     case '\0':
-      break;
-    default:
-      DEBUG_PRINTLN(F("NACK"));
-      break;
-  }
-}
-
-void parseCommandBackupDebug() {
-  switch (receivedCMD[1]) {
-    case CMD_BACKUP_RST:
-      DEBUG_PRINTLN(F("Manual Reset of Primary System."));
-      ResetBuoy();
-      break;
-    case CMD_BACKUP_BCKUPSTATUS:
-      DEBUG_PRINT(F("Primary System Status: "));
-      DEBUG_PRINTLN(GetStatus(MODULE_BUOY_HRTBEAT));
-      break;
-    case CMD_BACKUP_HB:
-      DEBUG_PRINTLN(F("Virtual Heartbeat"));
-      HeartBeatInInterrupt();
       break;
     default:
       DEBUG_PRINTLN(F("NACK"));

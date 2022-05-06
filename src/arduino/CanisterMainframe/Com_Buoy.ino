@@ -9,19 +9,37 @@
     Query data from Drill Logger SD card
 */
 
-const byte numCharsDbg = 32;
-char receivedCMDDBG[numCharsDbg];
+const byte numChars = 32;
+char receivedCMD[numChars];
 
 bool BuoyCommInitialize() {
-  Serial.begin(BUOY_BAUDRATE);
+  COM_BUOY.begin(BUOY_BAUDRATE);
 
-  return Serial;
+  return COM_BUOY;
 }
 
-void BuoyCommTerminate(){
-  Serial.end();
+void BuoyCommTerminate() {
+  COM_BUOY.end();
 }
 
+unsigned long lastMillisHandshake;
+void BuoyCommHandshake() {
+  if (millis() - lastMillisHandshake < HANDSHAKE_PERIOD) {
+    return;
+  }
+  lastMillisHandshake = millis();
+  DEBUG_PRINTLN(F("Sending Handshake"));
+  COM_BUOY.println("<R>");
+}
+
+void BuoyCommAck() {
+  DEBUG_PRINTLN(F("Sending ACK"));
+  COM_BUOY.println("<A>");
+}
+void BuoyCommNack() {
+  DEBUG_PRINTLN(F("Sending Nack"));
+  COM_BUOY.println("<N>");
+}
 // Receive Commands
 void recvWithStartEndMarkers() {
   static boolean recvInProgress = false;
@@ -30,18 +48,18 @@ void recvWithStartEndMarkers() {
   char endMarker                = '>';
   char rc;
 
-  while (Serial.available() > 0) {
-    rc = Serial.read();
+  while (COM_BUOY.available() > 0) {
+    rc = COM_BUOY.read();
 
     if (recvInProgress == true) {
       if (rc != endMarker) {
-        receivedCMDDBG[ndx] = rc;
+        receivedCMD[ndx] = rc;
         ndx++;
-        if (ndx >= numCharsDbg) {
-          ndx = numCharsDbg - 1;
+        if (ndx >= numChars) {
+          ndx = numChars - 1;
         }
       } else {
-        receivedCMDDBG[ndx] = '\0';  // terminate the string
+        receivedCMD[ndx] = '\0';  // terminate the string
         recvInProgress   = false;
         ndx              = 0;
         parseCommand();
@@ -56,9 +74,9 @@ void recvWithStartEndMarkers() {
 
 // Parse read Command
 void parseCommand() {
-  switch (receivedCMDDBG[0]) {
-    case CMD_BACKUP:
-      parseCommandBackup();
+  switch (receivedCMD[0]) {
+    case CMD_LOGGING:
+      parseCommandLog();
       break;
     case '\0':
       break;
@@ -67,26 +85,21 @@ void parseCommand() {
   }
 }
 
-void parseCommandBackup() {
-  switch (receivedCMDDBG[1]) {
-    case CMD_BACKUP_RST:
-      ResetBuoy();
-      break;
-    case CMD_BACKUP_BCKUPSTATUS:
-      DEBUG_PRINTLN(GetStatus(MODULE_BUOY_HRTBEAT));
-      break;
-    case CMD_BACKUP_HB:
-      HeartBeatInInterrupt();
-      break;
-    default:
-      break;
-  }
+void parseCommandLog() {
+  BuoyCommAck();
+  LoggingStart();
 }
 
-bool BuoyCommStatus(){
+void CanisterSendPackage(uint8_t package[], uint8_t size) {
+  DEBUG_PRINTLN(F("Sending Package!"));
+  COM_BUOY.println(F("<EMPTY_PACKAGE>"));  // TODO: Remove Temporary package placeholder
+  COM_BUOY.write(package, size);
+}
+
+bool BuoyCommStatus() {
   return GetStatus(MODULE_BUOY_COMM);
 }
 
-bool BuoyCommTest(){
+bool BuoyCommTest() {
   return true;
 }

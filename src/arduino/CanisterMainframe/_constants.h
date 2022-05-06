@@ -87,6 +87,7 @@
 
 // Buttons
 #define BTN_DEBOUNCE_TIME   300
+#define HANDSHAKE_PERIOD    1000
 
 // DEBUG
 #define BUOY_BAUDRATE       115200
@@ -119,3 +120,5 @@
 #define CMD_BACKUP_RST         'R'
 #define CMD_BACKUP_BCKUPSTATUS 'S'
 #define CMD_BACKUP_HB          'H'
+
+#define CMD_LOGGING            'L'

@@ -6,6 +6,7 @@
 
     Primary library: https://digilent.com/reference/_media/reference/pmod/pmodrtcc/rtcci2c.zip
     - Modified to latest Wire.h convention (Wire.receive() -> Wire.read() & Wire.send(xx) -> Wire.write(xx))
+    Secondary library: https://github.com/PaulStoffregen/Time
 
     By
     Mads Rosenhoej Jeppesen - Aarhus 2021
@@ -15,6 +16,11 @@
 */
 
 #include <RTCCI2C.h>
+
+#include "TimeLib.h"
+
+tmElements_t te;  // Time elements structure
+time_t unixTime;  // a time stamp
 
 RTCCI2C RTCC;
 int year, mon, date, day, hour, minute, sec;
@@ -30,31 +36,26 @@ bool InitializeRTC() {
   // DEBUG_PRINT("Power was back at: ");
   // printTime(RTCC_PWRU);
 
+  // enable back up battery
+  RTCC.enableVbat();
+
+  // Update Arduino Clock to match RTCC
+  UpdateClock();
+
+  return RTCC.getYear() != 0;
+}
+
+void SetClock() {
   // set the real time clock
   RTCC.stopClock();
   RTCC.setSec(RTCC_RTCC, 0x00);
-  RTCC.setMin(RTCC_RTCC, 0x59);
-  RTCC.setHour(RTCC_RTCC, 0x13);
+  RTCC.setMin(RTCC_RTCC, 0x00);
+  RTCC.setHour(RTCC_RTCC, 0x12);
   RTCC.setDay(RTCC_RTCC, 0x05);
-  RTCC.setDate(RTCC_RTCC, 0x08);
-  RTCC.setMonth(RTCC_RTCC, 0x04);
+  RTCC.setDate(RTCC_RTCC, 0x06);
+  RTCC.setMonth(RTCC_RTCC, 0x05);
   RTCC.setYear(0x22);
   RTCC.startClock();
-
-  // print current time
-  // DEBUG_PRINT("Current time is: ");
-  // printTime(RTCC_RTCC);
-  // // print alarm 0
-  // DEBUG_PRINT("Alarm 0 is set to : ");
-  // printTime(RTCC_ALM0);
-  // // print alarm 1
-  // DEBUG_PRINT("Alarm 1 is set to : ");
-  // printTime(RTCC_ALM1);
-
-  // enable back up battery
-  // RTCC.enableVbat();
-
-  return RTCC.getYear() != 0;
 }
 
 void TerminateRTC() {
@@ -143,6 +144,23 @@ void UpdateAlarm() {
 */
 void EnableAlarm(uint8_t alarm) {
   RTCC.enableAlarm(alarm, RTCC_ALMC1 | RTCC_ALMC0);
+}
+
+// Update clock to current unixTime
+void UpdateClock() {
+  // Get time from RTCC
+  te.Second = RTCC.getSec(RTCC_RTCC);
+  te.Minute = RTCC.getMinute(RTCC_RTCC);
+  te.Hour   = RTCC.getHour(RTCC_RTCC);
+  te.Day    = RTCC.getDay(RTCC_RTCC);
+  te.Month  = RTCC.getMonth(RTCC_RTCC);
+  te.Year   = RTCC.getYear(RTCC_RTCC) - 1970;
+
+  // Convert to unixtime
+  unixTime = makeTime(te);
+
+  // Set MCU clock to RTCC time, now() returns correct time
+  setTime(unixTime);
 }
 
 void RTCPrint() {

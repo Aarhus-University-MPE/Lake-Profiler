@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:mega",
-    "sketch": "src\\arduino\\BuoyMainframe\\BuoyMainframe.ino",
+    "sketch": "src\\arduino\\CanisterMainframe\\CanisterMainframe.ino",
     "port": "COM3",
     "programmer": "AVR ISP",
     "output": "src/arduino/out",

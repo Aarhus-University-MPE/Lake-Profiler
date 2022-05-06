@@ -11,7 +11,6 @@
 */
 
 #include "KellerLD.h"
-
 KellerLD bar100Sensor;
 
 bool DepthInitialize() {
@@ -29,10 +28,6 @@ bool DepthStatus() {
 }
 
 bool DepthTest() {
-  return true;
-}
-
-void DepthRead() {
   bar100Sensor.read();
 
   DEBUG_PRINT(F("Pressure: "));
@@ -50,4 +45,14 @@ void DepthRead() {
   DEBUG_PRINT(F("Altitude: "));
   DEBUG_PRINT(bar100Sensor.altitude());
   DEBUG_PRINTLN(F(" m above mean sea level"));
+
+  return true;
+}
+
+void DepthRead() {
+  bar100Sensor.read();
+}
+
+float GetDepth() {
+  return bar100Sensor.depth();
 }
