@@ -92,15 +92,10 @@ void SetStatus(int module, bool status) {
 }
 
 void SetStatus(bool status) {
-  Serial.print(F("LoraStatus()"));
-  Serial.println(LoraStatus());
   for (int i = 0; i < MODULE_COUNT; i++) {
     SystemStatus[i] = status;
   }
   SystemStatus[MODULE_RESERVED] = true;
-
-  Serial.print(F("LoraStatus()"));
-  Serial.println(LoraStatus());
 }
 
 bool SystemCheck(int mode);
