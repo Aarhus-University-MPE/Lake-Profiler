@@ -82,18 +82,27 @@ bool BatteryStatus(bool print);
 
 // System Status
 bool SystemStatus[MODULE_COUNT];
+
 bool GetStatus(int module) {
   return SystemStatus[module];
 }
+
 void SetStatus(int module, bool status) {
   SystemStatus[module] = status;
 }
+
 void SetStatus(bool status) {
+  Serial.print(F("LoraStatus()"));
+  Serial.println(LoraStatus());
   for (int i = 0; i < MODULE_COUNT; i++) {
     SystemStatus[i] = status;
   }
   SystemStatus[MODULE_RESERVED] = true;
+
+  Serial.print(F("LoraStatus()"));
+  Serial.println(LoraStatus());
 }
+
 bool SystemCheck(int mode);
 void SystemCheck();
 
@@ -196,3 +205,5 @@ void DataLogDeactivate();
 void DataLogActivate();
 
 void SetClock();
+void UpdateClock();
+float BatteryVoltage();

@@ -7,9 +7,10 @@
     Mads Rosenhoej Jeppesen - Aarhus 2021
     mrj@mpe.au.dk
 */
-int lumValue;
+int lumValue = 314;
 
 bool LumInitialize() {
+  pinMode(PA_LUM_SENSOR, INPUT);
   return true;
 }
 
@@ -21,6 +22,8 @@ bool LumStatus() {
 }
 
 bool LumTest() {
+  DEBUG_PRINT(F("Luminesence Reading: "));
+  DEBUG_PRINTLN(GetLumValue());
   return true;
 }
 
@@ -29,6 +32,7 @@ void LumRead() {
   lumValue = analogRead(PA_LUM_SENSOR);
 }
 
-int LumGetValue() {
+int GetLumValue() {
+  LumRead();
   return lumValue;
 }

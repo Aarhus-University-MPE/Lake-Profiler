@@ -10,8 +10,6 @@
 #include "_pinout.h"
 #include "_shared.h"
 
-bool systemActive = false;
-
 // ------------------------------------------------------------ //
 //                            SETUP                             //
 // ------------------------------------------------------------ //
@@ -40,7 +38,6 @@ void loop() {
   }
 
   if (systemActive) {
-    //
     SensorProcess();
   }
 }

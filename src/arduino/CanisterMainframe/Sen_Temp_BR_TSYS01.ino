@@ -28,10 +28,6 @@ bool TempStatus() {
 }
 
 bool TempTest() {
-  return true;
-}
-
-void TempRead() {
   sensorTSY01.read();
 
   DEBUG_PRINT(F("Temperature: "));
@@ -39,4 +35,13 @@ void TempRead() {
   DEBUG_PRINT(sensorTSY01.temperature());
 
   DEBUG_PRINTLN(F(" deg C"));
+  return true;
+}
+
+void TempRead() {
+  sensorTSY01.read();
+}
+
+float GetTemp() {
+  return sensorTSY01.temperature();
 }

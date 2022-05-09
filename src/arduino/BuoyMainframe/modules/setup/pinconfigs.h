@@ -82,14 +82,13 @@ bool ModeButtonDebounce() {
     return false;
   }
 
-  // Read trigger signal
-  bool switchPos = digitalRead(PI_SWITCH_MODE);
-
   // Small time delay to filter voltage spikes
   delay(50);
 
+  bool currentMode = (mode == MODE_SERVICE);  // Signal High when service
+
   // Check if button is still at trigger signal position
-  if (digitalRead(PI_SWITCH_MODE) != switchPos) {
+  if (digitalRead(PI_SWITCH_MODE) == currentMode) {
     return false;
   }
 

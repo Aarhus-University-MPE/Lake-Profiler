@@ -91,7 +91,7 @@ void ModuleEnableMode() {
     case MODE_SERVICE:
       ModuleEnable(MODULE_PWR_MOTOR);
       ModuleEnable(MODULE_MOTOR);
-      ModuleEnable(MODULE_CLOCK);
+      // ModuleEnable(MODULE_CLOCK);
       break;
     default:
       break;

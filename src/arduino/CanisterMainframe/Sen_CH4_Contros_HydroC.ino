@@ -5,14 +5,23 @@
 
     RS232 communication converted to UART with MAX232 circuit
 
+    Data Format: (ASCII NMEA-0183)
+      DS4 (Data)
+      $ CODS4,Dest,Source,D,Format,LDN,... (*Checksum) CR LF
+
+      #31 Conc_estimate - Fraction of CH4 (estimate) in headspace (ppm x 1000)
+
+      TS4 (Temperature controller data)
+      $ COTS1
+
     By
     Mads Rosenhoej Jeppesen - Aarhus 2021
     mrj@mpe.au.dk
 */
 
 const byte numCharsCH4 = 200;
-const byte ppmIndex    = 30;
-float ch4Concentration;
+const byte ppmIndexCH4 = 30;
+float ch4Concentration = 3.14f;
 char dataCH4[numCharsCH4];
 
 bool CH4Initialize() {
@@ -44,8 +53,8 @@ void recvWithStartEndMarkersCH4() {
   char endMarker                = '\n';
   char rc;
 
-  while (COM_BUOY.available() > 0) {
-    rc = COM_BUOY.read();
+  while (COM_CH4.available() > 0) {
+    rc = COM_CH4.read();
 
     if (recvInProgress == true) {
       if (rc != endMarker) {
@@ -81,12 +90,16 @@ void parseDataCH4() {
   char *strtokIndx;
   strcpy(tempChars, dataCH4);
 
-  // Scan forward to ppmIndex, values separated by ","
+  // Scan forward to ppmIndexCH4, values separated by ","
   strtokIndx = strtok(tempChars, ",");
-  for (size_t i = 0; i < ppmIndex - 1; i++) {
+  for (size_t i = 0; i < ppmIndexCH4 - 1; i++) {
     strtokIndx = strtok(NULL, ",");
   }
 
   // Convert to float (231546 = 231,546 ppm)
   ch4Concentration = atoi(strtokIndx) / 1000.0f;
+}
+
+float GetCH4Concentration() {
+  return ch4Concentration;
 }

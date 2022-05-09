@@ -46,7 +46,7 @@ void recvWithStartEndMarkersDebug() {
         receivedCMDDebug[ndx] = '\0';  // terminate the string
         recvInProgress        = false;
         ndx                   = 0;
-        parseCommand();
+        parseCommandDebug();
       }
     }
 
@@ -61,7 +61,20 @@ void parseCommandDebug() {
   DEBUG_PRINT(F("Received command (DBG_PRT): \""));
   DEBUG_PRINT(receivedCMDDebug);
   DEBUG_PRINTLN(F("\""));
+
+  char *sampleRatePtr                = receivedCMDDebug + 1;
+  char sampleRateChar[numCharsDebug] = {0};
+  strcpy(sampleRateChar, sampleRatePtr);
+
+  int sampleRate = atoi(sampleRateChar);
+
   switch (receivedCMDDebug[0]) {
+    case CMD_LOGGING:
+      parseCommandLog();
+      break;
+    case CMD_SAMPLERATE:
+      SetSampleInterval(sampleRate);
+      break;
     case '\0':
       break;
     default:

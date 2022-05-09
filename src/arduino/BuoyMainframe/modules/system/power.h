@@ -14,15 +14,13 @@
 
 // BatteryReading = 3 kOhm / (3 kOhm + 9 kOhm) * Battery Voltage
 // 13V .. 11.7V -> ~3.25V .. 2.93V -> 665 .. 599
-const float batteryScale  = 0.0136f;
-const float batteryOffset = -8.0682f;
+const float batteryScale  = 69.23;
+const float batteryOffset = -800.0f;
 
 bool charge;  // Battery Charge status
 
 int BatteryLevel() {
-  int voltageDigital = analogRead(PA_SENSOR_BATT);
-
-  float batteryLevel = batteryScale * (float)voltageDigital + batteryOffset;
+  float batteryLevel = batteryScale * BatteryVoltage() + batteryOffset;
 
   return max((int)batteryLevel, 0);
 }
@@ -37,7 +35,7 @@ float BatteryVoltage() {
 
   float voltageRead = voltageInt * 5.0f / 1024.0f;
 
-  float voltageBattery = voltageRead * 3.0f / 12.0f;
+  float voltageBattery = voltageRead * 12.0f / 3.0f;
 
   return voltageBattery;
 }

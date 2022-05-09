@@ -15,11 +15,7 @@ void StartStrategyService() {
   DEBUG_PRINTLN(F("Strategy (Service): Starting"));
   DEBUG_PRINTLINE();
 
-  // Disable all secondary outputs
-  ModuleDisable();
-
   ModuleEnableMode();
-  SetAlarm();
 
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("Strategy (Service): Initialized"));
@@ -38,6 +34,7 @@ void FinishStrategyService() {
   DEBUG_PRINTLN(F("Strategy (Service): Ending"));
   DEBUG_PRINTLINE();
 
+  // Disable secondary modules
   ModuleDisable();
 
   DEBUG_PRINTLINE();

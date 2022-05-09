@@ -1,9 +1,14 @@
 /*
     Depth sensor (Blue Robotics Bar100), handles reading sensor output.
 
-    https://bluerobotics.com/store/sensors-sonars-cameras/sensors/bar100-sensor-r2-rp/
+    Component:
+      https://bluerobotics.com/store/sensors-sonars-cameras/sensors/bar100-sensor-r2-rp/
 
-    https://github.com/bluerobotics/BlueRobotics_KellerLD_Library
+    <TODO: Temporary, until replacement arrives:
+      https://bluerobotics.com/store/sensors-sonars-cameras/sensors/bar30-sensor-r1/
+
+    Primary Library:
+      https://github.com/bluerobotics/BlueRobotics_KellerLD_Library
 
     By
     Mads Rosenhoej Jeppesen - Aarhus 2021
@@ -54,5 +59,6 @@ void DepthRead() {
 }
 
 float GetDepth() {
+  bar100Sensor.read();
   return bar100Sensor.depth();
 }

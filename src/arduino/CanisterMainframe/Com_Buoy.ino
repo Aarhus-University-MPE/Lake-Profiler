@@ -74,9 +74,18 @@ void recvWithStartEndMarkers() {
 
 // Parse read Command
 void parseCommand() {
+  char *sampleRatePtr           = receivedCMD + 1;
+  char sampleRateChar[numChars] = {0};
+  strcpy(sampleRateChar, sampleRatePtr);
+
+  int sampleRate = atoi(sampleRateChar);
+
   switch (receivedCMD[0]) {
     case CMD_LOGGING:
       parseCommandLog();
+      break;
+    case CMD_SAMPLERATE:
+      SetSampleInterval(sampleRate);
       break;
     case '\0':
       break;
@@ -91,9 +100,33 @@ void parseCommandLog() {
 }
 
 void CanisterSendPackage(uint8_t package[], uint8_t size) {
-  DEBUG_PRINTLN(F("Sending Package!"));
-  COM_BUOY.println(F("<EMPTY_PACKAGE>"));  // TODO: Remove Temporary package placeholder
+  PrintPackage(package, size);
+  // COM_BUOY.println(F("<EMPTY_PACKAGE>"));  // TODO: Remove Temporary package placeholder
   COM_BUOY.write(package, size);
+}
+
+void CanisterSendSensorError(byte sensorModule) {
+  uint8_t size = 2;
+  uint8_t errorPackage[size];
+
+  errorPackage[0] = PACKAGE_ERROR_SENSOR;
+  errorPackage[1] = sensorModule;
+
+  PrintPackage(errorPackage, size);
+
+  COM_BUOY.write(errorPackage, size);
+}
+
+void PrintPackage(uint8_t package[], uint8_t size) {
+  DEBUG_PRINTLN(F("Sending Package: "));
+
+  // DEBUG_PRINT(F("Bundle Idenetifier: "));
+  for (uint8_t i = 0; i < size + 1; i++) {
+    DEBUG_PRINT2(package[i], HEX);
+    DEBUG_PRINT(F("\t"));
+  }
+  DEBUG_PRINTLN();
+  DEBUG_PRINTLINE();
 }
 
 bool BuoyCommStatus() {

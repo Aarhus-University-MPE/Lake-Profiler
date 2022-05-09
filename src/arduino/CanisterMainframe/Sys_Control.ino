@@ -7,8 +7,8 @@
 */
 unsigned long lastSystemCheck = 9999999;
 
-void SystemEnable(int module) {
-  if (GetStatus(module)) return;
+bool SystemEnable(int module) {
+  if (GetStatus(module)) return true;
   DEBUG_PRINT(F("SYS Enable: "));
   DEBUG_PRINT(ModuleToString(module));
 
@@ -50,6 +50,8 @@ void SystemEnable(int module) {
     DEBUG_PRINTLN(F(": ERROR"));
   }
   SetStatus(module, status);
+
+  return status;
 }
 
 void SystemDisable(int module) {
@@ -97,6 +99,29 @@ void SystemDisable(int module) {
   SetStatus(module, status);
 }
 
+bool SystemEnablePrimary() {
+  if (!SystemEnable(MODULE_CH4)) {
+    CanisterSendSensorError(MODULE_CH4);
+    return false;
+  }
+  if (!SystemEnable(MODULE_CO2)) {
+    CanisterSendSensorError(MODULE_CO2);
+    return false;
+  }
+  if (!SystemEnable(MODULE_LUM)) {
+    CanisterSendSensorError(MODULE_LUM);
+    return false;
+  }
+  if (!SystemEnable(MODULE_DEPTH)) {
+    CanisterSendSensorError(MODULE_DEPTH);
+    return false;
+  }
+  if (!SystemEnable(MODULE_TEMP)) {
+    CanisterSendSensorError(MODULE_TEMP);
+    return false;
+  }
+  return true;
+}
 // Disable all secondary systems
 void SystemDisable() {
   SystemDisable(MODULE_CH4);

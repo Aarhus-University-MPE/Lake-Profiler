@@ -25,4 +25,5 @@ unsigned long ToLong(bool b[]) {
   return c;
 }
 
-void LoggingStart();
+bool LoggingStart();
+void parseCommandLog();

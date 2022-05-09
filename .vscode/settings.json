@@ -16,6 +16,12 @@
         "unordered_map": "cpp",
         "cstddef": "cpp",
         "forward_list": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "compare": "cpp",
+        "functional": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "*.tcc": "cpp"
     }
 }

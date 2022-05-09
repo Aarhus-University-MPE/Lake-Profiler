@@ -1,0 +1,4 @@
+TODO:
+  - LoRa Init error
+  - LoRa active from start
+  - Power new conversion constants (float instead of analogread values)

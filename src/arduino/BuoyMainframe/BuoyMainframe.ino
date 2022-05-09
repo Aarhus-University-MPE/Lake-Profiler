@@ -15,7 +15,6 @@
 void setup() {
   SetStatus(false);
   DBG_ONLY(initializeDebugComm());
-
   // System initialization
   InitAllPins();
 

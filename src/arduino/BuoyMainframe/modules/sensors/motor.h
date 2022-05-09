@@ -25,7 +25,9 @@ bool InitializeMotors() {
 void TerminateMotors() {
   digitalWrite(PO_POWER_ENCODER, false);
 
-  // motor termination...
+  // Motor termination
+  digitalWrite(PO_MOTOR_DOWN, false);
+  digitalWrite(PO_MOTOR_UP, false);
 }
 
 // Todo: test
@@ -54,17 +56,21 @@ void MotorMove(byte dir) {
   motorState = dir;
   switch (dir) {
     case MOTOR_DIR_UP:
-      // DEBUG_PRINTLN(F("Moving Up"));
+      digitalWrite(PO_MOTOR_DOWN, false);
+      digitalWrite(PO_MOTOR_UP, true);
+      DEBUG_PRINTLN(F("Moving Up"));
       digitalWrite(LED_BUILTIN, true);
-      // StandbyMode();
       break;
     case MOTOR_DIR_DOWN:
-      // DEBUG_PRINTLN(F("Moving Down"));
-      // RTCPrint();
+      digitalWrite(PO_MOTOR_DOWN, true);
+      digitalWrite(PO_MOTOR_UP, false);
+      DEBUG_PRINTLN(F("Moving Down"));
       digitalWrite(LED_BUILTIN, true);
       break;
     case MOTOR_DIR_HALT:
-      // DEBUG_PRINTLN(F("Moving Halt"));
+      digitalWrite(PO_MOTOR_UP, false);
+      digitalWrite(PO_MOTOR_DOWN, false);
+      DEBUG_PRINTLN(F("Moving Halt"));
       digitalWrite(LED_BUILTIN, false);
       break;
     default:

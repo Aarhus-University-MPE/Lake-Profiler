@@ -14,8 +14,7 @@ void StartStrategyAutonomous() {
   DEBUG_PRINTLN(F("Strategy (Autonomous): Starting"));
   DEBUG_PRINTLINE();
 
-  // Disable all outputs
-  ModuleDisable();
+  // Enable system modules
   ModuleEnableMode();
 
   DEBUG_PRINTLINE();
@@ -34,6 +33,7 @@ void FinishStrategyAutonomous() {
   DEBUG_PRINTLN(F("Strategy (Autonomous): Ending"));
   DEBUG_PRINTLINE();
 
+  // Disable secondary modules
   ModuleDisable();
 
   DEBUG_PRINTLINE();

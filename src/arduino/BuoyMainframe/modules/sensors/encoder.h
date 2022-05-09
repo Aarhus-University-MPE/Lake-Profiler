@@ -6,6 +6,7 @@ int encoderCount;
 
 // Increments encoder values
 void EncoderAInterrupt() {
+  // DEBUG_PRINTLN("A");
   motorDirection = digitalRead(PI_ENCODER_B);
   encoderCount += motorDirection;
 }
@@ -19,6 +20,7 @@ void EncoderBInterrupt() {
 int encoderRotations;
 // Increments encoder values
 void EncoderZInterrupt() {
+  // DEBUG_PRINTLN("Z");
   encoderRotations += motorDirection;
   encoderCount = 0;
 }

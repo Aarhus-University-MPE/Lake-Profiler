@@ -23,7 +23,7 @@ tmElements_t te;  // Time elements structure
 time_t unixTime;  // a time stamp
 
 RTCCI2C RTCC;
-int year, mon, date, day, hour, minute, sec;
+// int year, mon, date, day, hour, minute, sec;
 byte alarmState;
 const byte maxAlarmStates = 2;
 
@@ -150,11 +150,11 @@ void EnableAlarm(uint8_t alarm) {
 void UpdateClock() {
   // Get time from RTCC
   te.Second = RTCC.getSec(RTCC_RTCC);
-  te.Minute = RTCC.getMinute(RTCC_RTCC);
+  te.Minute = RTCC.getMin(RTCC_RTCC);
   te.Hour   = RTCC.getHour(RTCC_RTCC);
   te.Day    = RTCC.getDay(RTCC_RTCC);
   te.Month  = RTCC.getMonth(RTCC_RTCC);
-  te.Year   = RTCC.getYear(RTCC_RTCC) - 1970;
+  te.Year   = RTCC.getYear() - 1970;
 
   // Convert to unixtime
   unixTime = makeTime(te);
@@ -180,35 +180,33 @@ void RTCPrint() {
 
 void printTime(uint8_t src) {
   // get all paratmeters of the src
-  sec    = RTCC.getSec(src);
-  minute = RTCC.getMin(src);
-  hour   = RTCC.getHour(src);
-  day    = RTCC.getDay(src);
-  date   = RTCC.getDate(src);
-  mon    = RTCC.getMonth(src);
-  year   = RTCC.getYear();
+  UpdateClock();
 
-  // print all parameter of the src
-  DEBUG_PRINT2(mon, HEX);
-  DEBUG_PRINT(F("/"));
-  DEBUG_PRINT2(date, HEX);
+  DEBUG_PRINTLN(unixTime);
+
+  // year   = RTCC.getYear();
+
+  // // print all parameter of the src
+  // DEBUG_PRINT2(mon, HEX);
+  // DEBUG_PRINT(F("/"));
+  // DEBUG_PRINT2(date, HEX);
   // year is only available for the RTCC
-  if (src == RTCC_RTCC) {
-    DEBUG_PRINT(F("/"));
-    DEBUG_PRINT2(year, HEX);
-  }
-  DEBUG_PRINT(F("  day"));
-  DEBUG_PRINT2(day, HEX);
-  DEBUG_PRINT(F("  "));
-  DEBUG_PRINT2(hour, HEX);
-  DEBUG_PRINT(F(":"));
-  DEBUG_PRINT2(minute, HEX);
+  // if (src == RTCC_RTCC) {
+  //   DEBUG_PRINT(F("/"));
+  //   // DEBUG_PRINT2(year, HEX);
+  // }
+  // DEBUG_PRINT(F("  day"));
+  // DEBUG_PRINT2(day, HEX);
+  // DEBUG_PRINT(F("  "));
+  // DEBUG_PRINT2(hour, HEX);
+  // DEBUG_PRINT(F(":"));
+  // DEBUG_PRINT2(minute, HEX);
 
-  // second is not supported by the power fail registers
-  if (src != RTCC_PWRD && src != RTCC_PWRU) {
-    DEBUG_PRINT(F(":"));
-    DEBUG_PRINT2(sec, HEX);
-  }
+  // // second is not supported by the power fail registers
+  // if (src != RTCC_PWRD && src != RTCC_PWRU) {
+  //   DEBUG_PRINT(F(":"));
+  //   DEBUG_PRINT2(sec, HEX);
+  // }
 
   DEBUG_PRINTLN();
 }
