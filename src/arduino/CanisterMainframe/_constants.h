@@ -71,15 +71,9 @@
 #endif
 
 // ------------------------------------------------------------ //
-//                         HEARTBEAT                            //
+//                         System                            //
 // ------------------------------------------------------------ //
-#define HRTBEAT_FRQ_OUT             6  // times per minute
-#define HRTBEAT_DT_OUT              60000 / HRTBEAT_FRQ_OUT
-
-#define HRTBEAT_TRESHOLD            60000
-
-#define BACKUP_RST_FRQ              2
-#define BACKUP_RST_DT               60000 / BACKUP_RST_FRQ
+#define SystemVersion               "0.1.63"
 
 // ------------------------------------------------------------ //
 //                        COMMUNICATION                         //
@@ -87,7 +81,7 @@
 
 // Buttons
 #define BTN_DEBOUNCE_TIME           300
-#define HANDSHAKE_PERIOD            5000
+#define HANDSHAKE_PERIOD            1000
 
 // DEBUG
 #define BUOY_BAUDRATE               115200
@@ -98,7 +92,7 @@
 #define LOGGING_SAMPLE_INTERVAL_MAX 60000  // 1 min
 
 // Modules
-#define MODULE_COUNT                7
+#define MODULE_COUNT                9
 
 #define MODULE_BUOY_COMM            0
 #define MODULE_BUOY_HRTBEAT         1
@@ -124,6 +118,9 @@
 #define CMD_SAMPLERATE                   'S'
 
 #define CMD_LOGGING                      'L'
+#define CMD_HANDSHAKE                    "<H>"
+#define CMD_ACKNOWLEDGE                  "<A>"
+#define CMD_NOT_ACKNOWLEDGE              "<N>"
 
 // ------------------------------------------------------------ //
 //                           EEPROM                             //

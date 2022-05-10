@@ -43,7 +43,7 @@ unsigned int sampleID, loggingSampleInterval;
 bool systemActive              = false;
 unsigned int sampleIndex       = 0;
 unsigned long lastMillisSensor = 0;
-const byte packageSize         = 22;
+const byte packageSize         = 27;
 uint8_t package[packageSize];
 
 bool LoggingStart() {
@@ -114,14 +114,20 @@ unsigned int SampleIndex() {
   0-9: Status
 */
 void BundleIdentifier(PackageIdentifier identifier) {
+  // Message Wrapper
+  package[0]               = '<';
+  package[packageSize - 3] = '>';
+  package[packageSize - 2] = '\r';
+  package[packageSize - 1] = '\n';
+
   // Bundle ID
-  package[0] = identifier;
+  package[1] = identifier;
 
   // Sample Routine ID
-  AppendUnsignedInt(sampleID, 1);
+  AppendUnsignedInt(sampleID, 2);
 
   // Sample index
-  AppendUnsignedInt(SampleIndex(), 3);
+  AppendUnsignedInt(SampleIndex(), 4);
 }
 
 void AppendFloat(float data, int index) {
@@ -158,12 +164,12 @@ void AppendUnsignedInt(unsigned int data, int index) {
 /* Bundle data into a package
  */
 void BuildPackage() {
-  BundleIdentifier(PACKAGE_0);            // Byte 0,1,2,3
-  AppendFloat(GetCH4Concentration(), 5);  // Byte 5,6,7,8
-  AppendFloat(GetCo2Concentration(), 9);  // Byte 9,10,11,12
-  AppendFloat(GetDepth(), 13);            // Byte 13,14,15,16
-  AppendFloat(GetTemp(), 17);             // Byte 17,18,19,20
-  AppendInt(GetLumValue(), 21);           // Byte 21,22
+  BundleIdentifier(PACKAGE_0);             // Byte 0,1,2,3,4,5,24,25,26
+  AppendFloat(GetCH4Concentration(), 6);   // Byte 6,7,8,9
+  AppendFloat(GetCo2Concentration(), 10);  // Byte 10,11,12,13
+  AppendFloat(GetDepth(), 14);             // Byte 14,15,16,17
+  AppendFloat(GetTemp(), 18);              // Byte 18,19,20,21
+  AppendInt(GetLumValue(), 22);            // Byte 22,23
   // TimeStamp();                            // Timestamp added at top
 }
 

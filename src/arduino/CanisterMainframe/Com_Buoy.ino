@@ -24,24 +24,44 @@ void BuoyCommTerminate() {
 
 unsigned long lastMillisHandshake;
 void BuoyCommHandshake() {
+  if (!GetStatus(MODULE_BUOY_COMM)) {
+    DEBUG_PRINTLN(F("Module Not Active!"));
+    return;
+  }
   if (millis() - lastMillisHandshake < HANDSHAKE_PERIOD) {
     return;
   }
   lastMillisHandshake = millis();
   DEBUG_PRINTLN(F("Sending Handshake"));
-  COM_BUOY.println("<R>");
+  digitalWrite(LED_BUILTIN, true);
+  COM_BUOY.println("<H>");
+  delay(50);
+  digitalWrite(LED_BUILTIN, false);
 }
 
 void BuoyCommAck() {
+  if (!GetStatus(MODULE_BUOY_COMM)) {
+    DEBUG_PRINTLN(F("Module Not Active!"));
+    return;
+  }
   DEBUG_PRINTLN(F("Sending ACK"));
   COM_BUOY.println("<A>");
 }
 void BuoyCommNack() {
+  if (!GetStatus(MODULE_BUOY_COMM)) {
+    DEBUG_PRINTLN(F("Module Not Active!"));
+    return;
+  }
   DEBUG_PRINTLN(F("Sending Nack"));
   COM_BUOY.println("<N>");
 }
 // Receive Commands
 void recvWithStartEndMarkers() {
+  if (!GetStatus(MODULE_BUOY_COMM)) {
+    DEBUG_PRINTLN(F("Module Not Active!"));
+    return;
+  }
+
   static boolean recvInProgress = false;
   static byte ndx               = 0;
   char startMarker              = '<';
@@ -100,12 +120,23 @@ void parseCommandLog() {
 }
 
 void CanisterSendPackage(uint8_t package[], uint8_t size) {
+  if (!GetStatus(MODULE_BUOY_COMM)) {
+    DEBUG_PRINTLN(F("Module Not Active!"));
+    return;
+  }
+
   PrintPackage(package, size);
+  // Serial.write(package, size);
   // COM_BUOY.println(F("<EMPTY_PACKAGE>"));  // TODO: Remove Temporary package placeholder
   COM_BUOY.write(package, size);
 }
 
 void CanisterSendSensorError(byte sensorModule) {
+  if (!GetStatus(MODULE_BUOY_COMM)) {
+    DEBUG_PRINTLN(F("Module Not Active!"));
+    return;
+  }
+
   uint8_t size = 2;
   uint8_t errorPackage[size];
 

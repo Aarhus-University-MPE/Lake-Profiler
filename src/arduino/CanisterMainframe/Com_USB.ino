@@ -14,6 +14,16 @@ char receivedCMDDebug[numCharsDebug];
 bool DebugCommInitialize() {
   COM_SERIAL_PC.begin(DEBUG_BAUDRATE);
 
+  DEBUG_PRINTLN(F("#--------------------------------#"));
+  DEBUG_PRINTLN(F("#     Lake-Profiler Firmware     #"));
+  DEBUG_PRINTLN(F("#           Canister             #"));
+  DBG_ONLY(DEBUG_PRINTLN(F("#          #DEBUG MODE#          #")));
+  DEBUG_PRINT(F("#       System Version: "));
+  DEBUG_PRINT(SystemVersion);
+  DEBUG_PRINTLN(F("   #"));
+  DEBUG_PRINTLN(F("#--------------------------------#"));
+  DEBUG_PRINTLN();
+
   return COM_SERIAL_PC;
 }
 

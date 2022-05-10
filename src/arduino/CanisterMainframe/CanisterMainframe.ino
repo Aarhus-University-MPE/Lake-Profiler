@@ -23,6 +23,8 @@ void setup() {
 
   // Setup finished
   DEBUG_PRINTLN(F("Setup complete."));
+
+  SystemEnable(MODULE_BUOY_COMM);
 }
 
 // ------------------------------------------------------------ //

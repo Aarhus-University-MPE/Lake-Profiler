@@ -13,6 +13,22 @@ void DataLogDeactivate() {
   autonomyStop = true;
 }
 
+bool DataLogStatus() {
+  return autonomyActive;
+}
+
+void ButtonOverride() {
+  if (!digitalRead(PI_BUTTON_MOTOR_DOWN) && !digitalRead(PI_BUTTON_MOTOR_UP)) {
+    delay(1000);
+    if (!digitalRead(PI_BUTTON_MOTOR_DOWN) && !digitalRead(PI_BUTTON_MOTOR_UP)) {
+      if (DataLogStatus()) {
+        DataLogStop();
+      } else {
+        DataLogActivate();
+      }
+    }
+  }
+}
 void DataLogStart() {
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("Starting Data Log"));
@@ -33,6 +49,8 @@ void DataLogStop() {
 }
 
 void LoggingProcess() {
+  ButtonOverride();
+
   if (!autonomyActive) {
     return;
   }

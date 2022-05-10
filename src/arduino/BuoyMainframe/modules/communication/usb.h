@@ -14,21 +14,21 @@
 
 char receivedCMD[numChars];
 
-void initializeDebugComm() {
-  Serial.begin(DEBUG_BAUDRATE);
-  if (COM_SERIAL_DBG)
-    SetStatus(MODULE_COMM_DBG, true);
-  else
-    SetStatus(MODULE_COMM_DBG, false);
+bool InitializeDebugComm() {
+  COM_SERIAL_DBG.begin(DEBUG_BAUDRATE);
 
-  DEBUG_PRINTLN(F("#--------------------------------#"));
-  DEBUG_PRINTLN(F("#     Lake-Profiler Firmware     #"));
-  DBG_ONLY(DEBUG_PRINTLN(F("#          #DEBUG MODE#          #")));
-  DEBUG_PRINT(F("#        System Version: "));
-  DEBUG_PRINT(SystemVersion);
-  DEBUG_PRINTLN(F("   #"));
-  DEBUG_PRINTLN(F("#--------------------------------#"));
-  DEBUG_PRINTLN();
+  if (COM_SERIAL_DBG) {
+    DEBUG_PRINTLN(F("#--------------------------------#"));
+    DEBUG_PRINTLN(F("#     Lake-Profiler Firmware     #"));
+    DBG_ONLY(DEBUG_PRINTLN(F("#          #DEBUG MODE#          #")));
+    DEBUG_PRINT(F("#       System Version: "));
+    DEBUG_PRINT(SystemVersion);
+    DEBUG_PRINTLN(F("   #"));
+    DEBUG_PRINTLN(F("#--------------------------------#"));
+    DEBUG_PRINTLN();
+  }
+
+  return COM_SERIAL_DBG;
 }
 
 // Receive Commands
@@ -39,8 +39,8 @@ void recvWithStartEndMarkers() {
   char endMarker                = '>';
   char rc;
 
-  while (Serial.available() > 0) {
-    rc = Serial.read();
+  while (COM_SERIAL_DBG.available() > 0) {
+    rc = COM_SERIAL_DBG.read();
 
     if (recvInProgress == true) {
       if (rc != endMarker) {

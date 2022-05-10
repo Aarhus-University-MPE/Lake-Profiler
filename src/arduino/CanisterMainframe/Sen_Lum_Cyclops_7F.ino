@@ -10,7 +10,7 @@
 int lumValue = 314;
 
 bool LumInitialize() {
-  pinMode(PA_LUM_SENSOR, INPUT);
+  // pinMode(PA_LUM_SENSOR, INPUT);
   return true;
 }
 

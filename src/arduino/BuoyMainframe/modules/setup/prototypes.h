@@ -23,7 +23,7 @@ unsigned long ToLong(bool b[]);
 // USB Comm
 bool DebugCommStatus();
 void recvWithStartEndMarkers();
-void initializeDebugComm();
+bool InitializeDebugComm();
 void CountDownPrint();
 const byte numChars = 32;
 
@@ -95,6 +95,7 @@ void SetStatus(bool status) {
   for (int i = 0; i < MODULE_COUNT; i++) {
     SystemStatus[i] = status;
   }
+
   SystemStatus[MODULE_RESERVED] = true;
 }
 

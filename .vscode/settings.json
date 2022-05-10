@@ -22,6 +22,7 @@
         "tuple": "cpp",
         "type_traits": "cpp",
         "utility": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "random": "cpp"
     }
 }

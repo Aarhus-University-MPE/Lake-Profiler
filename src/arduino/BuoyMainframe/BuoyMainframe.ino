@@ -14,11 +14,10 @@
 // ------------------------------------------------------------ //
 void setup() {
   SetStatus(false);
-  DBG_ONLY(initializeDebugComm());
+  DBG_ONLY(ModuleEnable(MODULE_COMM_DBG));
+
   // System initialization
   InitAllPins();
-
-  delay(500);  // Await capacitor charge
 
   SystemEnablePrimary();
 

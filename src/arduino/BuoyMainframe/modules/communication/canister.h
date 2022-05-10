@@ -13,8 +13,17 @@
 */
 char receivedCMDCan[numChars];
 
+union unpack {
+  uint8_t i8;
+  int i;
+  char c;
+  float f;
+  unsigned int ui;
+  byte b[4];
+};
+
 bool InitializeCanister() {
-  COM_SERIAL_CANISTER.begin(115200);
+  COM_SERIAL_CANISTER.begin(CANISTER_BAUDRATE);
 
   return COM_SERIAL_CANISTER;
 }
@@ -24,7 +33,7 @@ void TerminateCanister() {
 }
 
 bool CanisterCommStatus() {
-  return COM_SERIAL_CANISTER;
+  return GetStatus(MODULE_COMM_CANISTER);
 }
 
 // Take data log sample
@@ -47,12 +56,16 @@ void recvWithStartEndMarkersCanister() {
   char rc;
 
   while (COM_SERIAL_CANISTER.available() > 0) {
-    DEBUG_PRINTLN("Data Available!");
     rc = COM_SERIAL_CANISTER.read();
+    // DEBUG_PRINT2(rc, HEX);
+    // DEBUG_PRINT(F("\t"));
+    union unpack pack;
+
+    pack.i8 = rc;
 
     if (recvInProgressCan == true) {
-      if (rc != endMarker) {
-        receivedCMDCan[ndxCan] = rc;
+      if (pack.c != endMarker) {
+        receivedCMDCan[ndxCan] = pack.c;
         ndxCan++;
         if (ndxCan >= numChars) {
           ndxCan = numChars - 1;
@@ -65,7 +78,7 @@ void recvWithStartEndMarkersCanister() {
       }
     }
 
-    else if (rc == startMarker) {
+    else if (pack.c == startMarker) {
       recvInProgressCan = true;
     }
   }
@@ -74,7 +87,13 @@ void recvWithStartEndMarkersCanister() {
 // Parse read Command
 void parseCommandCan() {
   DEBUG_PRINT(F("Received data (Canister): \""));
-  DEBUG_PRINT(receivedCMDCan);
+  for (int i = 0; i < numChars; i++) {
+    union unpack pack;
+
+    pack.c = receivedCMDCan[i];
+    DEBUG_PRINT2(pack.i8, HEX);
+    DEBUG_PRINT(F("\t"));
+  }
   DEBUG_PRINTLN(F("\""));
 
   switch (receivedCMDCan[0]) {

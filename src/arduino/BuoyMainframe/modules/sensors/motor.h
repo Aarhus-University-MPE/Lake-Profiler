@@ -43,8 +43,6 @@ void MotorProcess() {
     MotorMove(MOTOR_DIR_UP);
   } else if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
     MotorMove(MOTOR_DIR_DOWN);
-  } else {
-    MotorMove(MOTOR_DIR_HALT);
   }
 }
 
@@ -53,6 +51,16 @@ void MotorMove(byte dir) {
   if (dir == motorState) {
     return;
   }
+
+  if (motorState == MOTOR_DIR_UP || motorState == MOTOR_DIR_DOWN) {
+    digitalWrite(PO_MOTOR_DOWN, false);
+    digitalWrite(PO_MOTOR_UP, false);
+    DEBUG_PRINTLN(F("Moving Halt"));
+    motorState = MOTOR_DIR_HALT;
+    delay(500);  // TODO: System halt
+    return;
+  }
+
   motorState = dir;
   switch (dir) {
     case MOTOR_DIR_UP:

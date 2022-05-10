@@ -34,7 +34,7 @@ bool InitializeLora() {
 }
 
 bool LoraStatus() {
-  return true;
+  return GetStatus(MODULE_COMM_LORA);
 }
 
 void LoraSendMsg(uint8_t data[], uint8_t size) {
