@@ -1,6 +1,3 @@
-#pragma once
-
-#include "../setup/modules.h"
 
 /*
     Canister communication, handles reading serial and parsing commands.
@@ -11,16 +8,11 @@
 
     Query data from Drill Logger SD card
 */
-char receivedCMDCan[numChars];
+#pragma once
 
-union unpack {
-  uint8_t i8;
-  int i;
-  char c;
-  float f;
-  unsigned int ui;
-  byte b[4];
-};
+#include "../setup/modules.h"
+
+uint8_t receivedCMDCan[numChars];
 
 bool InitializeCanister() {
   COM_SERIAL_CANISTER.begin(CANISTER_BAUDRATE);
@@ -42,6 +34,10 @@ void CanisterLogStart() {
   COM_SERIAL_CANISTER.println("<L>");
 }
 
+void CanisterAcknowledge() {
+  COM_SERIAL_CANISTER.println("<A>");
+}
+
 // Reads data log
 void CanisterLogRead() {
   COM_SERIAL_CANISTER.read();
@@ -57,24 +53,22 @@ void recvWithStartEndMarkersCanister() {
 
   while (COM_SERIAL_CANISTER.available() > 0) {
     rc = COM_SERIAL_CANISTER.read();
-    // DEBUG_PRINT2(rc, HEX);
-    // DEBUG_PRINT(F("\t"));
-    union unpack pack;
 
+    union unpack pack;
     pack.i8 = rc;
 
     if (recvInProgressCan == true) {
       if (pack.c != endMarker) {
-        receivedCMDCan[ndxCan] = pack.c;
+        receivedCMDCan[ndxCan] = rc;
         ndxCan++;
         if (ndxCan >= numChars) {
           ndxCan = numChars - 1;
         }
       } else {
         receivedCMDCan[ndxCan] = '\0';  // terminate the string
-        recvInProgressCan      = false;
-        ndxCan                 = 0;
-        parseCommandCan();
+        parseCommandCan(ndxCan);
+        recvInProgressCan = false;
+        ndxCan            = 0;
       }
     }
 
@@ -85,28 +79,52 @@ void recvWithStartEndMarkersCanister() {
 }
 
 // Parse read Command
-void parseCommandCan() {
-  DEBUG_PRINT(F("Received data (Canister): \""));
-  for (int i = 0; i < numChars; i++) {
-    union unpack pack;
-
-    pack.c = receivedCMDCan[i];
-    DEBUG_PRINT2(pack.i8, HEX);
-    DEBUG_PRINT(F("\t"));
-  }
-  DEBUG_PRINTLN(F("\""));
+void parseCommandCan(uint8_t size) {
+  CanisterAcknowledge();
 
   switch (receivedCMDCan[0]) {
     case 'H':
-      DEBUG_PRINT(F("Handshake Received"));
+      DEBUG_PRINTLN(F("Handshake Received"));
       // Send startcommand
       CanisterLogStart();
       break;
-
+    case 0x41:
+      DEBUG_PRINTLINE();
+      DEBUG_PRINTLN(F("Received ACKNOWLEDGE"));
+      break;
+    case 'P':
+      parsePackage();
+      break;
     default:
       break;
   }
+}
 
-  // Log Data
-  // receivedCMDCan
+void parsePackage() {
+  union unpack pack;
+  if (receivedCMDCan[2] == 0xA) {
+    // new package incomming
+    DEBUG_PRINTLINE();
+    DEBUG_PRINT(F("New Package Received:"));
+    for (uint8_t i = 0; i < receivedCMDCan[1]; i++) {
+      DEBUG_PRINT2(receivedCMDCan[i + 2], HEX);
+      DEBUG_PRINT(F(" "));
+    }
+    DEBUG_PRINTLN();
+  } else {
+    DEBUG_PRINT(F("Message ("));
+    DEBUG_PRINT(receivedCMDCan[1]);
+    pack.i8 = receivedCMDCan[2];
+    DEBUG_PRINT(F(" "));
+    DEBUG_PRINT(pack.c);
+    DEBUG_PRINTLN(F(")"));
+  }
+
+  // for (int i = 0; i < size; i++) {
+  //   union unpack pack;
+
+  //   DEBUG_PRINT2(receivedCMDCan[i], HEX);
+  //   DEBUG_PRINT(F(" "));
+  // }
+  // DEBUG_PRINTLN();
 }

@@ -1,4 +1,5 @@
 TODO:
   - LoRa Init error
-  - LoRa active from start
-  - Power new conversion constants (float instead of analogread values)
+  - Save datapackage to (ID) file
+  - LoRa active from start @done
+  - Power new conversion constants (float instead of analogread values) @done

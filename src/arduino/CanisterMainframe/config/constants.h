@@ -73,7 +73,7 @@
 // ------------------------------------------------------------ //
 //                         System                            //
 // ------------------------------------------------------------ //
-#define SystemVersion               "0.1.63"
+#define SystemVersion               "0.4.83"
 
 // ------------------------------------------------------------ //
 //                        COMMUNICATION                         //
@@ -84,7 +84,7 @@
 #define HANDSHAKE_PERIOD            1000
 
 // DEBUG
-#define BUOY_BAUDRATE               115200
+#define BUOY_BAUDRATE               19200
 #define DEBUG_BAUDRATE              115200
 
 // Logging
@@ -101,7 +101,7 @@
 #define MODULE_LUM                  4
 #define MODULE_DEPTH                5
 #define MODULE_TEMP                 6
-#define MODULE_DEBUGCOMM            7
+#define MODULE_COMM_DBG             7
 #define MODULE_RESERVED             8
 
 #define ModuleToString(m) \

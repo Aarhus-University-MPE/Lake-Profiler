@@ -6,9 +6,7 @@
   2022
 */
 
-#include "_constants.h"
-#include "_pinout.h"
-#include "_shared.h"
+#include "./modules/setup/modules.h"
 
 // ------------------------------------------------------------ //
 //                            SETUP                             //
@@ -18,7 +16,7 @@ void setup() {
   InitAllPins();
 
   // Debug
-  DBG_ONLY(DebugCommInitialize());
+  DBG_ONLY(SystemEnable(MODULE_COMM_DBG));
   DEBUG_PRINT(F("Debug mode. Entered Setup... "));
 
   // Setup finished

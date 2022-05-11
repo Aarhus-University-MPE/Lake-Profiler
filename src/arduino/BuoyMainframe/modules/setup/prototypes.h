@@ -25,7 +25,7 @@ bool DebugCommStatus();
 void recvWithStartEndMarkers();
 bool InitializeDebugComm();
 void CountDownPrint();
-const byte numChars = 32;
+const byte numChars = 200;
 
 // Canister Comm
 void recvWithStartEndMarkersCanister();
@@ -33,7 +33,7 @@ void CanisterLogStart();
 void CanisterLogRead();
 bool InitializeCanister();
 bool CanisterCommStatus();
-void parseCommandCan();
+void parseCommandCan(uint8_t size);
 
 // Strategies
 void StartStrategySystemTest();
@@ -203,3 +203,4 @@ void DataLogActivate();
 void SetClock();
 void UpdateClock();
 float BatteryVoltage();
+void parsePackage();

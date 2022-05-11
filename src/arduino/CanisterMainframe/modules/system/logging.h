@@ -1,49 +1,11 @@
-void CanisterSendPackage(uint8_t package[], uint8_t size);
-void CH4Read();
-void CO2Read();
-void DepthRead();
-void LumRead();
-void TempRead();
-float GetCH4Concentration();
-float GetCo2Concentration();
-float GetDepth();
-float GetTemp();
-int GetLumValue();
-void BuildPackage();
-void SensorRead();
-bool SystemEnablePrimary();
-void ReadSampleInterval();
-void SetSampleInterval(unsigned int sampleInterval);
-void SetSampleID();
-void AppendFloat(float data, int index);
-void AppendInt(int data, int index);
-void AppendUnsignedInt(unsigned int data, int index);
-void CanisterSendSensorError(byte sensorModule);
-
-enum PackageIdentifier {
-  PACKAGE_ERROR        = 0,
-  PACKAGE_ERROR_SENSOR = 1,
-  PACKAGE_START        = 2,
-  PACKAGE_STATUS       = 3,
-  PACKAGE_0            = 10,
-  PACKAGE_1            = 11,
-  PACKAGE_2            = 12,
-  PACKAGE_3            = 13,
-  PACKAGE_4            = 14,
-};
-
-union unpack {
-  float f;
-  int i;
-  unsigned int ui;
-  byte b[4];
-};
+#pragma once
+#include "../setup/modules.h"
 
 unsigned int sampleID, loggingSampleInterval;
 bool systemActive              = false;
 unsigned int sampleIndex       = 0;
 unsigned long lastMillisSensor = 0;
-const byte packageSize         = 27;
+const byte packageSize         = 5;
 uint8_t package[packageSize];
 
 bool LoggingStart() {
@@ -61,13 +23,47 @@ bool LoggingStart() {
     DEBUG_PRINTLINE();
     DEBUG_PRINTLN(F("Logging Start Error!"));
     systemActive = false;
+    DEBUG_PRINTLINE();
+    return systemActive;
   }
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("Logging Started Success"));
   DEBUG_PRINTLINE();
   systemActive = true;
 
   return systemActive;
 }
 
+void LoggingStop() {
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("Stopping Data Logging"));
+  DEBUG_PRINTLINE();
+  systemActive = false;
+}
+
+// Package header
+bool SendHeader() {
+  BundleIdentifier(PACKAGE_0);
+  DEBUG_PRINT2(package, HEX);
+  return CanisterSendPackage(package, packageSize);
+}
+
+// Send all packages
+bool SendPackage() {
+  DEBUG_PRINTLN(F("Sending Package: "));
+
+  if (!SendHeader()) return false;
+  DEBUG_PRINTLINE();
+  if (!CH4SendPackage()) return false;
+  if (!CO2SendPackage()) return false;
+  if (!DepthSendPackage()) return false;
+  if (!TempSendPackage()) return false;
+  if (!LumSendPackage()) return false;
+  DEBUG_PRINTLINE();
+  return true;
+}
+
+// Sensor Package Broadcast
 void SensorBroadcast() {
   if (millis() - lastMillisSensor < loggingSampleInterval) {
     return;
@@ -76,11 +72,11 @@ void SensorBroadcast() {
   lastMillisSensor = millis();
 
   // Rebuild Package with latest data
-  BuildPackage();
-
-  // Broadcast to Buoy
-  CanisterSendPackage(package, packageSize);
+  if (!SendPackage()) {
+    delay(5000);  // TODO: Remove?
+  }
 }
+
 // Primary Sensor Loop
 void SensorProcess() {
   // Read sensor data
@@ -94,9 +90,9 @@ void SensorProcess() {
 void SensorRead() {
   CH4Read();
   CO2Read();
-  DepthRead();
+  // DepthRead();
   // LumRead(); // Analog sensor, no need to constantly update
-  TempRead();
+  // TempRead();
 }
 
 void SetSampleID() {
@@ -115,19 +111,15 @@ unsigned int SampleIndex() {
 */
 void BundleIdentifier(PackageIdentifier identifier) {
   // Message Wrapper
-  package[0]               = '<';
-  package[packageSize - 3] = '>';
-  package[packageSize - 2] = '\r';
-  package[packageSize - 1] = '\n';
 
   // Bundle ID
-  package[1] = identifier;
+  package[0] = identifier;
 
   // Sample Routine ID
-  AppendUnsignedInt(sampleID, 2);
+  AppendUnsignedInt(sampleID, 1);
 
   // Sample index
-  AppendUnsignedInt(SampleIndex(), 4);
+  AppendUnsignedInt(SampleIndex(), 3);
 }
 
 void AppendFloat(float data, int index) {
@@ -164,7 +156,8 @@ void AppendUnsignedInt(unsigned int data, int index) {
 /* Bundle data into a package
  */
 void BuildPackage() {
-  BundleIdentifier(PACKAGE_0);             // Byte 0,1,2,3,4,5,24,25,26
+  BundleIdentifier(PACKAGE_0);  // Byte 0,1,2,3,4,5,24,25,26
+
   AppendFloat(GetCH4Concentration(), 6);   // Byte 6,7,8,9
   AppendFloat(GetCo2Concentration(), 10);  // Byte 10,11,12,13
   AppendFloat(GetDepth(), 14);             // Byte 14,15,16,17

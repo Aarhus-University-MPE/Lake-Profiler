@@ -45,3 +45,12 @@ unsigned long ToLong(bool b[]) {
   }
   return c;
 }
+
+union unpack {
+  uint8_t i8;
+  int i;
+  char c;
+  float f;
+  unsigned int ui;
+  byte b[4];
+};

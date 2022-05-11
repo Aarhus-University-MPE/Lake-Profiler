@@ -13,6 +13,9 @@
 // Function prototypes
 #include "./prototypes.h"
 
+// Helper functions
+#include "../tools/generalFunctions.h"
+
 // Initial modules
 #include "../strategies/_strategies.h"
 #include "./pinconfigs.h"
@@ -26,6 +29,7 @@
 #include "../system/blackbox.h"
 #include "../system/control.h"
 #include "../system/heartbeat.h"
+#include "../system/logging.h"
 #include "../system/power.h"
 
 // Communication
@@ -36,12 +40,8 @@
 // Debug
 #include "../debug/debug.h"
 
-// Sensors
-#include "../sensors/encoder.h"
-#include "../sensors/logging.h"
-#include "../sensors/motor.h"
-#include "../sensors/rtc.h"
-#include "../sensors/sdReader.h"
-
-// Helper functions
-#include "../tools/generalFunctions.h"
+// Components
+#include "../components/encoder.h"
+#include "../components/motor.h"
+#include "../components/rtc.h"
+#include "../components/sdReader.h"

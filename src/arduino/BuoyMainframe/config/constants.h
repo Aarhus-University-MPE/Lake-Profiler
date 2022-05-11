@@ -187,10 +187,12 @@ const unsigned long SYSREQ_SAMPLE =
 #define DEBUG_BAUDRATE               115200
 
 // Canister Comm (RS232)
-#define CANISTER_BAUDRATE            115200
+#define CANISTER_BAUDRATE            19200
 
 // LORA
-#define LORA_FREQUENCY               868.0
+#define LORA_FREQUENCY               434.0
+#define CLIENT_ADDRESS               1
+#define SERVER_ADDRESS               2
 
 // ------------------------------------------------------------ //
 //                           EEPROM                             //
