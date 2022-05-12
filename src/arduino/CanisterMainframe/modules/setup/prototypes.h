@@ -59,9 +59,11 @@ void parseDataCH4(uint8_t size);
 void parseDataCO2(uint8_t size);
 
 // Communication
-void CanisterSendSensorError(byte sensorModule);
-bool CanisterSendPackage(uint8_t package[], uint8_t size);
-bool CanisterSendPackage(char package[], uint8_t size);
+void BuoySendSensorError(byte sensorModule);
+bool BuoySendPackage(uint8_t package[], uint8_t size);
+bool BuoySendPackage(char package[], uint8_t size);
+void BuoySendCommunicationError();
+void BuoySendLogStart();
 void parseCommand();
 void parseCommandDebug();
 
@@ -83,4 +85,3 @@ bool SystemCheckModule(byte module);
 bool SystemTestModule(byte module);
 
 void LoggingStop();
-void CanisterSendCommunicationError();

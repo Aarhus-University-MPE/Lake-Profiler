@@ -18,4 +18,5 @@ enum PackageIdentifier {
   PACKAGE_2              = 12,
   PACKAGE_3              = 13,
   PACKAGE_4              = 14,
+  PACKAGE_END            = 19
 };

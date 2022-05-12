@@ -242,3 +242,15 @@ const unsigned long SYSREQ_SAMPLE =
 #define CMD_MODULE_OVERRIDE          'O'
 #define CMD_MODULE_STATUS            'S'
 #define CMD_MODULE_RESET             'R'
+
+#define CMD_CLOCK                    'C'
+#define CMD_CLOCK_SEC                's'
+#define CMD_CLOCK_MIN                'm'
+#define CMD_CLOCK_HOUR               'H'
+#define CMD_CLOCK_DAY                'd'
+#define CMD_CLOCK_DATE               'D'
+#define CMD_CLOCK_MONTH              'M'
+#define CMD_CLOCK_YEAR               'Y'
+
+#define CMD_ALARM                    'A'
+#define CMD_ALARM_BEGIN              'B'

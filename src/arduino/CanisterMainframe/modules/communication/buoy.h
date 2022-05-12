@@ -51,6 +51,7 @@ void BuoyCommAck() {
   DEBUG_PRINTLN(F("Sending ACK"));
   COM_BUOY.println("<A>");
 }
+
 void BuoyCommNack() {
   if (!GetStatus(MODULE_BUOY_COMM)) {
     DEBUG_PRINTLN(F("Module Not Active!"));
@@ -125,17 +126,23 @@ void parseCommandLog() {
   LoggingStart();
 }
 
-void CanisterSendStart(uint8_t size) {
+void BuoySendStart(uint8_t size) {
   COM_BUOY.print("<P");
   uint8_t sizePackage[1];
   sizePackage[0] = size;
   COM_BUOY.write(sizePackage, 1);
 }
 
-void CanisterSendStart() {
+void BuoySendStart() {
   COM_BUOY.print("<");
 }
-void CanisterSendEndline() {
+
+void BuoySendLogStart() {
+  DEBUG_PRINTLN(F("Sending LogStart Command"));
+  COM_BUOY.println("<N>");
+}
+
+void BuoySendEndline() {
   COM_BUOY.print(">\r\n");
 }
 
@@ -143,7 +150,7 @@ void ResetAcknowledge() {
   acknowledgeReceived = false;
 }
 
-bool CanisterSendPackage(uint8_t package[], uint8_t size) {
+bool BuoySendPackage(uint8_t package[], uint8_t size) {
   if (!GetStatus(MODULE_BUOY_COMM)) {
     DEBUG_PRINTLN(F("Module Not Active!"));
     return false;
@@ -151,10 +158,10 @@ bool CanisterSendPackage(uint8_t package[], uint8_t size) {
 
   PrintPackage(package, size);
 
-  CanisterSendStart(size);
+  BuoySendStart(size);
   COM_BUOY.write(package, size);
   unsigned long lastMillisSend = millis();
-  CanisterSendEndline();
+  BuoySendEndline();
   ResetAcknowledge();
 
   delay(10);
@@ -166,9 +173,9 @@ bool CanisterSendPackage(uint8_t package[], uint8_t size) {
     if (millis() - lastMillisSend > 200) {
       retry++;
       DEBUG_PRINTLN(F("Failed to received ACK, resending"));
-      CanisterSendStart(size);
+      BuoySendStart(size);
       COM_BUOY.write(package, size);
-      CanisterSendEndline();
+      BuoySendEndline();
       lastMillisSend = millis();
     }
   }
@@ -176,7 +183,7 @@ bool CanisterSendPackage(uint8_t package[], uint8_t size) {
   if (!acknowledgeReceived) {
     DEBUG_PRINTLN(F("Failed to received ACK"));
     // Stop log report error
-    CanisterSendCommunicationError();
+    BuoySendCommunicationError();
     LoggingStop();
     return false;
   }
@@ -184,7 +191,7 @@ bool CanisterSendPackage(uint8_t package[], uint8_t size) {
   return true;
 }
 
-bool CanisterSendPackage(char package[], uint8_t size) {
+bool BuoySendPackage(char package[], uint8_t size) {
   if (!GetStatus(MODULE_BUOY_COMM)) {
     DEBUG_PRINTLN(F("Module Not Active!"));
     return false;
@@ -198,16 +205,16 @@ bool CanisterSendPackage(char package[], uint8_t size) {
     packagei8[i] = pack.i8;
   }
 
-  return CanisterSendPackage(packagei8, size);
+  return BuoySendPackage(packagei8, size);
 }
 
-void CanisterSendCommunicationError() {
-  CanisterSendStart();
+void BuoySendCommunicationError() {
+  BuoySendStart();
   COM_BUOY.print(PACKAGE_ERROR_COMM_ACK);
-  CanisterSendEndline();
+  BuoySendEndline();
 }
 
-void CanisterSendSensorError(byte sensorModule) {
+void BuoySendSensorError(byte sensorModule) {
   if (!GetStatus(MODULE_BUOY_COMM)) {
     DEBUG_PRINTLN(F("Module Not Active!"));
     return;
@@ -221,9 +228,9 @@ void CanisterSendSensorError(byte sensorModule) {
 
   PrintPackage(errorPackage, size);
 
-  CanisterSendStart();
+  BuoySendStart();
   COM_BUOY.write(errorPackage, size);
-  CanisterSendEndline();
+  BuoySendEndline();
 }
 
 void PrintPackage(uint8_t package[], uint8_t size) {

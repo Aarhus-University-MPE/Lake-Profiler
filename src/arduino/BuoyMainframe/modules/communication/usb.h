@@ -82,6 +82,12 @@ void parseCommand() {
       break;
     case CMD_MODULE:
       parseCommandModule();
+    case CMD_CLOCK:
+      parseCommandClock();
+      break;
+    case CMD_ALARM:
+      parseCommandAlarm();
+      break;
     case '\0':
       break;
     default:
@@ -218,6 +224,107 @@ void parseCommandModule() {
       DEBUG_PRINTLN(F("NACK"));
       break;
   }
+}
+
+void parseCommandClock() {
+  union unpack pack;
+  pack.c             = receivedCMD[2];
+  uint8_t clockValue = pack.i8;
+
+  DEBUG_PRINT(F("Setting Clock Value: "));
+  switch (receivedCMD[1]) {
+    case CMD_CLOCK_SEC:
+      DEBUG_PRINT(F("sec "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetClockSec(clockValue);
+      break;
+    case CMD_CLOCK_MIN:
+      DEBUG_PRINT(F("min "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetClockMin(clockValue);
+      break;
+    case CMD_CLOCK_HOUR:
+      DEBUG_PRINT(F("Hour "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetClockHour(clockValue);
+      break;
+    case CMD_CLOCK_DAY:
+      DEBUG_PRINT(F("Day "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetClockDay(clockValue);
+      break;
+    case CMD_CLOCK_DATE:
+      DEBUG_PRINT(F("Date "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetClockDate(clockValue);
+      break;
+    case CMD_CLOCK_MONTH:
+      DEBUG_PRINT(F("Month "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetClockMonth(clockValue);
+      break;
+    case CMD_CLOCK_YEAR:
+      DEBUG_PRINT(F("Year "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetClockYear(clockValue);
+      break;
+
+    default:
+      break;
+  }
+  DEBUG_PRINTLN();
+
+  // Update Arduino Clock to match RTCC
+  UpdateUnixTime();
+}
+
+void parseCommandAlarm() {
+  union unpack pack;
+  pack.c             = receivedCMD[2];
+  uint8_t clockValue = pack.i8;
+
+  DEBUG_PRINT(F("Setting Alarm: "));
+  switch (receivedCMD[1]) {
+    case CMD_CLOCK_SEC:
+      DEBUG_PRINT(F("sec "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetAlarmSec(clockValue);
+      break;
+    case CMD_CLOCK_MIN:
+      DEBUG_PRINT(F("min "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetAlarmMin(clockValue);
+      break;
+    case CMD_CLOCK_HOUR:
+      DEBUG_PRINT(F("Hour "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetAlarmHour(clockValue);
+      break;
+    case CMD_CLOCK_DAY:
+      DEBUG_PRINT(F("Day "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetAlarmDay(clockValue);
+      break;
+    case CMD_CLOCK_DATE:
+      DEBUG_PRINT(F("Date "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetAlarmDate(clockValue);
+      break;
+    case CMD_CLOCK_MONTH:
+      DEBUG_PRINT(F("Month "));
+      DEBUG_PRINT2(clockValue, HEX);
+      SetAlarmMonth(clockValue);
+      break;
+    case CMD_ALARM_BEGIN:
+      DEBUG_PRINT(F("ON"));
+      DEBUG_PRINTLN();
+      SetAlarm();
+      break;
+
+    default:
+      break;
+  }
+  DEBUG_PRINTLN();
 }
 
 void CountDownPrint() {

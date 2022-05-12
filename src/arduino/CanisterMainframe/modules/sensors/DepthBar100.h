@@ -83,5 +83,5 @@ bool DepthSendPackage() {
   }
 
   // Send Package over RS232
-  return CanisterSendPackage(package, 5);
+  return BuoySendPackage(package, 5);
 }

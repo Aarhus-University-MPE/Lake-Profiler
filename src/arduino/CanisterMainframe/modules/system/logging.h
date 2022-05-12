@@ -29,6 +29,7 @@ bool LoggingStart() {
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("Logging Started Success"));
   DEBUG_PRINTLINE();
+  BuoySendLogStart();
   systemActive = true;
 
   return systemActive;
@@ -44,10 +45,14 @@ void LoggingStop() {
 // Package header
 bool SendHeader() {
   BundleIdentifier(PACKAGE_0);
-  DEBUG_PRINT2(package, HEX);
-  return CanisterSendPackage(package, packageSize);
+  return BuoySendPackage(package, packageSize);
 }
 
+// Package footer
+bool SendFooter() {
+  BundleIdentifier(PACKAGE_END);
+  return BuoySendPackage(package, packageSize);
+}
 // Send all packages
 bool SendPackage() {
   DEBUG_PRINTLN(F("Sending Package: "));
@@ -59,6 +64,7 @@ bool SendPackage() {
   if (!DepthSendPackage()) return false;
   if (!TempSendPackage()) return false;
   if (!LumSendPackage()) return false;
+  if (!SendFooter()) return false;
   DEBUG_PRINTLINE();
   return true;
 }
@@ -119,7 +125,7 @@ void BundleIdentifier(PackageIdentifier identifier) {
   AppendUnsignedInt(sampleID, 1);
 
   // Sample index
-  AppendUnsignedInt(SampleIndex(), 3);
+  AppendUnsignedInt(sampleIndex, 3);
 }
 
 void AppendFloat(float data, int index) {

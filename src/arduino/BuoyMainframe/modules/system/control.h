@@ -91,7 +91,7 @@ void ModuleEnableMode() {
     case MODE_SYSTEMTEST:
       break;
     case MODE_AUTONOMOUS:
-      ModuleEnable(MODULE_COMM_LORA);
+      // ModuleEnable(MODULE_COMM_LORA); // TODO: Temporary removed
       ModuleEnable(MODULE_CLOCK);
       break;
     case MODE_SERVICE:

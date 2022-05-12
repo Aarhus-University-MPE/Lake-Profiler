@@ -120,5 +120,5 @@ float GetCH4Concentration() {
 
 // Send latest package
 bool CH4SendPackage() {
-  return CanisterSendPackage(latestDataCH4, packageSizeCH4);
+  return BuoySendPackage(latestDataCH4, packageSizeCH4);
 }

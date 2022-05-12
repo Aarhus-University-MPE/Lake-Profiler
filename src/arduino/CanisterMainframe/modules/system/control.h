@@ -130,23 +130,23 @@ void SystemDisable(int module) {
 
 bool SystemEnablePrimary() {
   if (!SystemEnable(MODULE_CH4)) {
-    CanisterSendSensorError(MODULE_CH4);
+    BuoySendSensorError(MODULE_CH4);
     return false;
   }
   if (!SystemEnable(MODULE_CO2)) {
-    CanisterSendSensorError(MODULE_CO2);
+    BuoySendSensorError(MODULE_CO2);
     return false;
   }
   if (!SystemEnable(MODULE_LUM)) {
-    CanisterSendSensorError(MODULE_LUM);
+    BuoySendSensorError(MODULE_LUM);
     return false;
   }
   if (!SystemEnable(MODULE_DEPTH)) {
-    CanisterSendSensorError(MODULE_DEPTH);
+    BuoySendSensorError(MODULE_DEPTH);
     return false;
   }
   if (!SystemEnable(MODULE_TEMP)) {
-    CanisterSendSensorError(MODULE_TEMP);
+    BuoySendSensorError(MODULE_TEMP);
     return false;
   }
   return true;

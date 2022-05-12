@@ -194,13 +194,44 @@ bool ModeButtonDebounce();
 
 void DataLogStop();
 void DataLogStart();
-void SetModeManual(byte modeSet);
+void SetModeManual(uint8_t modeSet);
 void LoggingProcess();
 
 void DataLogDeactivate();
 void DataLogActivate();
 
-void SetClock();
-void UpdateClock();
 float BatteryVoltage();
-void parsePackage();
+void parsePackage(uint8_t size);
+void parseLogStart();
+void GetTimeStamp(char *fileName);
+
+// RTC
+void SetClock();
+void UpdateUnixTime();
+void EnableAlarm(uint8_t alarm);
+
+void parseCommandClock();
+void SetClockSec(uint8_t hexValue);
+void SetClockMin(uint8_t hexValue);
+void SetClockHour(uint8_t hexValue);
+void SetClockDay(uint8_t hexValue);
+void SetClockDate(uint8_t hexValue);
+void SetClockMonth(uint8_t hexValue);
+void SetClockYear(uint8_t hexValue);
+
+void parseCommandAlarm();
+void SetAlarmSec(uint8_t hexValue);
+void SetAlarmMin(uint8_t hexValue);
+void SetAlarmHour(uint8_t hexValue);
+void SetAlarmDay(uint8_t hexValue);
+void SetAlarmDate(uint8_t hexValue);
+void SetAlarmMonth(uint8_t hexValue);
+void SetAlarmStartHour(uint8_t startHour);
+void SetAlarmFrequency(uint8_t frequency);
+
+void InitializeAlarm();
+void UpdateAlarm();
+void UpdateAlarmTimings();
+void SetAlarm();
+void SetAlarm(uint8_t hour);
+uint8_t NextAlarm();

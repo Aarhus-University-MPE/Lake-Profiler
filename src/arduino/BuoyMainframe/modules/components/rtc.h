@@ -17,45 +17,24 @@
 
 #include <RTCCI2C.h>
 
-#include "TimeLib.h"
-
-tmElements_t te;  // Time elements structure
-time_t unixTime;  // a time stamp
-
 RTCCI2C RTCC;
-// int year, mon, date, day, hour, minute, sec;
-byte alarmState;
-const byte maxAlarmStates = 2;
 
 bool InitializeRTC() {
   RTCC.begin();
-
-  // print the power-fail time-stamp
-  // DEBUG_PRINT("Lost Power at: ");
-  // printTime(RTCC_PWRD);
-  // DEBUG_PRINT("Power was back at: ");
-  // printTime(RTCC_PWRU);
 
   // enable back up battery
   RTCC.enableVbat();
 
   // Update Arduino Clock to match RTCC
-  UpdateClock();
+  UpdateUnixTime();
+
+  // Set Alarm
+  InitializeAlarm();
+
+  // Update Arduino Clock to match RTCC
+  UpdateUnixTime();
 
   return RTCC.getYear() != 0;
-}
-
-void SetClock() {
-  // set the real time clock
-  RTCC.stopClock();
-  RTCC.setSec(RTCC_RTCC, 0x00);
-  RTCC.setMin(RTCC_RTCC, 0x00);
-  RTCC.setHour(RTCC_RTCC, 0x12);
-  RTCC.setDay(RTCC_RTCC, 0x05);
-  RTCC.setDate(RTCC_RTCC, 0x06);
-  RTCC.setMonth(RTCC_RTCC, 0x05);
-  RTCC.setYear(0x22);
-  RTCC.startClock();
 }
 
 void TerminateRTC() {
@@ -64,103 +43,6 @@ void TerminateRTC() {
 
 bool RTCStatus() {
   return GetStatus(MODULE_CLOCK);
-}
-
-// Configs alarm
-void SetAlarm() {
-  if (!GetStatus(MODULE_CLOCK)) {
-    return;
-  }
-  alarmState = 0;
-
-  // set alarm 0
-  RTCC.setSec(RTCC_ALM0, 0x00);
-  RTCC.setMin(RTCC_ALM0, 0x00);
-  RTCC.setHour(RTCC_ALM0, 0x13);
-  RTCC.setDay(RTCC_ALM0, 0x01);
-  RTCC.setDate(RTCC_ALM0, 0x01);
-  RTCC.setMonth(RTCC_ALM0, 0x01);
-
-  // enables alarm 0
-  RTCC.enableAlarm(RTCC_ALM0, RTCC_ALMC1);
-
-  // print current time
-  DEBUG_PRINT(F("Current time is: "));
-  printTime(RTCC_RTCC);
-
-  // print alarm 0
-  DEBUG_PRINT(F("Alarm 0 is set to : "));
-  printTime(RTCC_ALM0);
-}
-
-// set alarm 0 based on input hour
-void SetAlarm(byte hour) {
-  if (!GetStatus(MODULE_CLOCK)) {
-    return;
-  }
-  RTCC.setSec(RTCC_ALM0, 0x00);
-  RTCC.setMin(RTCC_ALM0, 0x00);
-  RTCC.setHour(RTCC_ALM0, hour);
-  RTCC.setDay(RTCC_ALM0, 0x01);
-  RTCC.setDate(RTCC_ALM0, 0x01);
-  RTCC.setMonth(RTCC_ALM0, 0x01);
-
-  RTCC.enableAlarm(RTCC_ALM0, RTCC_ALMC1);
-
-  // print alarm 1
-  DEBUG_PRINT(F("Alarm 0 is set to : "));
-  printTime(RTCC_ALM0);
-}
-
-void UpdateAlarm() {
-  if (alarmState + 1 > maxAlarmStates) {
-    alarmState = 0;
-  } else {
-    alarmState += 1;
-  }
-
-  switch (alarmState) {
-    case 0:
-      SetAlarm(0x13);
-      break;
-    case 1:
-      SetAlarm(0x14);
-      break;
-    case 2:
-      SetAlarm(0x15);
-      break;
-    default:
-      break;
-  }
-}
-
-/*
-  NONE                       - seconds match
-  RTCC_ALMC0                 - minutes match
-  RTCC_ALMC1                 - hours match
-  RTCC_ALMC1 | ALMC0         - matches on day at midnight
-  RTCC_ALMC2                 - date match
-  RTCC_ALMC2 | ALMC1 | ALMC0 - seconds, minutes, hour, day, date, and month match
-*/
-void EnableAlarm(uint8_t alarm) {
-  RTCC.enableAlarm(alarm, RTCC_ALMC1 | RTCC_ALMC0);
-}
-
-// Update clock to current unixTime
-void UpdateClock() {
-  // Get time from RTCC
-  te.Second = RTCC.getSec(RTCC_RTCC);
-  te.Minute = RTCC.getMin(RTCC_RTCC);
-  te.Hour   = RTCC.getHour(RTCC_RTCC);
-  te.Day    = RTCC.getDay(RTCC_RTCC);
-  te.Month  = RTCC.getMonth(RTCC_RTCC);
-  te.Year   = RTCC.getYear() - 1970;
-
-  // Convert to unixtime
-  unixTime = makeTime(te);
-
-  // Set MCU clock to RTCC time, now() returns correct time
-  setTime(unixTime);
 }
 
 void RTCPrint() {
@@ -180,33 +62,55 @@ void RTCPrint() {
 
 void printTime(uint8_t src) {
   // get all paratmeters of the src
-  UpdateClock();
+  // UpdateUnixTime(src);
 
-  DEBUG_PRINTLN(unixTime);
+  // DEBUG_PRINTln(unixTime);
 
-  // year   = RTCC.getYear();
+  // print all parameter of the src
+  if (src == RTCC_RTCC) {
+    DEBUG_PRINT2(RTCC.getMonth(src), HEX);
+    DEBUG_PRINT(F("/"));
+    DEBUG_PRINT2(RTCC.getDate(src), HEX);
+    // year is only available for the RTCC
+    if (src == RTCC_RTCC) {
+      DEBUG_PRINT(F("/"));
+      DEBUG_PRINT2(RTCC.getYear(), HEX);
+    }
+    DEBUG_PRINT(F(" - "));
+  }
+  DEBUG_PRINT2(RTCC.getHour(src), HEX);
+  DEBUG_PRINT(F(":"));
+  DEBUG_PRINT2(RTCC.getMin(src), HEX);
 
-  // // print all parameter of the src
-  // DEBUG_PRINT2(mon, HEX);
-  // DEBUG_PRINT(F("/"));
-  // DEBUG_PRINT2(date, HEX);
-  // year is only available for the RTCC
-  // if (src == RTCC_RTCC) {
-  //   DEBUG_PRINT(F("/"));
-  //   // DEBUG_PRINT2(year, HEX);
-  // }
-  // DEBUG_PRINT(F("  day"));
-  // DEBUG_PRINT2(day, HEX);
-  // DEBUG_PRINT(F("  "));
-  // DEBUG_PRINT2(hour, HEX);
-  // DEBUG_PRINT(F(":"));
-  // DEBUG_PRINT2(minute, HEX);
-
-  // // second is not supported by the power fail registers
-  // if (src != RTCC_PWRD && src != RTCC_PWRU) {
-  //   DEBUG_PRINT(F(":"));
-  //   DEBUG_PRINT2(sec, HEX);
-  // }
+  // second is not supported by the power fail registers
+  if (src != RTCC_PWRD && src != RTCC_PWRU) {
+    DEBUG_PRINT(F(":"));
+    DEBUG_PRINT2(RTCC.getSec(src), HEX);
+  }
 
   DEBUG_PRINTLN();
+}
+
+void GetTimeStamp(char* fileName) {
+  char tempArray[3];
+
+  // YY
+  itoa(RTCC.getYear(), tempArray, 10);
+  fileName[0] = tempArray[0];
+  fileName[1] = tempArray[1];
+
+  // MM
+  itoa(RTCC.getMonth(RTCC_RTCC), tempArray, 10);
+  fileName[2] = tempArray[0];
+  fileName[3] = tempArray[1];
+
+  // DD
+  itoa(RTCC.getDate(RTCC_RTCC), tempArray, 10);
+  fileName[4] = tempArray[0];
+  fileName[5] = tempArray[1];
+
+  // HH
+  itoa(RTCC.getHour(RTCC_RTCC), tempArray, 10);
+  fileName[6] = tempArray[0];
+  fileName[7] = tempArray[1];
 }

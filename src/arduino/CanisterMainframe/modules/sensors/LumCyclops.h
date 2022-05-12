@@ -56,5 +56,5 @@ bool LumSendPackage() {
   }
 
   // Send Package over RS232
-  return CanisterSendPackage(package, 3);
+  return BuoySendPackage(package, 3);
 }

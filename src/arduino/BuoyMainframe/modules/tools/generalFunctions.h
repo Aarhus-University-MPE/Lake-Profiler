@@ -54,3 +54,15 @@ union unpack {
   unsigned int ui;
   byte b[4];
 };
+
+uint8_t HourToHex(uint8_t hour) {
+  if (hour < 10) {
+    return hour;
+  } else if (hour < 20) {
+    return hour + 6;
+  } else if (hour < 24) {
+    return hour + 12;
+  } else {
+    return HourToHex(hour - 24);
+  }
+}

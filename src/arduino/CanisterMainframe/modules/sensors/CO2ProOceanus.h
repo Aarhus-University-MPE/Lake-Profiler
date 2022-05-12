@@ -118,5 +118,5 @@ float GetCo2Concentration() {
 
 // Send latest package
 bool CO2SendPackage() {
-  return CanisterSendPackage(latestDataCO2, packageSizeCO2);
+  return BuoySendPackage(latestDataCO2, packageSizeCO2);
 }

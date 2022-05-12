@@ -93,14 +93,17 @@ void parseCommandCan(uint8_t size) {
       DEBUG_PRINTLN(F("Received ACKNOWLEDGE"));
       break;
     case 'P':
-      parsePackage();
+      parsePackage(size);
+      break;
+    case 'N':
+      parseLogStart();
       break;
     default:
       break;
   }
 }
 
-void parsePackage() {
+void parsePackage(uint8_t size) {
   union unpack pack;
   if (receivedCMDCan[2] == 0xA) {
     // new package incomming
@@ -110,10 +113,21 @@ void parsePackage() {
       DEBUG_PRINT2(receivedCMDCan[i + 2], HEX);
       DEBUG_PRINT(F(" "));
     }
+    DEBUG_PRINT(F("- Package Size: "));
+    DEBUG_PRINT(size);
     DEBUG_PRINTLN();
+  } else if (receivedCMDCan[2] == 0x13) {
+    // End of package
+    DEBUG_PRINTLINE();
+    DEBUG_PRINTLN(F("End of Package"));
+
+    // TODO: Add timestamp when line row end
+    // Timestamp
   } else {
-    DEBUG_PRINT(F("Message ("));
+    DEBUG_PRINT(F("Message (Expected Size: "));
     DEBUG_PRINT(receivedCMDCan[1]);
+    DEBUG_PRINT(F(" - Actual Size: "));
+    DEBUG_PRINT(size);
     pack.i8 = receivedCMDCan[2];
     DEBUG_PRINT(F(" "));
     DEBUG_PRINT(pack.c);
@@ -127,4 +141,19 @@ void parsePackage() {
   //   DEBUG_PRINT(F(" "));
   // }
   // DEBUG_PRINTLN();
+}
+
+// Create file with current timestamp in name
+void parseLogStart() {
+  char fileName[9] = "YYMMDDHH";
+
+  GetTimeStamp(fileName);
+
+  SDWriteStream(fileName);
+
+  // new log started
+  DEBUG_PRINTLINE();
+  DEBUG_PRINT(F("New Logging started: "));
+  DEBUG_PRINT(fileName);
+  DEBUG_PRINTLINE();
 }
