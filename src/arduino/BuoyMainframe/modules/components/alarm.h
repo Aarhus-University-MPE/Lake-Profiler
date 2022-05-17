@@ -5,6 +5,12 @@
 #pragma once
 #include "../setup/modules.h"
 
+#define MAX_ALARM_FREQUENCY 24
+#define MIN_ALARM_FREQUENCY 1
+
+#define MAX_ALARM_START     23
+#define MIN_ALARM_START     0
+
 uint8_t alarmFrequency = 0;
 uint8_t alarmStartHour = 0;
 uint8_t alarm[24];
@@ -41,39 +47,80 @@ void SetAlarm() {
   SetAlarm(NextAlarm());
 }
 
+int GetAlarmFrequency() {
+  alarmFrequency = EEPROM_READ_INT(MEMADDR_ALARM_FREQUENCY);
+  alarmFrequency = min(MAX_ALARM_FREQUENCY, max(MIN_ALARM_FREQUENCY, alarmFrequency));
+
+  return alarmFrequency;
+}
+
+int GetAlarmStartHour() {
+  alarmStartHour = EEPROM_READ_INT(MEMADDR_ALARM_START);
+  alarmStartHour = min(MAX_ALARM_START, max(MIN_ALARM_START, alarmFrequency));
+
+  return alarmStartHour;
+}
+
 void InitializeAlarm() {
-  SetAlarmFrequency(12);  // TODO: Add to EEPROM
-  SetAlarmStartHour(6);
+  SetAlarmFrequency(GetAlarmFrequency());
+  SetAlarmStartHour(GetAlarmStartHour());
   SetAlarm();
 }
 
-// set alarm 0 based on input hour
-void SetAlarm(byte hour) {
+// set alarm based on input hour
+void SetAlarm(byte hour, uint8_t src) {
   if (!GetStatus(MODULE_CLOCK)) {
     DEBUG_PRINTLN(F("Clock Error"));
     return;
   }
-  RTCC.setSec(RTCC_ALM0, 0x00);
-  RTCC.setMin(RTCC_ALM0, 0x00);
-  RTCC.setHour(RTCC_ALM0, hour);
-  RTCC.setDay(RTCC_ALM0, 0x01);
-  RTCC.setDate(RTCC_ALM0, 0x01);
-  RTCC.setMonth(RTCC_ALM0, 0x01);
+  RTCC.setSec(src, 0x00);
+  RTCC.setMin(src, 0x00);
+  RTCC.setHour(src, HourToHex(HexToHour(hour) - 1));  // Start 1 hour before for warmup
+  RTCC.setDay(src, 0x01);
+  RTCC.setDate(src, 0x01);
+  RTCC.setMonth(src, 0x01);
 
-  EnableAlarm(RTCC_ALM0);
+  EnableAlarm(src);
 
   // print alarm 1
-  DEBUG_PRINT(F("Alarm 0 is set to : "));
-  printTime(RTCC_ALM0);
+  if (src == RTCC_ALM0) {
+    DEBUG_PRINT(F("Alarm 0 is set to : "));
+  } else {
+    DEBUG_PRINT(F("Alarm 1 is set to : "));
+  }
+  printTime(src);
+}
+
+// set alarm 0 based on input hour
+void SetAlarm(byte hour) {
+  SetAlarm(hour, RTCC_ALM0);
+}
+
+// Set Alarm1 to 1 hour from now
+uint8_t SetAlarmHourFromNow() {
+  uint8_t hourNow = RTCC.getHour(RTCC_RTCC);
+  SetAlarm(HourToHex(HexToHour(hourNow) + 1), RTCC_ALM1);
+  return (HexToHour(hourNow) + 1);
 }
 
 void SetAlarmFrequency(uint8_t frequency) {
   alarmFrequency = frequency;
+  EEPROM_WRITE_INT(MEMADDR_ALARM_FREQUENCY, alarmFrequency);
+
+  // DEBUG_PRINT(F("Alarm Frequency Set: "));
+  // DEBUG_PRINTLN(alarmFrequency);
+
   UpdateAlarmTimings();
 }
 
 void SetAlarmStartHour(uint8_t startHourHex) {
   alarmStartHour = startHourHex;
+  EEPROM_WRITE_INT(MEMADDR_ALARM_START, alarmStartHour);
+
+  // DEBUG_PRINT(F("Alarm Start Hour Set: "));
+  // DEBUG_PRINT2(alarmStartHour, HEX);
+  // DEBUG_PRINTLN();
+
   UpdateAlarmTimings();
 }
 
@@ -98,9 +145,28 @@ void EnableAlarm(uint8_t alarm) {
 }
 
 bool CheckAlarm() {
-  if (RTCC.checkFlag(RTCC_ALM0)) {
-    DEBUG_PRINTLN(F("Alarm triggered!"));
-    SetAlarm();
+  if (!RTCC.checkFlag(RTCC_ALM0)) {
+    return false;
+  }
+
+  DEBUG_PRINTLN(F("Alarm 0 triggered!"));
+  SetAlarm();
+  return true;
+}
+
+bool AlarmStatus(uint8_t src) {
+  switch (src) {
+    case RTCC_ALM0:
+      return CheckAlarm();
+      break;
+    case RTCC_ALM1:
+      if (RTCC.checkFlag(RTCC_ALM1)) {
+        DEBUG_PRINTLN(F("Alarm 1 triggered!"));
+        RTCC.disableAlarm(RTCC_ALM1);
+        return true;
+      }
+    default:
+      break;
   }
 }
 
@@ -108,11 +174,11 @@ uint8_t NextAlarm() {
   uint8_t hour   = RTCC.getHour(RTCC_RTCC);
   uint8_t minute = RTCC.getMin(RTCC_RTCC);
 
-  DEBUG_PRINT(F("Current time: "));
-  DEBUG_PRINT2(hour, HEX);
-  DEBUG_PRINT(F(":"));
-  DEBUG_PRINT2(minute, HEX);
-  DEBUG_PRINTLN();
+  // DEBUG_PRINT(F("Current time: "));
+  // DEBUG_PRINT2(hour, HEX);
+  // DEBUG_PRINT(F(":"));
+  // DEBUG_PRINT2(minute, HEX);
+  // DEBUG_PRINTLN();
 
   int8_t hourDifference = -1;
   uint8_t i             = 0;

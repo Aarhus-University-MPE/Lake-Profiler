@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <RTCCI2C.h>
 #include <SD.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -23,6 +24,7 @@
 // Strategies
 #include "../strategies/0_SystemTest.h"
 #include "../strategies/1_Autonomous.h"
+#include "../strategies/1_AutonomyProcess.h"
 #include "../strategies/2_Service.h"
 
 // System Control

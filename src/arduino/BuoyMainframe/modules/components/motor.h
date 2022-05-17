@@ -86,6 +86,16 @@ void MotorMove(byte dir) {
   }
 }
 
+bool MotorPositionReached(uint8_t dir) {
+  switch (dir) {
+    case MOTOR_DIR_UP:
+      return GetEncoderRotations() <= MOTOR_POS_BOT break;
+      break;
+    default:
+      break;
+  }
+}
+
 // Measure motor stall
 bool MotorStall() {
   DEBUG_PRINTLN(F("Motor Stall!"));

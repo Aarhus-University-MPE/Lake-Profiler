@@ -112,21 +112,51 @@ void SDDelete(char fileName[]) {
 }
 
 // Create empty file on SD card
-void SDCreate(char fileName[]) {
-  if (SDReaderStatus()) {
-    appendCsv(fileName);
-    if (SD.exists(fileName)) {
-      DEBUG_PRINTLN(F("File already exist"));
+bool SDCreate(char fileName[]) {
+  if (!SDReaderStatus()) {
+    DEBUG_PRINTLN(F("SD Reader Error"));
+    return false;
+  }
+  appendCsv(fileName);
+  if (SD.exists(fileName)) {
+    DEBUG_PRINTLN(F("File already exist"));
+  } else {
+    DEBUG_PRINT(F("Creating file: "));
+    DEBUG_PRINT(fileName);
+    File file = SD.open(fileName, FILE_WRITE);
+    if (file) {
+      DEBUG_PRINTLN(F(" - Success!"));
+      file.close();
+      return true;
     } else {
-      DEBUG_PRINT(F("Creating file: "));
-      DEBUG_PRINT(fileName);
-      File file = SD.open(fileName, FILE_WRITE);
-      if (file) {
-        DEBUG_PRINTLN(F(" - Success!"));
-        file.close();
-      } else {
-        DEBUG_PRINTLN(F(" - Error!"));
-      }
+      DEBUG_PRINTLN(F(" - Error!"));
+      return false;
+    }
+  }
+}
+
+// Create empty file on SD card with custom fileending
+bool SDCreate(char fileName[], bool customFileEnd) {
+  if (!SDReaderStatus()) {
+    DEBUG_PRINTLN(F("SD Reader Error"));
+    return false;
+  }
+  if (!customFileEnd) {
+    return SDCreate(fileName);
+  }
+  if (SD.exists(fileName)) {
+    DEBUG_PRINTLN(F("File already exist"));
+  } else {
+    DEBUG_PRINT(F("Creating file: "));
+    DEBUG_PRINT(fileName);
+    File file = SD.open(fileName, FILE_WRITE);
+    if (file) {
+      DEBUG_PRINTLN(F(" - Success!"));
+      file.close();
+      return true;
+    } else {
+      DEBUG_PRINTLN(F(" - Error!"));
+      return false;
     }
   }
 }
@@ -136,9 +166,13 @@ void SDCreate(char fileName[]) {
   First run opens file with name, consecutive runs appends data to opened file
   When complete run SDQuit() to close write stream
 */
-bool SDWriteStream(char fileNameOrData[]) {
+bool SDWriteStream(char fileNameOrData[], bool customFileEnd) {
+  if (!SDReaderStatus()) {
+    DEBUG_PRINTLN(F("SD Reader Error"));
+    return false;
+  }
   if (!activeWriteFile) {
-    return SDOpenWriteStream(fileNameOrData);
+    return SDOpenWriteStream(fileNameOrData, customFileEnd);
   }
 
   DEBUG_PRINT(F("Wrinting to file: "));
@@ -153,9 +187,20 @@ bool SDWriteStream(char fileNameOrData[]) {
   First run opens file with name, consecutive runs appends data to opened file
   When complete run SDQuit() to close write stream
 */
+bool SDWriteStream(char fileNameOrData[]) {
+  SDWriteStream(fileNameOrData, false);
+  return true;
+}
+
+/*
+  Initializes file write stream
+  First run opens file with name, consecutive runs appends data to opened file
+  When complete run SDQuit() to close write stream
+*/
 bool SDWriteStreamNewLine() {
   if (!activeWriteFile) {
     DEBUG_PRINTLN(F("No active file!"));
+    return false;
   }
 
   DEBUG_PRINTLN(F("Wrinting newline char to file"));
@@ -164,8 +209,10 @@ bool SDWriteStreamNewLine() {
   return true;
 }
 
-bool SDOpenWriteStream(char fileName[]) {
-  appendCsv(fileName);
+bool SDOpenWriteStream(char fileName[], bool customEndLine) {
+  if (!customEndLine) {
+    appendCsv(fileName);
+  }
   if (!SD.exists(fileName)) {
     DEBUG_PRINT(F("Creating file: "));
     DEBUG_PRINT(fileName);

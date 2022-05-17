@@ -13,9 +13,13 @@
 #include "../setup/modules.h"
 
 uint8_t receivedCMDCan[numChars];
+bool handshakeReceived   = false;
+bool acknowledgeReceived = false;
 
 bool InitializeCanister() {
   COM_SERIAL_CANISTER.begin(CANISTER_BAUDRATE);
+  handshakeReceived   = false;
+  acknowledgeReceived = false;
 
   return COM_SERIAL_CANISTER;
 }
@@ -30,8 +34,10 @@ bool CanisterCommStatus() {
 
 // Take data log sample
 void CanisterLogStart() {
+  AppendToLog(F("Sending Start Signal - \"<L>\""), true);
   DEBUG_PRINTLN(F("Sending Start Signal"));
   COM_SERIAL_CANISTER.println("<L>");
+  acknowledgeReceived = false;
 }
 
 void CanisterAcknowledge() {
@@ -85,12 +91,14 @@ void parseCommandCan(uint8_t size) {
   switch (receivedCMDCan[0]) {
     case 'H':
       DEBUG_PRINTLN(F("Handshake Received"));
-      // Send startcommand
-      CanisterLogStart();
+      AppendToLog(F("Handshake Received"), true);
+      handshakeReceived = true;
       break;
     case 0x41:
       DEBUG_PRINTLINE();
       DEBUG_PRINTLN(F("Received ACKNOWLEDGE"));
+      AppendToLog(F("Received ACKNOWLEDGE"), true);
+      acknowledgeReceived = true;
       break;
     case 'P':
       parsePackage(size);
@@ -101,6 +109,14 @@ void parseCommandCan(uint8_t size) {
     default:
       break;
   }
+}
+
+bool HandshakeReceived() {
+  return handshakeReceived;
+}
+
+bool AcknowledgeReceived() {
+  return acknowledgeReceived;
 }
 
 void parsePackage(uint8_t size) {
@@ -149,11 +165,13 @@ void parseLogStart() {
 
   GetTimeStamp(fileName);
 
-  SDWriteStream(fileName);
-
-  // new log started
+  // Create data file (YYMMDDHH.csv)
   DEBUG_PRINTLINE();
-  DEBUG_PRINT(F("New Logging started: "));
-  DEBUG_PRINT(fileName);
+  if (SDWriteStream(fileName)) {
+    DEBUG_PRINT(F("New Logging started: "));
+    DEBUG_PRINTLN(fileName);
+  } else {
+    DEBUG_PRINTLN(F("Logging Start Error - SD file Error"));
+  }
   DEBUG_PRINTLINE();
 }

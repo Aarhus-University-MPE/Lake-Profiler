@@ -66,3 +66,27 @@ uint8_t HourToHex(uint8_t hour) {
     return HourToHex(hour - 24);
   }
 }
+
+uint8_t TimeToHex(uint8_t time) {
+  if (time < 10) {
+    return time;
+  } else if (time < 20) {
+    return time + 6;
+  } else if (time < 30) {
+    return time + 12;
+  } else if (time < 40) {
+    return time + 18;
+  }
+}
+
+uint8_t HexToHour(uint8_t hourHex) {
+  if (hourHex < 10) {
+    return hourHex;
+  } else if (hourHex < 32) {
+    return hourHex - 6;
+  } else if (hourHex < 36) {
+    return hourHex - 12;
+  } else {
+    return HexToHour(hourHex - 36);
+  }
+}

@@ -1,12 +1,11 @@
-#pragma once
-
-#include "../setup/modules.h"
-
 /*  Autonomous mode
 
     Strategy for Autonomous mode
     - Starts logging procedure every specified interval
 */
+
+#pragma once
+#include "../setup/modules.h"
 
 // Start sequence of strategy
 void StartStrategyAutonomous() {
@@ -17,6 +16,12 @@ void StartStrategyAutonomous() {
   // Enable system modules
   ModuleEnableMode();
 
+  // Print current time
+  RTCPrint();
+
+  // Set Alarm
+  InitializeAlarm();
+
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("Strategy (Autonomous): Initialized"));
   DEBUG_PRINTLINE();
@@ -24,7 +29,7 @@ void StartStrategyAutonomous() {
 
 // Main sequence of strategy
 void RunStrategyAutonomous() {
-  LoggingProcess();
+  AutonomyProcess();
 }
 
 // End sequence of strategy
@@ -45,5 +50,6 @@ void SelectFunctionAutonomous() {
   if (!InputButtonDebounce()) {
     return;
   }
-  //
+
+  // Functionalities here
 }

@@ -53,6 +53,7 @@ void SelectFunctionService();
 
 // Mode switchers
 boolean SetMode();
+byte GetMode();
 void ModeUpdater();
 
 typedef void (*functionPtr)();
@@ -69,11 +70,27 @@ void MotorMove(byte dir);
 bool MotorStall();
 bool GetMotorState();
 bool MotorStatus();
+bool MotorPositionReached(uint8_t dir);
 
 // Encoder
 void EncoderAInterrupt();
 void EncoderBInterrupt();
 void EncoderZInterrupt();
+
+int GetEncoderRotations();
+int GetEncoderCount();
+
+int GetEncoderRotationsTop();
+int GetEncoderRotationsBottom();
+
+int GetEncoderCountTop();
+int GetEncoderCountBottom();
+
+void SetEncoderRotationsTop(uint8_t value);
+void SetEncoderRotationsBottom(uint8_t value);
+
+void SetEncoderCountTop(uint8_t value);
+void SetEncoderCountBottom(uint8_t value);
 
 // Power
 bool VoltageCheck();
@@ -111,7 +128,8 @@ void SDQuery();
 void SDSize(char fileName[]);
 void SDDownload(char fileName[]);
 void SDDelete(char fileName[]);
-void SDCreate(char fileName[]);
+bool SDCreate(char fileName[]);
+bool SDCreate(char fileName[], bool customFileEnd);
 void printFiles(File dir);
 void appendCharArray(char *s, char c);
 void appendCsv(char *s);
@@ -152,7 +170,26 @@ void TerminateRTC();
 void TerminateLora();
 void TerminateCanister();
 
-byte GetMode();
+// Autonomy
+void AutonomyProcess();
+void ButtonOverride();
+bool AutonomyAwaitHandshake();
+bool AutonomyAwaitAcknowledge();
+bool AutonomyStartLog();
+void AutonomyStopLog();
+void AutonomyState();
+
+bool HandshakeReceived();
+bool AcknowledgeReceived();
+
+// Data Recoder
+bool InitializeLoggingFiles();
+void AppendToLog(char *logInput, bool endLine);
+void AppendToLog(String logInput, bool endLine);
+void AppendToLog(String logInput);
+void AppendToLog(char *logInput);
+void AppendToData(char *dataInput, bool endLine);
+void AppendToData(char *dataInput);
 
 // additional
 void parseCommand();
@@ -169,6 +206,7 @@ void SetStatus(int, bool);
 bool RTCStatus();
 bool LoraStatus();
 void SetAlarm();
+
 void printTime(uint8_t);
 void RTCPrint();
 
@@ -177,9 +215,11 @@ int BatteryLevel();
 void MotorProcess();
 void BlackBoxPrint();
 
+// SD Write Steam (Continuous writing to same focument)
+bool SDWriteStream(char fileNameOrData[], bool customFileEnd);
 bool SDWriteStream(char fileNameOrData[]);
 bool SDWriteStreamNewLine();
-bool SDOpenWriteStream(char fileName[]);
+bool SDOpenWriteStream(char fileName[], bool customEndLine);
 void SDQuit();
 
 void HeartbeatBlackBox();
@@ -192,12 +232,12 @@ void SystemEnablePrimary();
 bool InputButtonDebounce();
 bool ModeButtonDebounce();
 
+bool DataLogStart();
 void DataLogStop();
-void DataLogStart();
+void DataLogInitialized();
 void SetModeManual(uint8_t modeSet);
 void LoggingProcess();
 
-void DataLogDeactivate();
 void DataLogActivate();
 
 float BatteryVoltage();
@@ -228,6 +268,7 @@ void SetAlarmDate(uint8_t hexValue);
 void SetAlarmMonth(uint8_t hexValue);
 void SetAlarmStartHour(uint8_t startHour);
 void SetAlarmFrequency(uint8_t frequency);
+bool AlarmStatus(uint8_t src);
 
 void InitializeAlarm();
 void UpdateAlarm();
@@ -235,3 +276,4 @@ void UpdateAlarmTimings();
 void SetAlarm();
 void SetAlarm(uint8_t hour);
 uint8_t NextAlarm();
+uint8_t SetAlarmHourFromNow();

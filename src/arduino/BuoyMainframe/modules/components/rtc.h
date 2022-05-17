@@ -11,11 +11,7 @@
     By
     Mads Rosenhoej Jeppesen - Aarhus 2021
     mrj@mpe.au.dk
-
-
 */
-
-#include <RTCCI2C.h>
 
 RTCCI2C RTCC;
 
@@ -24,12 +20,6 @@ bool InitializeRTC() {
 
   // enable back up battery
   RTCC.enableVbat();
-
-  // Update Arduino Clock to match RTCC
-  UpdateUnixTime();
-
-  // Set Alarm
-  InitializeAlarm();
 
   // Update Arduino Clock to match RTCC
   UpdateUnixTime();
@@ -56,7 +46,7 @@ void RTCPrint() {
     DEBUG_PRINTLN(F("ALM0!!!"));
     // disable alarm 0, alarm 0 will not be triggered anymore
     RTCC.disableAlarm(RTCC_ALM0);
-    UpdateAlarm();
+    SetAlarm();
   }
 }
 
@@ -68,9 +58,9 @@ void printTime(uint8_t src) {
 
   // print all parameter of the src
   if (src == RTCC_RTCC) {
-    DEBUG_PRINT2(RTCC.getMonth(src), HEX);
-    DEBUG_PRINT(F("/"));
     DEBUG_PRINT2(RTCC.getDate(src), HEX);
+    DEBUG_PRINT(F("/"));
+    DEBUG_PRINT2(RTCC.getMonth(src), HEX);
     // year is only available for the RTCC
     if (src == RTCC_RTCC) {
       DEBUG_PRINT(F("/"));
@@ -93,24 +83,43 @@ void printTime(uint8_t src) {
 
 void GetTimeStamp(char* fileName) {
   char tempArray[3];
+  int year  = HexToHour(RTCC.getYear());
+  int month = HexToHour(RTCC.getMonth(RTCC_RTCC));
+  int date  = HexToHour(RTCC.getDate(RTCC_RTCC));
+  int hour  = HexToHour(RTCC.getHour(RTCC_RTCC));
 
   // YY
-  itoa(RTCC.getYear(), tempArray, 10);
+  itoa(year, tempArray, 10);
   fileName[0] = tempArray[0];
   fileName[1] = tempArray[1];
 
   // MM
-  itoa(RTCC.getMonth(RTCC_RTCC), tempArray, 10);
-  fileName[2] = tempArray[0];
-  fileName[3] = tempArray[1];
+  itoa(month, tempArray, 10);
+  if (month < 10) {
+    fileName[2] = '0';
+    fileName[3] = tempArray[0];
+  } else {
+    fileName[2] = tempArray[0];
+    fileName[3] = tempArray[1];
+  }
 
   // DD
-  itoa(RTCC.getDate(RTCC_RTCC), tempArray, 10);
-  fileName[4] = tempArray[0];
-  fileName[5] = tempArray[1];
+  itoa(date, tempArray, 10);
+  if (date < 10) {
+    fileName[4] = '0';
+    fileName[5] = tempArray[0];
+  } else {
+    fileName[4] = tempArray[0];
+    fileName[5] = tempArray[1];
+  }
 
   // HH
-  itoa(RTCC.getHour(RTCC_RTCC), tempArray, 10);
-  fileName[6] = tempArray[0];
-  fileName[7] = tempArray[1];
+  itoa(hour, tempArray, 10);
+  if (hour < 10) {
+    fileName[6] = '0';
+    fileName[7] = tempArray[0];
+  } else {
+    fileName[6] = tempArray[0];
+    fileName[7] = tempArray[1];
+  }
 }

@@ -1,68 +1,50 @@
 #pragma once
 #include "../setup/modules.h"
 
-bool autonomyActive = false;
-bool autonomyStart  = false;
-bool autonomyStop   = false;
-
-void DataLogActivate() {
-  autonomyStart  = true;
-  autonomyActive = true;
-}
-void DataLogDeactivate() {
-  autonomyStop = true;
-}
-
-bool DataLogStatus() {
-  return autonomyActive;
-}
-
-void ButtonOverride() {
-  if (!digitalRead(PI_BUTTON_MOTOR_DOWN) && !digitalRead(PI_BUTTON_MOTOR_UP)) {
-    delay(1000);
-    if (!digitalRead(PI_BUTTON_MOTOR_DOWN) && !digitalRead(PI_BUTTON_MOTOR_UP)) {
-      if (DataLogStatus()) {
-        DataLogStop();
-      } else {
-        DataLogActivate();
-      }
-    }
+bool DataLogStart() {
+  // Create logging files (.csv and .log)
+  if (!InitializeLoggingFiles()) {
+    DEBUG_PRINTLN(F("Initialization Failed - SD Error"));
+    AutonomyStopLog();
+    return false;
   }
-}
-void DataLogStart() {
-  DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Starting Data Log"));
-  DEBUG_PRINTLINE();
+
+  // Start Canister
   ModuleEnable(MODULE_PWR_CANISTER);
   ModuleEnable(MODULE_COMM_CANISTER);
+
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("Awaiting Handshake... "));
+  AppendToLog(F("Awaiting Handshake... "), false);
+  return true;
 }
 
 void DataLogStop() {
-  DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Stopping Data Log"));
-  DEBUG_PRINTLINE();
   ModuleDisable(MODULE_PWR_CANISTER);
   ModuleDisable(MODULE_COMM_CANISTER);
-  autonomyActive = false;
+  AppendToLog(F("Log Complete"), true);
+  // TODO: Write timestamp (UNIX)
 }
 
-void LoggingProcess() {
-  ButtonOverride();
+void DataLogInitialized() {
+  DEBUG_PRINTLN(F("Setting Alarm to 1 hour from now"));
+  AppendToLog(F("Setting Alarm to 1 hour from now - "));
+  uint8_t alarmHour = SetAlarmHourFromNow();
 
-  if (!autonomyActive) {
-    return;
+  char tempArray[3];
+  char hourChar[3];
+  itoa(alarmHour, tempArray, 10);
+  if (alarmHour < 10) {
+    hourChar[0] = '0';
+    hourChar[1] = tempArray[0];
+  } else {
+    hourChar[0] = tempArray[0];
+    hourChar[1] = tempArray[1];
   }
-  if (autonomyStart) {
-    autonomyStart = false;
-    DataLogStart();
-  }
+  AppendToLog(hourChar);
+  AppendToLog(F(":00"));
 
-  recvWithStartEndMarkersCanister();
-
-  if (autonomyStop) {
-    autonomyStop = false;
-    DataLogStop();
-  }
+  DEBUG_PRINTLN(F("Alarm Set: "));
+  DEBUG_PRINTLN(hourChar);
+  DEBUG_PRINTLN(F(":00"));
 }
