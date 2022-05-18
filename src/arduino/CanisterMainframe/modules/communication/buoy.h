@@ -164,7 +164,7 @@ bool BuoySendPackage(uint8_t package[], uint8_t size) {
   BuoySendEndline();
   ResetAcknowledge();
 
-  delay(10);
+  delay(5);
   recvWithStartEndMarkers();
 
   int retry = 0;

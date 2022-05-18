@@ -42,9 +42,9 @@ void FinishStrategyExample() {
 
 // Strategy select button functionality
 void SelectFunctionExample() {
-  if (!InputButtonDebounce()) {
-    return;
-  }
+  // if (!InputButtonDebounce()) {
+  //   return;
+  // }
 
   // Code
 }

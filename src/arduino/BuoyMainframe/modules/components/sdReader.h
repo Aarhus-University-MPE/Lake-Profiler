@@ -175,8 +175,8 @@ bool SDWriteStream(char fileNameOrData[], bool customFileEnd) {
     return SDOpenWriteStream(fileNameOrData, customFileEnd);
   }
 
-  DEBUG_PRINT(F("Wrinting to file: "));
-  DEBUG_PRINTLN(fileNameOrData);
+  // DEBUG_PRINT(F("Wrinting to file: "));
+  // DEBUG_PRINTLN(fileNameOrData);
 
   activeWriteFile.write(fileNameOrData);
   return true;
@@ -189,6 +189,36 @@ bool SDWriteStream(char fileNameOrData[], bool customFileEnd) {
 */
 bool SDWriteStream(char fileNameOrData[]) {
   SDWriteStream(fileNameOrData, false);
+  return true;
+}
+
+/*
+  Write binary data to file stream
+  When complete run SDQuit() to close write stream
+*/
+bool SDWriteStream(uint8_t data[], uint8_t size, bool customFileEnd) {
+  if (!SDReaderStatus()) {
+    DEBUG_PRINTLN(F("SD Reader Error"));
+    return false;
+  }
+  if (!activeWriteFile) {
+    DEBUG_PRINTLN(F("No active file"));
+    return false;
+  }
+
+  // DEBUG_PRINT(F("Wrinting to file: "));
+  // DEBUG_PRINTLN(data);
+
+  activeWriteFile.write(data, size);
+  return true;
+}
+
+/*
+  Write binary data to file stream
+  When complete run SDQuit() to close write stream
+*/
+bool SDWriteStream(uint8_t data[], uint8_t size) {
+  SDWriteStream(data, size, false);
   return true;
 }
 
@@ -236,118 +266,3 @@ void SDQuit() {
   DEBUG_PRINTLN(F("Closing active file"));
   activeWriteFile.close();
 }
-
-// // Initialize SD card reader module.
-// bool InitializeSDReader() {
-//   bool status = false;
-//   if (!SDReaderStatus()) {
-//     status = SD.begin(PO_SPISS_SDCARD);
-
-//     SetStatus(MODULE_SD, status);
-//   }
-//   return status;
-// }
-
-// void TerminateSDReader() {
-//   SD.end();
-//   SetStatus(MODULE_SD, false);
-// }
-// // Checks status of SD reader
-// bool SDReaderStatus() {
-//   return GetStatus(MODULE_SD);
-// }
-
-// // Query all files on SD card and print to serial prompt
-// void SDQuery() {
-//   if (SDReaderStatus()) {
-//     File file = SD.open("/");
-//     file.rewindDirectory();
-//     DBG_ONLY(printFiles(file));
-//     file.rewindDirectory();
-//     file.close();
-//     delay(10);
-//   }
-// }
-
-// // Print all files to serial port
-// void printFiles(File dir) {
-//   DEBUG_PRINTLN("Files in system:");
-//   while (true) {
-//     File entry = dir.openNextFile();
-//     if (!entry) {
-//       File entry = dir.openNextFile();
-//       if (!entry)
-//         break;
-//     }
-
-//     if (!entry.isDirectory()) {
-//       DEBUG_PRINT(entry.name());
-//       DEBUG_PRINT(F("\t\t"));
-//       DEBUG_PRINTLN2(entry.size(), DEC);
-//     }
-//     entry.close();
-//   }
-//   DEBUG_PRINTLN("End of storage");
-// }
-
-// // Print size of file on SD card
-// void SDSize(char fileName[]) {
-//   if (SDReaderStatus()) {
-//     appendCsv(fileName);
-//     DEBUG_PRINT(F("Opening file: "));
-//     DEBUG_PRINTLN(fileName);
-//     File file = SD.open(fileName);
-//     if (file) {
-//       DEBUG_PRINTLN("File size: " + (String)file.size() + " bytes");
-//       file.close();
-//     } else
-//       DEBUG_PRINTLN("File not found!");
-//   }
-// }
-
-// // Print all data from datafile to serial port
-// void SDDownload(char fileName[]) {
-//   if (SDReaderStatus()) {
-//     appendCsv(fileName);
-//     DEBUG_PRINTLN("Downloading file: ");
-//     DEBUG_PRINTLN(fileName);
-//     File file = SD.open(fileName);
-//     if (file) {
-//       while (file.available()) {
-//         DEBUG_WRITE(file.read());
-//       }
-//       file.close();
-//       DEBUG_PRINTLN("End of File");
-//     } else
-//       DEBUG_PRINTLN("File not found!");
-//   }
-// }
-
-// // Delete file on SD card
-// void SDDelete(char fileName[]) {
-//   if (SDReaderStatus()) {
-//     appendCsv(fileName);
-//     if (SD.exists(fileName)) {
-//       DEBUG_PRINTLN("Deleting file: ");
-//       DEBUG_PRINTLN(fileName);
-//       SD.remove(fileName);
-//       DEBUG_PRINTLN("File Removed");
-//     } else
-//       DEBUG_PRINTLN("File not found");
-//   }
-// }
-
-// // Create empty file on SD card
-// void SDCreate(char fileName[]) {
-//   if (SDReaderStatus()) {
-//     appendCsv(fileName);
-//     if (SD.exists(fileName)) {
-//       DEBUG_PRINTLN("File already exist");
-//     } else {
-//       DEBUG_PRINTLN("Creating file: ");
-//       DEBUG_PRINTLN(fileName);
-//       File file = SD.open(fileName, FILE_WRITE);
-//       file.close();
-//     }
-//   }
-// }

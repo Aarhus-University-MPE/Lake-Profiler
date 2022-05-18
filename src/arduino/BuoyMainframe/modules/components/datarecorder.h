@@ -26,30 +26,27 @@ bool InitializeLoggingFiles() {
   strcat(fileLocationData, fileName);
 
   // Create data file
-  if (!SDCreate(fileLocationData)) {
-    return false;
-  }
+  if (!SDCreate(fileLocationData)) return false;
 
   // Append .log
   strcat(fileLocationLog, fileLocationData);
   strcat(fileLocationLog, fileEnd);
 
   // Create log file
-  if (!SDCreate(fileLocationLog, true)) {
-    return false;
-  }
+  if (!SDCreate(fileLocationLog, true)) return false;
 
   // Initialize log file
   AppendToLog(F("Data Log Initialing - "), false);
   AppendToLog(fileName, true);
-
-  // TODO: Write timestamp (UNIX)
+  AppendToLog(F("Timestamp: "));
+  AppendToLog((String)now(), true);
 
   return true;
 }
 
 // Append data to the current .log file
 void AppendToLog(char *logInput, bool endLine) {
+  if (!SDReaderStatus()) return;
   SDWriteStream(fileLocationLog, true);
   SDWriteStream(logInput);
   if (endLine) SDWriteStreamNewLine();
@@ -80,6 +77,35 @@ void AppendToData(char *dataInput, bool endLine) {
   SDQuit();
 }
 
+// Append dat without lineend
 void AppendToData(char *dataInput) {
   AppendToData(dataInput, false);
+}
+
+// Append data to the current data file
+void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine) {
+  SDWriteStream(fileLocationData, true);
+  SDWriteStream(dataInput, size);
+  if (endLine) SDWriteStreamNewLine();
+  SDQuit();
+}
+
+// Append dat without lineend
+void AppendToData(uint8_t *dataInput, uint8_t size) {
+  AppendToData(dataInput, size, false);
+}
+
+// Add current timestamp
+void TimeStampData() {
+  uint8_t timeStampData[4];
+  unsigned long timeStamp = (unsigned long)now();
+
+  for (uint8_t i = 0; i < 4; i++) {
+    timeStampData[i] = ((timeStamp >> (8 * i)) & 0XFF);
+  }
+
+  DEBUG_PRINT(F("Current time: "));
+  DEBUG_PRINTLN(timeStamp);
+
+  AppendToData(timeStampData, 4, true);
 }

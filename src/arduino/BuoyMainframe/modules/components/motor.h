@@ -11,13 +11,13 @@
 #include "../setup/modules.h"
 
 byte motorState;
+bool setPos = false;
 
 // Initialize motors and turns on encoder power
 bool InitializeMotors() {
   digitalWrite(PO_POWER_ENCODER, true);
 
-  // TODO: motor initialization...
-
+  EEPROMGetMotorPos();
   return true;
 }
 
@@ -30,27 +30,45 @@ void TerminateMotors() {
   digitalWrite(PO_MOTOR_UP, false);
 }
 
-// Todo: test
+// Returns true if motor is moving
+bool MotorState() {
+  return digitalRead(PO_MOTOR_DOWN) || digitalRead(PO_MOTOR_UP);
+}
+
+// Moves motor based on input buttons
 unsigned long lastMillisRead;
 void MotorProcess() {
-  if (millis() - lastMillisRead < BUTTON_DBOUNCE_TIME) {
-    return;
-  }
-  // TODO: DEBUG_PRINTLN(F("Reading... "));
+  if (millis() - lastMillisRead < BUTTON_DBOUNCE_TIME) return;
 
   lastMillisRead = millis();
-  if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
+
+  if (setPos) MotorSetPos();
+
+  // Both Buttons Pressed
+  else if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+    MotorMove(MOTOR_DIR_HALT);
+    MotorSetState();
+  }
+  // Up Button Pressed
+  else if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
     MotorMove(MOTOR_DIR_UP);
-  } else if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+  }
+  // Down Button Pressed
+  else if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
     MotorMove(MOTOR_DIR_DOWN);
+  }
+  // End position reached
+  else if (MotorPositionReached()) {
+    MotorMove(MOTOR_DIR_HALT);
   }
 }
 
-// move motors
-void MotorMove(byte dir) {
-  if (dir == motorState) {
-    return;
-  }
+// Move motors based on input, if
+void MotorMove(uint8_t dir) {
+  if (dir == motorState) return;
+
+  // Save current position to EEPROM
+  EncoderUpdate();
 
   if (motorState == MOTOR_DIR_UP || motorState == MOTOR_DIR_DOWN) {
     digitalWrite(PO_MOTOR_DOWN, false);
@@ -86,26 +104,50 @@ void MotorMove(byte dir) {
   }
 }
 
+// Next button input (longer than 500 ms) will save that direction
+void MotorSetPos() {
+  if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
+    delay(500);
+    if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
+      SetEncoderTop();
+      setPos = false;
+    }
+  } else if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+    delay(500);
+    if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+      SetEncoderBottom();
+      setPos = false;
+    }
+  }
+}
+
+void MotorSetState() {
+  delay(2000);
+
+  // Both Buttons Still Pressed?
+  if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+    setPos = true;
+  }
+}
+
+// Returns true if endposition reached for specified direction
 bool MotorPositionReached(uint8_t dir) {
   switch (dir) {
     case MOTOR_DIR_UP:
-      return GetEncoderRotations() <= MOTOR_POS_BOT break;
+      return GetEncoderRotations() <= GetEncoderRotationsTop() && GetEncoderCount() <= GetEncoderCountTop();
+      break;
+    case MOTOR_DIR_DOWN:
+      return GetEncoderRotations() >= GetEncoderRotationsBottom() && GetEncoderCount() >= GetEncoderCountBottom();
       break;
     default:
       break;
   }
 }
 
-// Measure motor stall
-bool MotorStall() {
-  DEBUG_PRINTLN(F("Motor Stall!"));
-  return false;
+// Returns true if endposition reached for specified direction
+bool MotorPositionReached() {
+  return MotorPositionReached(motorState);
 }
-
-// // motor currently running?
-// bool GetMotorState() {
-//   return motorState;
-// }
 
 // Motors operational?
 bool MotorStatus() {

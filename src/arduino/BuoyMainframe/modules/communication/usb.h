@@ -88,6 +88,12 @@ void parseCommand() {
     case CMD_ALARM:
       parseCommandAlarm();
       break;
+    case CMD_ENCODER:
+      parseCommandEncoder();
+      break;
+    case CMD_POWER:
+      parseCommandPower();
+      break;
     case '\0':
       break;
     default:
@@ -324,6 +330,52 @@ void parseCommandAlarm() {
       break;
   }
   DEBUG_PRINTLN();
+}
+
+void parseCommandEncoder() {
+  switch (receivedCMD[1]) {
+    case CMD_ENCODER_PRINT_POS:
+      EncoderPrintPos();
+      break;
+    case CMD_ENCODER_PRINT_BOTTOM:
+      EncoderPrintPos(MOTOR_DIR_DOWN);
+      break;
+    case CMD_ENCODER_PRINT_TOP:
+      EncoderPrintPos(MOTOR_DIR_UP);
+      break;
+    case CMD_ENCODER_SET_BOTTOM:
+      SetEncoderBottom();
+      break;
+    case CMD_ENCODER_SET_TOP:
+      SetEncoderTop();
+      break;
+    default:
+      break;
+  }
+}
+
+void parseCommandPower() {
+  char *levelPtr           = receivedCMD + 2;
+  char levelChar[numChars] = {0};
+  strcpy(levelChar, levelPtr);
+
+  int batteryLevel = atoi(levelChar);
+
+  switch (receivedCMD[1]) {
+    case CMD_POWER_SET:
+      SetBatteryMinLevel(batteryLevel);
+      break;
+    case CMD_POWER_GET:
+      DEBUG_PRINT(F("Minimum Battery Level: "));
+      DEBUG_PRINT(GetBatteryMinLevel());
+      DEBUG_PRINTLN(F(" %"));
+      break;
+    case CMD_POWER_PRINT:
+      BatteryStatus(true);
+      break;
+    default:
+      break;
+  }
 }
 
 void CountDownPrint() {

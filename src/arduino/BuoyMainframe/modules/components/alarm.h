@@ -56,7 +56,7 @@ int GetAlarmFrequency() {
 
 int GetAlarmStartHour() {
   alarmStartHour = EEPROM_READ_INT(MEMADDR_ALARM_START);
-  alarmStartHour = min(MAX_ALARM_START, max(MIN_ALARM_START, alarmFrequency));
+  alarmStartHour = min(MAX_ALARM_START, max(MIN_ALARM_START, alarmStartHour));
 
   return alarmStartHour;
 }
@@ -141,6 +141,7 @@ void UpdateAlarmTimings() {
   RTCC_ALMC2 | ALMC1 | ALMC0 - seconds, minutes, hour, day, date, and month match
 */
 void EnableAlarm(uint8_t alarm) {
+  RTCC.disableAlarm(alarm);
   RTCC.enableAlarm(alarm, RTCC_ALMC1);
 }
 

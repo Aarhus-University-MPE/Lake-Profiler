@@ -135,138 +135,59 @@ const unsigned long SYSREQ_SAMPLE =
 //                       STRATEGY MODES                         //
 // ------------------------------------------------------------ //
 
-#define MODES_MAX                       3  // Total number of modes
-#define MODES_MIN_BROWSABLE             1  // Minimum mode index, that could be set via mode button.
+#define MODES_MAX             3  // Total number of modes
+#define MODES_MIN_BROWSABLE   1  // Minimum mode index, that could be set via mode button.
 
-#define MODE_SYSTEMTEST                 0  // Test main systems
-#define MODE_AUTONOMOUS                 1  // Autonomous driving mode
-#define MODE_SERVICE                    2  // Service mode
+#define MODE_SYSTEMTEST       0  // Test main systems
+#define MODE_AUTONOMOUS       1  // Autonomous driving mode
+#define MODE_SERVICE          2  // Service mode
 
-#define ModeToString(m)                 ((m) == 0 ? "System Test" : ((m) == 1 ? "Autonomous" : ((m) == 2 ? "Service" : "Unknown")))
+#define ModeToString(m)       ((m) == 0 ? "System Test" : ((m) == 1 ? "Autonomous" : ((m) == 2 ? "Service" : "Unknown")))
 
 // ------------------------------------------------------------ //
 //                         HEARTBEAT                            //
 // ------------------------------------------------------------ //
-#define HRTBEAT_FRQ_OUT                 1  // times per minute
-#define HRTBEAT_DT_OUT                  60000 / HRTBEAT_FRQ_OUT
+#define HRTBEAT_FRQ_OUT       1  // times per minute
+#define HRTBEAT_DT_OUT        60000 / HRTBEAT_FRQ_OUT
 
-#define HRTBEAT_TRESHOLD                300000  // Treshold for late heartbeat
+#define HRTBEAT_TRESHOLD      300000  // Treshold for late heartbeat
 
-#define BACKUP_RST_DT                   300000  // Time between each reset attempt
+#define BACKUP_RST_DT         300000  // Time between each reset attempt
 
-#define HRTBEAT_DT_LOG                  300000  // Time between system status log
+#define HRTBEAT_DT_LOG        300000  // Time between system status log
 
 // ------------------------------------------------------------ //
 //                           BATTERY                            //
 // ------------------------------------------------------------ //
 
-#define BATTERY_MIN_LEVEL               50
+#define BATTERY_MIN_LEVEL     50
 
 // ------------------------------------------------------------ //
 //                           MOTORS                             //
 // ------------------------------------------------------------ //
 
-#define MOTOR_SPEED                     100
-#define MOTOR_ACCEL                     20
-#define MOTOR_STEPS                     5
-#define MOTOR_POS_TOP                   500
-#define MOTOR_POS_BOT                   -500
-#define MOTOR_DIR_UP                    1
-#define MOTOR_DIR_DOWN                  2
-#define MOTOR_DIR_HALT                  0
+#define MOTOR_DIR_UP          1
+#define MOTOR_DIR_DOWN        2
+#define MOTOR_DIR_HALT        0
+
+#define ENCODER_UPDATE_PERIOD 250
 
 // ------------------------------------------------------------ //
 //                        COMMUNICATION                         //
 // ------------------------------------------------------------ //
 
 // Buttons
-#define BTN_DEBOUNCE_TIME               500
-#define ESTOP_DEBOUNCE_TIME             1000
+#define BTN_DEBOUNCE_TIME     500
+#define ESTOP_DEBOUNCE_TIME   1000
 
 // DEBUG
-#define DEBUG_BAUDRATE                  115200
+#define DEBUG_BAUDRATE        115200
 
 // Canister Comm (RS232)
-#define CANISTER_BAUDRATE               19200
-#define LOGGING_START_TIMEOUT           5000
+#define CANISTER_BAUDRATE     19200
+#define LOGGING_START_TIMEOUT 5000
 
 // LORA
-#define LORA_FREQUENCY                  434.0
-#define CLIENT_ADDRESS                  1
-#define SERVER_ADDRESS                  2
-
-// ------------------------------------------------------------ //
-//                           EEPROM                             //
-// ------------------------------------------------------------ //
-#define EEPROM_READ_INT(addr)           (int)(((EEPROM.read(addr) << 0) & 0xFF) + ((EEPROM.read(addr + 1) << 8) & 0xFF00))
-
-#define EEPROM_WRITE_INT(addr, int)     EEPROM.put(addr, int)
-
-// Modes
-#define MEMADDR_LASTMODE                0
-
-// Encoder
-#define MEMADDR_ENCODER_COUNT           2
-#define MEMADDR_ENCODER_ROTATION        4
-
-#define MEMADDR_ENCODER_ROTATION_TOP    6
-#define MEMADDR_ENCODER_ROTATION_BOTTOM 8
-
-#define MEMADDR_ENCODER_COUNT_TOP       10
-#define MEMADDR_ENCODER_COUNT_BOTTOM    12
-
-// Alarm
-#define MEMADDR_ALARM_FREQUENCY         14
-#define MEMADDR_ALARM_START             16
-
-// motor calibration cache
-
-// ------------------------------------------------------------ //
-//                          COMMANDS                            //
-// ------------------------------------------------------------ //
-#define CMD_START_MARK                  '<'
-#define CMD_END_MARK                    '>'
-
-#define CMD_FILES                       'F'
-#define CMD_FILES_LIST                  'L'
-#define CMD_FILES_SIZE                  'S'
-#define CMD_FILES_DOWNLOAD              'D'
-#define CMD_FILES_CREATE                'C'
-#define CMD_FILES_REMOVE                'R'
-#define CMD_FILES_WRITE                 'W'
-#define CMD_FILES_WRITENEWLINE          'N'
-#define CMD_FILES_QUIT                  'Q'
-#define CMD_FILES_BLCKBOX               'B'
-#define CMD_FILES_BLCKBOXEMPTY          'E'
-
-#define CMD_STRATEGY                    'S'
-#define CMD_STRATEGY_SET                'S'
-#define CMD_STRATEGY_FUNCTION           'F'
-#define CMD_STRATEGY_OVERRIDE           'O'
-
-#define CMD_BACKUP                      'B'
-#define CMD_BACKUP_RST                  'R'
-#define CMD_BACKUP_PRIMSTATUS           'S'
-#define CMD_BACKUP_HB                   'H'
-
-#define CMD_MODULE                      'M'
-#define CMD_MODULE_ENABLE               'E'
-#define CMD_MODULE_DISABLE              'D'
-#define CMD_MODULE_OVERRIDE             'O'
-#define CMD_MODULE_STATUS               'S'
-#define CMD_MODULE_RESET                'R'
-
-#define CMD_CLOCK                       'C'
-#define CMD_CLOCK_SEC                   's'
-#define CMD_CLOCK_MIN                   'm'
-#define CMD_CLOCK_HOUR                  'H'
-#define CMD_CLOCK_DAY                   'd'
-#define CMD_CLOCK_DATE                  'D'
-#define CMD_CLOCK_MONTH                 'M'
-#define CMD_CLOCK_YEAR                  'Y'
-#define CMD_CLOCK_PRINT                 'P'
-
-#define CMD_ALARM                       'A'
-#define CMD_ALARM_FREQUENCY             'F'
-#define CMD_ALARM_START_HOUR            'S'
-#define CMD_ALARM_BEGIN                 'B'
+#define LORA_FREQUENCY        434.0
+#define CLIENT_ADDRESS        1
+#define SERVER_ADDRESS        2

@@ -27,7 +27,7 @@ int BatteryLevel() {
 
 // Checks voltage levels above critical values?
 bool VoltageCheck() {
-  return BatteryLevel() > BATTERY_MIN_LEVEL;
+  return BatteryLevel() > GetBatteryMinLevel();
 }
 
 float BatteryVoltage() {
@@ -40,8 +40,22 @@ float BatteryVoltage() {
   return voltageBattery;
 }
 
+// Returns current battery status > minimum battery level
 bool BatteryStatus() {
   return VoltageCheck();
+}
+
+// Returns minimum battery level from EEPROM
+uint8_t GetBatteryMinLevel() {
+  return EEPROM_READ_INT(MEMADDR_BATTERY_MIN);
+}
+
+// Sets EEPROM minimum battery level
+void SetBatteryMinLevel(uint8_t batteryLevel) {
+  DEBUG_PRINT(F("Setting min battery level: "));
+  DEBUG_PRINT(batteryLevel);
+  DEBUG_PRINTLN(F(" %"));
+  EEPROM_WRITE_INT(MEMADDR_BATTERY_MIN, batteryLevel);
 }
 
 bool BatteryStatus(bool print) {

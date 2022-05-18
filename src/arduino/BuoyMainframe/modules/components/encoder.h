@@ -5,11 +5,16 @@ byte motorDirection;
 int encoderCount     = 0;
 int encoderRotations = 0;
 
-int encoderRotationsTop    = 0;
-int encoderRotationsBottom = 0;
+unsigned int lastMillisUpdate = 0;
 
-int encoderCountTop    = 0;
-int encoderCountBottom = 0;
+// Update and save current positions
+void EncoderUpdate() {
+  // Throttle updates
+  if (millis() - lastMillisUpdate < ENCODER_UPDATE_PERIOD) return;
+
+  lastMillisUpdate = millis();
+  EEPROMSetMotorPos();
+}
 
 // Increments encoder values
 void EncoderAInterrupt() {
@@ -71,10 +76,56 @@ void SetEncoderCountBottom(uint8_t value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT_BOTTOM, value);
 }
 
-// Save current position in EEPROM
+// Save current position as top position
+void SetEncoderTop() {
+  DEBUG_PRINT(F("Setting Top Position - "));
+  EncoderPrintPos();
+
+  SetEncoderCountTop(encoderCount);
+  SetEncoderRotationsTop(encoderRotations);
+}
+
+// Save current position as bottom position
+void SetEncoderBottom() {
+  DEBUG_PRINT(F("Setting Bottom Position - Count: "));
+  EncoderPrintPos();
+
+  SetEncoderCountBottom(encoderCount);
+  SetEncoderRotationsBottom(encoderRotations);
+}
+
+// Save current position in EEPROM TODO: Add this somewhere
 void EEPROMSetMotorPos() {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT, encoderCount);
   EEPROM_WRITE_INT(MEMADDR_ENCODER_ROTATION, encoderRotations);
+}
+
+// Prints current position
+void EncoderPrintPos() {
+  DEBUG_PRINT(F("Count: "));
+  DEBUG_PRINT(encoderCount);
+  DEBUG_PRINT(F(", Rotations: "));
+  DEBUG_PRINTLN(encoderRotations);
+}
+
+void EncoderPrintPos(uint8_t direction) {
+  switch (direction) {
+    case MOTOR_DIR_UP:
+      DEBUG_PRINT(F("Top Position - Count: "));
+      DEBUG_PRINT(GetEncoderCountTop());
+      DEBUG_PRINT(F(", Rotations: "));
+      DEBUG_PRINTLN(GetEncoderRotationsTop());
+      break;
+    case MOTOR_DIR_DOWN:
+      DEBUG_PRINT(F("Bottom Position - Count: "));
+      DEBUG_PRINT(GetEncoderCountBottom());
+      DEBUG_PRINT(F(", Rotations: "));
+      DEBUG_PRINTLN(GetEncoderRotationsBottom());
+      break;
+
+    default:
+      break;
+  }
 }
 
 // Read latest position in EEPROM

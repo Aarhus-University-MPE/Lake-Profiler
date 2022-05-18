@@ -47,9 +47,9 @@ void FinishStrategyAutonomous() {
 
 // Strategy function
 void SelectFunctionAutonomous() {
-  if (!InputButtonDebounce()) {
-    return;
-  }
+  // if (!InputButtonDebounce()) {
+  //   return;
+  // }
 
   // Functionalities here
 }

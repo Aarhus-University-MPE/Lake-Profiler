@@ -32,49 +32,58 @@ void AutonomyState() {
     case 1:
       if (AutonomyStartLog()) autonomyState++;
       break;
-    // Await handshake from canister
+    // Check Battery Levels
     case 2:
+      if (AutonomyPowerCheck()) autonomyState++;
+      break;
+    // Power Levels sufficient, power up canister
+    case 3:
+      AutonomyStartCanister();
+      autonomyState++;
+      break;
+    // Await handshake from canister
+    case 4:
       if (AutonomyAwaitHandshake()) autonomyState++;
       break;
     // Handshake received, send start command to canister
-    case 3:
+    case 5:
       CanisterLogStart();
       millisAutonomyStart = millis();
       autonomyState++;
       break;
     // Await acknowledge from canister, confirming successful start
-    case 4:
+    case 6:
       if (AutonomyAwaitAcknowledge()) autonomyState++;
       break;
     // Acknowledge received, set alarm to 1 hr from now (CH4 warmup period)
-    case 5:
+    case 7:
       DataLogInitialized();
       autonomyState++;
       break;
     // Await alarm signalling warmup period over
-    case 6:
+    case 8:
       if (AlarmStatus(RTCC_ALM1)) autonomyState++;
       break;
     // Alarm triggered start moving motor up
-    case 7:
+    case 9:
       MotorMove(MOTOR_DIR_UP);
       autonomyState++;
       break;
     // Await top position reached
-    case 8:
+    case 10:
       if (MotorPositionReached(MOTOR_DIR_UP)) autonomyState++;
       break;
     // Top position reached, turn off canister and move to bottom position
-    case 9:
+    case 11:
       DataLogStop();
       MotorMove(MOTOR_DIR_DOWN);
       autonomyState++;
       break;
     // Await bottom position reached
-    case 10:
+    case 12:
       if (MotorPositionReached(MOTOR_DIR_DOWN)) autonomyState++;
       break;
-    case 11:
+    case 13:
       DEBUG_PRINTLINE();
       DEBUG_PRINTLN(F("Bottom position reached, system idle until next logging"));
       DEBUG_PRINTLN(F("Full log complete"));
@@ -111,6 +120,35 @@ void AutonomyStopLog() {
 
   DataLogStop();
   autonomyState = 0;
+}
+
+// Check battery level
+bool AutonomyPowerCheck() {
+  DEBUG_PRINT(F("Battery Level: "));
+  DEBUG_PRINT(BatteryLevel());
+  AppendToLog(F("Battery Level: "));
+  AppendToLog((String)BatteryLevel());
+  if (BatteryStatus()) {
+    AppendToLog(F(" \% - Sufficient"), true);
+    DEBUG_PRINTLN(F(" \% - Sufficient"));
+    return true;
+  } else {
+    AppendToLog(F(" % - Insufficient"), true);
+    DEBUG_PRINTLN(F(" % - Insufficient"));
+    AutonomyStopLog();
+    return false;
+  }
+}
+
+// Start Canister
+void AutonomyStartCanister() {
+  ModuleEnable(MODULE_PWR_CANISTER);
+  ModuleEnable(MODULE_COMM_CANISTER);
+
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("Awaiting Handshake... "));
+  AppendToLog(F("Awaiting Handshake... "), false);
+  DEBUG_PRINTLINE();
 }
 
 // Await handshake, timeout if too long

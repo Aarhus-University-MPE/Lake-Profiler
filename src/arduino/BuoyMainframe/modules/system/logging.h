@@ -5,17 +5,8 @@ bool DataLogStart() {
   // Create logging files (.csv and .log)
   if (!InitializeLoggingFiles()) {
     DEBUG_PRINTLN(F("Initialization Failed - SD Error"));
-    AutonomyStopLog();
     return false;
   }
-
-  // Start Canister
-  ModuleEnable(MODULE_PWR_CANISTER);
-  ModuleEnable(MODULE_COMM_CANISTER);
-
-  DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Awaiting Handshake... "));
-  AppendToLog(F("Awaiting Handshake... "), false);
   return true;
 }
 
@@ -23,7 +14,8 @@ void DataLogStop() {
   ModuleDisable(MODULE_PWR_CANISTER);
   ModuleDisable(MODULE_COMM_CANISTER);
   AppendToLog(F("Log Complete"), true);
-  // TODO: Write timestamp (UNIX)
+  AppendToLog(F("Timestamp: "));
+  AppendToLog((String)now(), true);
 }
 
 void DataLogInitialized() {

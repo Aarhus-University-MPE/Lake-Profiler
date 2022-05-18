@@ -10,7 +10,7 @@
 #include "../setup/modules.h"
 
 // Enable individual module
-void ModuleEnable(int module) {
+void ModuleEnable(uint8_t module) {
   if (GetStatus(module))
     return;
 

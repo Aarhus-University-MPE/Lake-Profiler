@@ -43,8 +43,8 @@ void FinishStrategyService() {
 
 // Strategy function
 void SelectFunctionService() {
-  if (!InputButtonDebounce()) {
-    return;
-  }
+  // if (!InputButtonDebounce()) {
+  //   return;
+  // }
   //
 }

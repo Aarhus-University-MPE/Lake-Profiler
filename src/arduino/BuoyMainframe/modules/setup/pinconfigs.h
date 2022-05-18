@@ -2,7 +2,7 @@
 
 #include "./modules.h"
 
-unsigned long lastMillisMode, lastMillisUpDown;
+unsigned long lastMillisMode, lastMillisUp, lastMillisDown;
 
 // Initialization of inputs
 void InitInterrupts() {
@@ -57,9 +57,9 @@ void InitAllPins() {
   InitInterrupts();
 }
 
-// Check for Select Button noise, returns true if valid button press
-bool InputButtonDebounce() {
-  if (millis() - lastMillisUpDown < BTN_DEBOUNCE_TIME) {
+// Check for Up Button noise, returns true if valid button press
+bool UpButtonDebounce() {
+  if (millis() - lastMillisUp < BTN_DEBOUNCE_TIME) {
     return false;
   }
 
@@ -67,12 +67,31 @@ bool InputButtonDebounce() {
   delay(50);
 
   // Check if button is still pressed
-  if (digitalRead(PI_BUTTON_MOTOR_UP) && digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+  if (digitalRead(PI_BUTTON_MOTOR_UP)) {
     return false;
   }
 
   // Set timestamp for button debouncing
-  lastMillisUpDown = millis();
+  lastMillisUp = millis();
+  return true;
+}
+
+// Check for Down Button noise, returns true if valid button press
+bool DownButtonDebounce() {
+  if (millis() - lastMillisDown < BTN_DEBOUNCE_TIME) {
+    return false;
+  }
+
+  // Small time delay to filter voltage spikes
+  delay(50);
+
+  // Check if button is still pressed
+  if (digitalRead(PI_BUTTON_MOTOR_UP)) {
+    return false;
+  }
+
+  // Set timestamp for button debouncing
+  lastMillisDown = millis();
   return true;
 }
 

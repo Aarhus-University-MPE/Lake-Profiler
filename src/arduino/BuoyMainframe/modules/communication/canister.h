@@ -13,6 +13,7 @@
 #include "../setup/modules.h"
 
 uint8_t receivedCMDCan[numChars];
+char receivedCMDCanChar[numChars];
 bool handshakeReceived   = false;
 bool acknowledgeReceived = false;
 
@@ -65,13 +66,15 @@ void recvWithStartEndMarkersCanister() {
 
     if (recvInProgressCan == true) {
       if (pack.c != endMarker) {
-        receivedCMDCan[ndxCan] = rc;
+        receivedCMDCan[ndxCan]     = rc;
+        receivedCMDCanChar[ndxCan] = pack.c;
         ndxCan++;
         if (ndxCan >= numChars) {
           ndxCan = numChars - 1;
         }
       } else {
-        receivedCMDCan[ndxCan] = '\0';  // terminate the string
+        receivedCMDCan[ndxCan]     = '\0';  // terminate the string
+        receivedCMDCanChar[ndxCan] = '\0';
         parseCommandCan(ndxCan);
         recvInProgressCan = false;
         ndxCan            = 0;
@@ -106,6 +109,27 @@ void parseCommandCan(uint8_t size) {
     case 'N':
       parseLogStart();
       break;
+    // General Error
+    case 0x0:
+      DEBUG_PRINT(F("General Error: "));
+      DEBUG_PRINT2(receivedCMDCan[1], HEX);
+      DEBUG_PRINTLN();
+      break;
+    // Sensor Error
+    case 0x1:
+      DEBUG_PRINT(F("Sensor Initialization Error: "));
+      DEBUG_PRINT2(receivedCMDCan[1], HEX);
+      DEBUG_PRINTLN();
+      AppendToLog(F("Sensor Initialization Error: "));
+      AppendToLog((String)receivedCMDCan[1], true);
+      AutonomyStopLog();
+      break;
+    // Acknowledge Error
+    case 0x2:
+      DEBUG_PRINTLN(F("Package Acknowledge Error"));
+      AppendToLog(F("Package Acknowledge Error"), true);
+      AutonomyStopLog();
+      break;
     default:
       break;
   }
@@ -120,43 +144,33 @@ bool AcknowledgeReceived() {
 }
 
 void parsePackage(uint8_t size) {
-  union unpack pack;
-  if (receivedCMDCan[2] == 0xA) {
-    // new package incomming
-    DEBUG_PRINTLINE();
-    DEBUG_PRINT(F("New Package Received:"));
-    for (uint8_t i = 0; i < receivedCMDCan[1]; i++) {
-      DEBUG_PRINT2(receivedCMDCan[i + 2], HEX);
-      DEBUG_PRINT(F(" "));
-    }
-    DEBUG_PRINT(F("- Package Size: "));
-    DEBUG_PRINT(size);
-    DEBUG_PRINTLN();
-  } else if (receivedCMDCan[2] == 0x13) {
-    // End of package
-    DEBUG_PRINTLINE();
-    DEBUG_PRINTLN(F("End of Package"));
+  PrintPackageInfo(size);
 
-    // TODO: Add timestamp when line row end
-    // Timestamp
-  } else {
-    DEBUG_PRINT(F("Message (Expected Size: "));
-    DEBUG_PRINT(receivedCMDCan[1]);
-    DEBUG_PRINT(F(" - Actual Size: "));
-    DEBUG_PRINT(size);
-    pack.i8 = receivedCMDCan[2];
-    DEBUG_PRINT(F(" "));
-    DEBUG_PRINT(pack.c);
-    DEBUG_PRINTLN(F(")"));
+  switch (receivedCMDCan[2]) {
+    // New Package
+    case 0xA:
+      AppendData(size);
+      break;
+    // End of package
+    case 0x13:
+      TimeStampData();
+      break;
+    // CH4 sensor Write as Char Array
+    case '$':
+      AppendData();
+      break;
+    // CO2 sensor Write as Char Array
+    case 'W':
+      AppendData();
+      break;
+    default:
+      // Sensor Package
+      AppendData(size);
+      break;
   }
 
-  // for (int i = 0; i < size; i++) {
-  //   union unpack pack;
-
-  //   DEBUG_PRINT2(receivedCMDCan[i], HEX);
-  //   DEBUG_PRINT(F(" "));
-  // }
-  // DEBUG_PRINTLN();
+  char separator[2] = ";";
+  AppendToData(separator);
 }
 
 // Create file with current timestamp in name
@@ -174,4 +188,64 @@ void parseLogStart() {
     DEBUG_PRINTLN(F("Logging Start Error - SD file Error"));
   }
   DEBUG_PRINTLINE();
+}
+
+// Append data to data file
+void AppendData(uint8_t size) {
+  uint8_t *dataPtr = receivedCMDCan + 1;
+
+  AppendToData(dataPtr, size - 1);
+
+  // Print data to console
+  for (int i = 0; i < size - 1; i++) {
+    DEBUG_PRINT2(dataPtr[i], HEX);
+    DEBUG_PRINT(F(" "));
+  }
+  DEBUG_PRINTLN();
+}
+
+// Append data to data file
+void AppendData() {
+  char *dataPtr = receivedCMDCanChar + 1;
+
+  AppendToData(dataPtr);
+
+  // Print data to console
+  DEBUG_PRINTLN(dataPtr);
+}
+
+// Print package information
+void PrintPackageInfo(uint8_t size) {
+  union unpack pack;
+
+  DEBUG_PRINTLINE();
+  switch (receivedCMDCan[2]) {
+    case 0xA:
+      DEBUG_PRINT(F("New Package Received:"));
+      for (uint8_t i = 0; i < receivedCMDCan[1]; i++) {
+        DEBUG_PRINT2(receivedCMDCan[i + 2], HEX);
+        DEBUG_PRINT(F(" "));
+      }
+      DEBUG_PRINT(F("- Package Size: "));
+      DEBUG_PRINT(size);
+      DEBUG_PRINTLN();
+      break;
+    case 0x13:
+      DEBUG_PRINTLN(F("End of Package"));
+      DEBUG_PRINTLINE();
+      break;
+
+    default:
+      DEBUG_PRINT(F("Sensor Package "));
+      DEBUG_PRINT(receivedCMDCan[2]);
+      DEBUG_PRINT(F(" - (Expected Size: "));
+      DEBUG_PRINT(receivedCMDCan[1]);
+      DEBUG_PRINT(F(" - Actual Size: "));
+      DEBUG_PRINT(size);
+      pack.i8 = receivedCMDCan[2];
+      DEBUG_PRINT(F(" "));
+      DEBUG_PRINT(pack.c);
+      DEBUG_PRINTLN(F(")"));
+      break;
+  }
 }

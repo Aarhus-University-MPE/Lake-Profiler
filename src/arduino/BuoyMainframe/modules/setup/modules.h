@@ -5,10 +5,13 @@
 #include <RTCCI2C.h>
 #include <SD.h>
 #include <SPI.h>
+#include <TimeLib.h>
 #include <Wire.h>
 
 // Config
+#include "../../config/commandlist.h"
 #include "../../config/constants.h"
+#include "../../config/memory.h"
 #include "../../config/pinout.h"
 
 // Function prototypes
@@ -43,6 +46,7 @@
 #include "../debug/debug.h"
 
 // Components
+#include "../components/datarecorder.h"
 #include "../components/encoder.h"
 #include "../components/motor.h"
 #include "../components/rtc.h"

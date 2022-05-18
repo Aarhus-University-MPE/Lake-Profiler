@@ -24,6 +24,12 @@ unsigned long ToLong(bool b[]);
 bool DebugCommStatus();
 void recvWithStartEndMarkers();
 bool InitializeDebugComm();
+void parseCommand();
+void parseCommandFiles();
+void parseCommandStrategy();
+void parseCommandModule();
+void parseCommandEncoder();
+void parseCommandPower();
 void CountDownPrint();
 const byte numChars = 200;
 
@@ -71,6 +77,9 @@ bool MotorStall();
 bool GetMotorState();
 bool MotorStatus();
 bool MotorPositionReached(uint8_t dir);
+bool MotorPositionReached();
+void MotorSetState();
+void MotorSetPos();
 
 // Encoder
 void EncoderAInterrupt();
@@ -92,10 +101,19 @@ void SetEncoderRotationsBottom(uint8_t value);
 void SetEncoderCountTop(uint8_t value);
 void SetEncoderCountBottom(uint8_t value);
 
+void SetEncoderTop();
+void SetEncoderBottom();
+void EEPROMSetMotorPos();
+
+void EncoderPrintPos();
+void EncoderPrintPos(uint8_t direction);
+
 // Power
 bool VoltageCheck();
 bool BatteryStatus();
 bool BatteryStatus(bool print);
+void SetBatteryMinLevel(uint8_t batteryLevel);
+uint8_t GetBatteryMinLevel();
 
 // System Status
 bool SystemStatus[MODULE_COUNT];
@@ -121,6 +139,9 @@ void SystemCheck();
 
 void ModuleEnableMode(int mode);
 void ModuleEnableMode();
+
+void ModuleEnable();
+void ModuleEnable(uint8_t module);
 
 // SD Reader
 bool SDReaderStatus();
@@ -178,6 +199,8 @@ bool AutonomyAwaitAcknowledge();
 bool AutonomyStartLog();
 void AutonomyStopLog();
 void AutonomyState();
+bool AutonomyPowerCheck();
+void AutonomyStartCanister();
 
 bool HandshakeReceived();
 bool AcknowledgeReceived();
@@ -190,13 +213,13 @@ void AppendToLog(String logInput);
 void AppendToLog(char *logInput);
 void AppendToData(char *dataInput, bool endLine);
 void AppendToData(char *dataInput);
+void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine);
+void AppendToData(uint8_t *dataInput, uint8_t size);
+void AppendData(uint8_t size);
+void AppendData();
+void TimeStampData();
 
 // additional
-void parseCommand();
-void parseCommandFiles();
-void parseCommandStrategy();
-void parseCommandModule();
-void ModuleEnable();
 void ModuleDisable();
 void SystemTest(bool);
 void SystemTest();
@@ -218,6 +241,8 @@ void BlackBoxPrint();
 // SD Write Steam (Continuous writing to same focument)
 bool SDWriteStream(char fileNameOrData[], bool customFileEnd);
 bool SDWriteStream(char fileNameOrData[]);
+bool SDWriteStream(uint8_t data[], uint8_t size, bool customFileEnd);
+bool SDWriteStream(uint8_t data[], uint8_t size);
 bool SDWriteStreamNewLine();
 bool SDOpenWriteStream(char fileName[], bool customEndLine);
 void SDQuit();
@@ -229,7 +254,8 @@ void DebugTerminate();
 
 void SystemEnablePrimary();
 
-bool InputButtonDebounce();
+bool UpButtonDebounce();
+bool DownButtonDebounce();
 bool ModeButtonDebounce();
 
 bool DataLogStart();
@@ -242,6 +268,7 @@ void DataLogActivate();
 
 float BatteryVoltage();
 void parsePackage(uint8_t size);
+void PrintPackageInfo(uint8_t size);
 void parseLogStart();
 void GetTimeStamp(char *fileName);
 
@@ -250,6 +277,7 @@ void SetClock();
 void UpdateUnixTime();
 void EnableAlarm(uint8_t alarm);
 
+// Clock
 void parseCommandClock();
 void SetClockSec(uint8_t hexValue);
 void SetClockMin(uint8_t hexValue);
@@ -259,6 +287,7 @@ void SetClockDate(uint8_t hexValue);
 void SetClockMonth(uint8_t hexValue);
 void SetClockYear(uint8_t hexValue);
 
+// Alarms
 void parseCommandAlarm();
 void SetAlarmSec(uint8_t hexValue);
 void SetAlarmMin(uint8_t hexValue);
