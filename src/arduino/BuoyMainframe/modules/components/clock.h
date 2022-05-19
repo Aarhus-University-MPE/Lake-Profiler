@@ -66,12 +66,12 @@ void SetClockYear(uint8_t hexValue) {
 // Update clock to current unixTime
 void UpdateUnixTime() {
   // Get time from RTCC
-  te.Second = RTCC.getSec(RTCC_RTCC);
-  te.Minute = RTCC.getMin(RTCC_RTCC);
-  te.Hour   = RTCC.getHour(RTCC_RTCC);
-  te.Day    = RTCC.getDate(RTCC_RTCC);
-  te.Month  = RTCC.getMonth(RTCC_RTCC);
-  te.Year   = RTCC.getYear() - 1970;
+  te.Second = HexToHour(RTCC.getSec(RTCC_RTCC));
+  te.Minute = HexToHour(RTCC.getMin(RTCC_RTCC));
+  te.Hour   = HexToHour(RTCC.getHour(RTCC_RTCC));  // Summer time?
+  te.Day    = HexToHour(RTCC.getDate(RTCC_RTCC));
+  te.Month  = HexToHour(RTCC.getMonth(RTCC_RTCC));
+  te.Year   = HexToHour(RTCC.getYear()) + 30;  // Years since 1970
 
   // Convert to unixtime
   unixTime = makeTime(te);

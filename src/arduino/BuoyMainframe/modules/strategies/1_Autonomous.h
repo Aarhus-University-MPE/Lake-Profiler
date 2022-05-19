@@ -38,6 +38,9 @@ void FinishStrategyAutonomous() {
   DEBUG_PRINTLN(F("Strategy (Autonomous): Ending"));
   DEBUG_PRINTLINE();
 
+  // Save current position to EEPROM
+  EEPROMSetMotorPos();
+
   // Disable secondary modules
   ModuleDisable();
 

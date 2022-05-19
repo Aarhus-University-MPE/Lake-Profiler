@@ -10,9 +10,9 @@ void InitInterrupts() {
   attachInterrupt(PT_SWITCH_MODE, ModeSwitchInterrupt, CHANGE);
 
   // Encoder interrupts
-  attachInterrupt(PI_ENCODER_A, EncoderAInterrupt, FALLING);  // Triggers 100 times per revolution (3.6° resolution)
-  // attachInterrupt(PI_ENCODER_B, EncoderBInterrupt, FALLING);  // Triggers 100 times per revolution (3.6° resolution)
-  attachInterrupt(PI_ENCODER_Z, EncoderZInterrupt, FALLING);  // Triggers once every revolution
+  attachInterrupt(PT_ENCODER_A, EncoderAInterrupt, FALLING);  // Triggers 100 times per revolution (3.6° resolution)
+  // attachInterrupt(PT_ENCODER_B, EncoderBInterrupt, FALLING);  // Triggers 100 times per revolution (3.6° resolution)
+  attachInterrupt(PT_ENCODER_Z, EncoderZInterrupt, RISING);  // Triggers once every revolution
 }
 
 // Sets pinmode of all pins and writes initial values for outputs
@@ -24,7 +24,7 @@ void InitAllPins() {
 
   // Power control (Relays)
   digitalWrite(PO_POWER_CANISTER, LOW);
-  digitalWrite(PO_POWER_ENCODER, LOW);
+  digitalWrite(PO_POWER_ENCODER, HIGH);
 
   pinMode(PO_POWER_CANISTER, OUTPUT);
   pinMode(PO_POWER_ENCODER, OUTPUT);
@@ -53,6 +53,8 @@ void InitAllPins() {
   pinMode(17, INPUT);
 
   pinMode(LED_BUILTIN, OUTPUT);
+
+  Wire.setWireTimeout(1000);
 
   InitInterrupts();
 }

@@ -33,10 +33,16 @@ void DataLogInitialized() {
     hourChar[0] = tempArray[0];
     hourChar[1] = tempArray[1];
   }
-  AppendToLog(hourChar);
-  AppendToLog(F(":00"));
+  hourChar[3] = '\0';
 
-  DEBUG_PRINTLN(F("Alarm Set: "));
-  DEBUG_PRINTLN(hourChar);
-  DEBUG_PRINTLN(F(":00"));
+  AppendToLog(hourChar);
+  AppendToLog(F(":00"), true);
+}
+
+int GetWarmupTime() {
+  return EEPROM_READ_INT(MEMADDR_SYSTEM_WARMUP);
+}
+
+void SetWarmupTime(int warmupTime) {
+  EEPROM_WRITE_INT(MEMADDR_SYSTEM_WARMUP, warmupTime);
 }

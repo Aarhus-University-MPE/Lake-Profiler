@@ -10,7 +10,7 @@ char fileLocationLog[22];
 
 // Create logging files (YYMMDDHH.log and YYMMDDHH.csv)
 bool InitializeLoggingFiles() {
-  char folder[8]   = "./data/";
+  char folder[8]   = "/data/";
   char fileName[9] = "YYMMDDHH";
   char fileEnd[5]  = ".log";
 
@@ -25,14 +25,18 @@ bool InitializeLoggingFiles() {
   strcpy(fileLocationData, folder);
   strcat(fileLocationData, fileName);
 
-  // Create data file
-  if (!SDCreate(fileLocationData)) return false;
-
   // Append .log
   strcat(fileLocationLog, fileLocationData);
   strcat(fileLocationLog, fileEnd);
 
+  // Create data file
+  if (!SDCreate(fileLocationData)) return false;
+  DEBUG_PRINT(F("data file: "));
+  DEBUG_PRINTLN(fileLocationData);
+
   // Create log file
+  DEBUG_PRINT(F("log file: "));
+  DEBUG_PRINTLN(fileLocationLog);
   if (!SDCreate(fileLocationLog, true)) return false;
 
   // Initialize log file
@@ -40,6 +44,9 @@ bool InitializeLoggingFiles() {
   AppendToLog(fileName, true);
   AppendToLog(F("Timestamp: "));
   AppendToLog((String)now(), true);
+
+  DEBUG_PRINT(F("Current time: "));
+  DEBUG_PRINTLN(now());
 
   return true;
 }

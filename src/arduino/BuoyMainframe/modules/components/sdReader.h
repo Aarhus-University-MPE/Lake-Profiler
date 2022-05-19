@@ -15,7 +15,11 @@ File activeWriteFile;
 
 // Initialize SD card reader module.
 bool InitializeSDReader() {
-  return SD.begin(PO_SPISS_SDCARD);
+  bool status = false;
+  if (SD.begin(PO_SPISS_SDCARD)) {
+    status = SD.mkdir("data");
+  }
+  return status;
 }
 
 void TerminateSDReader() {
@@ -29,15 +33,48 @@ bool SDReaderStatus() {
 // Query all files on SD card and print to serial prompt
 void SDQuery() {
   if (SDReaderStatus()) {
-    File file = SD.open("/");
-    file.rewindDirectory();
-    DBG_ONLY(printFiles(file));
-    file.rewindDirectory();
-    file.close();
+    File dir = SD.open("/");
+    dir.rewindDirectory();
+    printDirectory(dir, 0);
+    dir.rewindDirectory();
+    dir.close();
     delay(10);
   }
 }
 
+// Print full directory
+void printDirectory(File dir, int numTabs) {
+  while (true) {
+    File entry = dir.openNextFile();
+
+    if (!entry) {
+      // no more files
+      break;
+    }
+
+    for (uint8_t i = 0; i < numTabs; i++) {
+      DEBUG_PRINT('\t');
+    }
+
+    DEBUG_PRINT(entry.name());
+
+    if (entry.isDirectory()) {
+      DEBUG_PRINTLN("/");
+
+      printDirectory(entry, numTabs + 1);
+
+    } else {
+      // files have sizes, directories do not
+
+      DEBUG_PRINT("\t\t");
+
+      DEBUG_PRINT2(entry.size(), DEC);
+      DEBUG_PRINTLN();
+    }
+
+    entry.close();
+  }
+}
 // Print all files to serial port
 void printFiles(File dir) {
   DEBUG_PRINTLN(F(("Files in system:")));
@@ -79,13 +116,16 @@ void SDSize(char fileName[]) {
 // Print all data from datafile to serial port
 void SDDownload(char fileName[]) {
   if (SDReaderStatus()) {
-    appendCsv(fileName);
+    // appendCsv(fileName);
     DEBUG_PRINTLN(F("Downloading file: "));
     DEBUG_PRINTLN(fileName);
     File file = SD.open(fileName);
     if (file) {
       while (file.available()) {
-        DEBUG_WRITE(file.read());
+        uint8_t data = file.read();
+        Serial.print(data, HEX);
+        Serial.print(F(" "));
+        if (data == '\n') Serial.println();
       }
       file.close();
       DEBUG_PRINTLINE();
@@ -99,7 +139,7 @@ void SDDownload(char fileName[]) {
 // Delete file on SD card
 void SDDelete(char fileName[]) {
   if (SDReaderStatus()) {
-    appendCsv(fileName);
+    // appendCsv(fileName);
     if (SD.exists(fileName)) {
       DEBUG_PRINT(F("Deleting file: "));
       DEBUG_PRINT(fileName);
@@ -119,7 +159,8 @@ bool SDCreate(char fileName[]) {
   }
   appendCsv(fileName);
   if (SD.exists(fileName)) {
-    DEBUG_PRINTLN(F("File already exist"));
+    SDDelete(fileName);
+    SDCreate(fileName, true);
   } else {
     DEBUG_PRINT(F("Creating file: "));
     DEBUG_PRINT(fileName);
@@ -145,7 +186,8 @@ bool SDCreate(char fileName[], bool customFileEnd) {
     return SDCreate(fileName);
   }
   if (SD.exists(fileName)) {
-    DEBUG_PRINTLN(F("File already exist"));
+    SDDelete(fileName);
+    SDCreate(fileName, true);
   } else {
     DEBUG_PRINT(F("Creating file: "));
     DEBUG_PRINT(fileName);
@@ -233,7 +275,7 @@ bool SDWriteStreamNewLine() {
     return false;
   }
 
-  DEBUG_PRINTLN(F("Wrinting newline char to file"));
+  // DEBUG_PRINTLN(F("Wrinting newline char to file"));
 
   activeWriteFile.write('\n');
   return true;
@@ -243,26 +285,26 @@ bool SDOpenWriteStream(char fileName[], bool customEndLine) {
   if (!customEndLine) {
     appendCsv(fileName);
   }
+
+  // TODO: remove?
   if (!SD.exists(fileName)) {
     DEBUG_PRINT(F("Creating file: "));
     DEBUG_PRINT(fileName);
+    activeWriteFile = SD.open(fileName, FILE_WRITE);
+    if (!activeWriteFile) {
+      DEBUG_PRINTLN(F(" - Error!"));
+    } else {
+      DEBUG_PRINTLN(F(" - Success"));
+    }
   } else {
-    DEBUG_PRINT(F("Opening file: "));
-    DEBUG_PRINT(fileName);
-  }
-  activeWriteFile = SD.open(fileName, FILE_WRITE);
-
-  if (!activeWriteFile) {
-    DEBUG_PRINTLN(F(" - Error!"));
-    return false;
+    activeWriteFile = SD.open(fileName, FILE_WRITE);
   }
 
-  DEBUG_PRINTLN(F(" - Success"));
-  return true;
+  return activeWriteFile;
 }
 
 // Closes current active file write stream
 void SDQuit() {
-  DEBUG_PRINTLN(F("Closing active file"));
+  // DEBUG_PRINTLN(F("Closing active file"));
   activeWriteFile.close();
 }

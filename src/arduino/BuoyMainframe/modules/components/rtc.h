@@ -16,6 +16,7 @@
 RTCCI2C RTCC;
 
 bool InitializeRTC() {
+  Wire.begin();
   RTCC.begin();
 
   // enable back up battery
@@ -37,7 +38,7 @@ bool RTCStatus() {
 
 void RTCPrint() {
   // print current time
-  DEBUG_PRINT(F("Current time is : "));
+  DEBUG_PRINT(F("Current time is: "));
   printTime(RTCC_RTCC);
 
   // check if alarm 0 is triggered
@@ -48,6 +49,9 @@ void RTCPrint() {
     RTCC.disableAlarm(RTCC_ALM0);
     SetAlarm();
   }
+
+  DEBUG_PRINT(F("Current MCU time: "));
+  DEBUG_PRINTLN(now());
 }
 
 void printTime(uint8_t src) {

@@ -69,6 +69,7 @@ bool DebugCommStatus() {
 
 // Parse read Command
 void parseCommand() {
+  DEBUG_PRINTLINE();
   DEBUG_PRINT(F("Received command (DBG_PRT): \""));
   DEBUG_PRINT(receivedCMD);
   DEBUG_PRINTLN(F("\""));
@@ -82,6 +83,7 @@ void parseCommand() {
       break;
     case CMD_MODULE:
       parseCommandModule();
+      break;
     case CMD_CLOCK:
       parseCommandClock();
       break;
@@ -251,43 +253,47 @@ void parseCommandClock() {
     case CMD_CLOCK_MIN:
       DEBUG_PRINT(F("min "));
       DEBUG_PRINT2(clockValueHex, HEX);
+      DEBUG_PRINTLN();
       SetClockMin(clockValueHex);
       break;
     case CMD_CLOCK_HOUR:
       DEBUG_PRINT(F("Hour "));
       DEBUG_PRINT2(clockValueHex, HEX);
       DEBUG_PRINT(F(":00"));
+      DEBUG_PRINTLN();
       SetClockHour(clockValueHex);
       break;
     case CMD_CLOCK_DAY:
       DEBUG_PRINT(F("Day "));
       DEBUG_PRINT2(clockValueHex, HEX);
+      DEBUG_PRINTLN();
       SetClockDay(clockValueHex);
       break;
     case CMD_CLOCK_DATE:
       DEBUG_PRINT(F("Date "));
       DEBUG_PRINT2(clockValueHex, HEX);
+      DEBUG_PRINTLN();
       SetClockDate(clockValueHex);
       break;
     case CMD_CLOCK_MONTH:
       DEBUG_PRINT(F("Month "));
       DEBUG_PRINT2(clockValueHex, HEX);
+      DEBUG_PRINTLN();
       SetClockMonth(clockValueHex);
       break;
     case CMD_CLOCK_YEAR:
       DEBUG_PRINT(F("Year "));
       DEBUG_PRINT2(clockValueHex, HEX);
+      DEBUG_PRINTLN();
       SetClockYear(clockValueHex);
       break;
     case CMD_CLOCK_PRINT:
       DEBUG_PRINTLN(F("Print"));
       RTCPrint();
       break;
-
     default:
       break;
   }
-  DEBUG_PRINTLN();
 
   // Update Arduino Clock to match RTCC
   UpdateUnixTime();
@@ -325,7 +331,16 @@ void parseCommandAlarm() {
       DEBUG_PRINTLN();
       SetAlarm();
       break;
-
+    case CMD_ALARM_WARMUP_SET:
+      DEBUG_PRINT(F("Setting Warmup Time: "));
+      DEBUG_PRINTLN(clockValue);
+      SetWarmupTime(clockValue);
+      break;
+    case CMD_ALARM_WARMUP_GET:
+      DEBUG_PRINT(F("Warmup Time: "));
+      DEBUG_PRINT(GetWarmupTime());
+      DEBUG_PRINTLN(F(":00"));
+      break;
     default:
       break;
   }

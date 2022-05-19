@@ -95,11 +95,11 @@ int GetEncoderRotationsBottom();
 int GetEncoderCountTop();
 int GetEncoderCountBottom();
 
-void SetEncoderRotationsTop(uint8_t value);
-void SetEncoderRotationsBottom(uint8_t value);
+void SetEncoderRotationsTop(int value);
+void SetEncoderRotationsBottom(int value);
 
-void SetEncoderCountTop(uint8_t value);
-void SetEncoderCountBottom(uint8_t value);
+void SetEncoderCountTop(int value);
+void SetEncoderCountBottom(int value);
 
 void SetEncoderTop();
 void SetEncoderBottom();
@@ -107,6 +107,7 @@ void EEPROMSetMotorPos();
 
 void EncoderPrintPos();
 void EncoderPrintPos(uint8_t direction);
+void EEPROMGetMotorPos();
 
 // Power
 bool VoltageCheck();
@@ -154,6 +155,7 @@ bool SDCreate(char fileName[], bool customFileEnd);
 void printFiles(File dir);
 void appendCharArray(char *s, char c);
 void appendCsv(char *s);
+void printDirectory(File dir, int numTabs);
 
 // Blackbox
 bool BlackBoxStatus();
@@ -263,6 +265,8 @@ void DataLogStop();
 void DataLogInitialized();
 void SetModeManual(uint8_t modeSet);
 void LoggingProcess();
+int GetWarmupTime();
+void SetWarmupTime(int warmupTime);
 
 void DataLogActivate();
 

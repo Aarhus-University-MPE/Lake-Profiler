@@ -36,7 +36,9 @@ bool CanisterCommStatus() {
 // Take data log sample
 void CanisterLogStart() {
   AppendToLog(F("Sending Start Signal - \"<L>\""), true);
+  DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("Sending Start Signal"));
+  DEBUG_PRINTLINE();
   COM_SERIAL_CANISTER.println("<L>");
   acknowledgeReceived = false;
 }
@@ -144,7 +146,7 @@ bool AcknowledgeReceived() {
 }
 
 void parsePackage(uint8_t size) {
-  PrintPackageInfo(size);
+  // PrintPackageInfo(size);
 
   switch (receivedCMDCan[2]) {
     // New Package
@@ -181,12 +183,8 @@ void parseLogStart() {
 
   // Create data file (YYMMDDHH.csv)
   DEBUG_PRINTLINE();
-  if (SDWriteStream(fileName)) {
-    DEBUG_PRINT(F("New Logging started: "));
-    DEBUG_PRINTLN(fileName);
-  } else {
-    DEBUG_PRINTLN(F("Logging Start Error - SD file Error"));
-  }
+  DEBUG_PRINT(F("New Logging started: "));
+  DEBUG_PRINTLN(fileName);
   DEBUG_PRINTLINE();
 }
 
@@ -197,11 +195,11 @@ void AppendData(uint8_t size) {
   AppendToData(dataPtr, size - 1);
 
   // Print data to console
-  for (int i = 0; i < size - 1; i++) {
-    DEBUG_PRINT2(dataPtr[i], HEX);
-    DEBUG_PRINT(F(" "));
-  }
-  DEBUG_PRINTLN();
+  // for (int i = 0; i < size - 1; i++) {
+  //   DEBUG_PRINT2(dataPtr[i], HEX);
+  //   DEBUG_PRINT(F(" "));
+  // }
+  // DEBUG_PRINTLN();
 }
 
 // Append data to data file
@@ -211,7 +209,7 @@ void AppendData() {
   AppendToData(dataPtr);
 
   // Print data to console
-  DEBUG_PRINTLN(dataPtr);
+  // DEBUG_PRINTLN(dataPtr);
 }
 
 // Print package information

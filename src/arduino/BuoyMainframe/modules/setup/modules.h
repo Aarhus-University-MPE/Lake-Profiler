@@ -10,6 +10,7 @@
 
 // Config
 #include "../../config/commandlist.h"
+#include "../../config/components.h"
 #include "../../config/constants.h"
 #include "../../config/memory.h"
 #include "../../config/pinout.h"

@@ -71,25 +71,37 @@ void AutonomyState() {
       break;
     // Await top position reached
     case 10:
-      if (MotorPositionReached(MOTOR_DIR_UP)) autonomyState++;
+      if (MotorPositionReached()) {
+        MotorMove(MOTOR_DIR_HALT);
+        DEBUG_PRINTLINE();
+        DEBUG_PRINTLN(F("Top Position Reached!"));
+        DEBUG_PRINTLINE();
+        AppendToLog(F("Top Position Reached!"));
+        autonomyState++;
+      }
       break;
     // Top position reached, turn off canister and move to bottom position
     case 11:
       DataLogStop();
+      DEBUG_PRINTLINE();
+      DEBUG_PRINTLN(F("Moving to Bottom Position"));
+      DEBUG_PRINTLINE();
       MotorMove(MOTOR_DIR_DOWN);
       autonomyState++;
       break;
     // Await bottom position reached
     case 12:
-      if (MotorPositionReached(MOTOR_DIR_DOWN)) autonomyState++;
+      if (MotorPositionReached()) autonomyState++;
       break;
     case 13:
+      MotorMove(MOTOR_DIR_HALT);
       DEBUG_PRINTLINE();
       DEBUG_PRINTLN(F("Bottom position reached, system idle until next logging"));
       DEBUG_PRINTLN(F("Full log complete"));
       DEBUG_PRINTLINE();
       AppendToLog(F("Bottom position reached"), true);
       AppendToLog(F("Full log complete"), true);
+      AutonomyStopLog();
       break;
     default:
       autonomyState = 0;
@@ -104,7 +116,6 @@ bool AutonomyStartLog() {
   DEBUG_PRINTLINE();
   if (DataLogStart()) {
     millisAutonomyStart = millis();
-    DEBUG_PRINTLN(F("Awaiting Handshake... "));
     return true;
   } else {
     AutonomyStopLog();
@@ -131,6 +142,7 @@ bool AutonomyPowerCheck() {
   if (BatteryStatus()) {
     AppendToLog(F(" \% - Sufficient"), true);
     DEBUG_PRINTLN(F(" \% - Sufficient"));
+    DEBUG_PRINTLINE();
     return true;
   } else {
     AppendToLog(F(" % - Insufficient"), true);
@@ -155,12 +167,12 @@ void AutonomyStartCanister() {
 bool AutonomyAwaitHandshake() {
   // Check timeout
   if (millis() - millisAutonomyStart > LOGGING_START_TIMEOUT) {
-    DEBUG_PRINTLN(F("Acknowledge timeout Error"));
+    DEBUG_PRINTLN(F("Handshake timeout Error"));
     AutonomyStopLog();
     return false;
   }
 
-  return AcknowledgeReceived();
+  return HandshakeReceived();
 }
 
 // Await Acknowledge, timeout if too long
@@ -186,13 +198,13 @@ void ButtonOverride() {
   // Check if one of the buttons are have been released
   if (digitalRead(PI_BUTTON_MOTOR_DOWN) || digitalRead(PI_BUTTON_MOTOR_UP)) return;
 
-  // If currently Logging, Stop
-  if (autonomyState != 0) {
-    AutonomyStopLog();
+  // If currently inactive start logging (Waiting for Alarm0 or Alarm1)
+  if (autonomyState == 8 || autonomyState == 0) {
+    autonomyState++;
   }
-  // else (currently inactive) start logging
+  // If currently logging, stop
   else {
-    autonomyState = 1;
+    AutonomyStopLog();
   }
 }
 

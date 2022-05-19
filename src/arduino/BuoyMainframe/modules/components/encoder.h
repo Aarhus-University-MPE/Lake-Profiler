@@ -1,37 +1,24 @@
 #pragma once
 #include "../setup/modules.h"
 
-byte motorDirection;
+int motorDirection   = 1;
 int encoderCount     = 0;
 int encoderRotations = 0;
 
-unsigned int lastMillisUpdate = 0;
-
-// Update and save current positions
-void EncoderUpdate() {
-  // Throttle updates
-  if (millis() - lastMillisUpdate < ENCODER_UPDATE_PERIOD) return;
-
-  lastMillisUpdate = millis();
-  EEPROMSetMotorPos();
-}
-
 // Increments encoder values
 void EncoderAInterrupt() {
-  DEBUG_PRINTLN("A");
-  motorDirection = digitalRead(PI_ENCODER_B);
+  motorDirection = digitalRead(PI_ENCODER_B) ? 1 : -1;
   encoderCount += motorDirection;
 }
 
 // Increments encoder values
 void EncoderBInterrupt() {
-  // motorDirection = digitalRead(PI_ENCODER_A);
-  // encoderCount += motorDirection;
+  motorDirection = digitalRead(PI_ENCODER_A);
+  encoderCount += motorDirection;
 }
 
 // Increments encoder values
 void EncoderZInterrupt() {
-  DEBUG_PRINTLN("Z");
   encoderRotations += motorDirection;
   encoderCount = 0;
 }
@@ -62,17 +49,17 @@ int GetEncoderCountBottom() {
   return EEPROM_READ_INT(MEMADDR_ENCODER_COUNT_BOTTOM);
 }
 
-void SetEncoderRotationsTop(uint8_t value) {
+void SetEncoderRotationsTop(int value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_ROTATION_TOP, value);
 }
-void SetEncoderRotationsBottom(uint8_t value) {
+void SetEncoderRotationsBottom(int value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_ROTATION_BOTTOM, value);
 }
 
-void SetEncoderCountTop(uint8_t value) {
+void SetEncoderCountTop(int value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT_TOP, value);
 }
-void SetEncoderCountBottom(uint8_t value) {
+void SetEncoderCountBottom(int value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT_BOTTOM, value);
 }
 
@@ -94,15 +81,16 @@ void SetEncoderBottom() {
   SetEncoderRotationsBottom(encoderRotations);
 }
 
-// Save current position in EEPROM TODO: Add this somewhere
+// Save current position in EEPROM
 void EEPROMSetMotorPos() {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT, encoderCount);
   EEPROM_WRITE_INT(MEMADDR_ENCODER_ROTATION, encoderRotations);
+  // EncoderPrintPos();
 }
 
 // Prints current position
 void EncoderPrintPos() {
-  DEBUG_PRINT(F("Count: "));
+  DEBUG_PRINT(F("Encoder Position, Count: "));
   DEBUG_PRINT(encoderCount);
   DEBUG_PRINT(F(", Rotations: "));
   DEBUG_PRINTLN(encoderRotations);

@@ -93,7 +93,7 @@ void BlackBoxAppend(String blackBoxInput) {
   File blackBoxFile = SD.open("Blackbox.csv", FILE_WRITE);
   if (blackBoxFile) {
     if (newLine) {
-      blackBoxFile.print((String)millis());
+      blackBoxFile.print((String)now());
       blackBoxFile.print(F(";"));
       newLine = false;
     }
@@ -132,7 +132,7 @@ void BlackBoxAppend(long int blackBoxInput, int type) {
   File blackBoxFile = SD.open("Blackbox.csv", FILE_WRITE);
   if (blackBoxFile) {
     if (newLine) {
-      blackBoxFile.print(millis());
+      blackBoxFile.print((String)now());
       blackBoxFile.print(F(";"));
       newLine = false;
     }

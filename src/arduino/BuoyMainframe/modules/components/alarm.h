@@ -68,14 +68,14 @@ void InitializeAlarm() {
 }
 
 // set alarm based on input hour
-void SetAlarm(byte hour, uint8_t src) {
+void SetAlarm(byte hourHex, uint8_t src) {
   if (!GetStatus(MODULE_CLOCK)) {
     DEBUG_PRINTLN(F("Clock Error"));
     return;
   }
   RTCC.setSec(src, 0x00);
   RTCC.setMin(src, 0x00);
-  RTCC.setHour(src, HourToHex(HexToHour(hour) - 1));  // Start 1 hour before for warmup
+  RTCC.setHour(src, hourHex);  // Start 1 hour before for warmup
   RTCC.setDay(src, 0x01);
   RTCC.setDate(src, 0x01);
   RTCC.setMonth(src, 0x01);
@@ -169,6 +169,7 @@ bool AlarmStatus(uint8_t src) {
     default:
       break;
   }
+  return false;
 }
 
 uint8_t NextAlarm() {
@@ -186,11 +187,15 @@ uint8_t NextAlarm() {
 
   hourDifference = alarm[i] - hour;
 
-  while (hourDifference <= 0 && i < alarmFrequency) {
+  while (hourDifference <= GetWarmupTime() + 1 && i < alarmFrequency) {
     i++;
     hourDifference = alarm[i] - hour;
   }
-  // Serial.print(F(", next closest alarm: "));
-  // Serial.println(alarm[i], HEX);
-  return alarm[i];
+
+  // Check for wrap around (0:00 - 1 hr, = 24:00 - 1 hr)
+  if (alarm[i] - GetWarmupTime() < 0) {
+    return HourToHex(HexToHour(alarm[i]) + 24 - GetWarmupTime());
+  } else {
+    return HourToHex(HexToHour(alarm[i]) - GetWarmupTime());
+  }
 }

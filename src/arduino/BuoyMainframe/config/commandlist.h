@@ -50,17 +50,23 @@
 #define CMD_ALARM_FREQUENCY      'F'
 #define CMD_ALARM_START_HOUR     'S'
 #define CMD_ALARM_BEGIN          'B'
+#define CMD_ALARM_WARMUP_SET     'W'
+#define CMD_ALARM_WARMUP_GET     'w'
 
 // Motor Encoder
 #define CMD_ENCODER              'E'
 #define CMD_ENCODER_PRINT_POS    'P'
 #define CMD_ENCODER_PRINT_TOP    'T'
 #define CMD_ENCODER_PRINT_BOTTOM 'B'
-#define CMD_ENCODER_SET_TOP      'U'
-#define CMD_ENCODER_SET_BOTTOM   'L'
+#define CMD_ENCODER_SET_TOP      't'
+#define CMD_ENCODER_SET_BOTTOM   'b'
 
 // Power
 #define CMD_POWER                'P'
 #define CMD_POWER_SET            'S'
 #define CMD_POWER_GET            'G'
 #define CMD_POWER_PRINT          'P'
+
+// <Cm54><CH14><CD19><CM5><CY22><CP>
+
+// <FRdata/22051915.csv><FRdata/22051915.log>

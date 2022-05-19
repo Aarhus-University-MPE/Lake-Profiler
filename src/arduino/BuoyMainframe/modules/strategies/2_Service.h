@@ -34,6 +34,9 @@ void FinishStrategyService() {
   DEBUG_PRINTLN(F("Strategy (Service): Ending"));
   DEBUG_PRINTLINE();
 
+  // Save current position to EEPROM
+  EEPROMSetMotorPos();
+
   // Disable secondary modules
   ModuleDisable();
 
