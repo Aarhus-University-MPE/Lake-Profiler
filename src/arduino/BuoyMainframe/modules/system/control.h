@@ -24,8 +24,7 @@ void ModuleEnable(uint8_t module) {
       status = BatteryStatus(true);
       break;
     case MODULE_PWR_MOTOR:
-      // TODO: enable motor power
-      digitalWrite(PO_POWER_ENCODER, true);
+      // No Primary Power, encoders enabled constantly.
       break;
     case MODULE_PWR_CANISTER:
       digitalWrite(PO_POWER_CANISTER, true);
@@ -119,8 +118,7 @@ void ModuleDisable(int module) {
       status = BatteryStatus();
       break;
     case MODULE_PWR_MOTOR:
-      // TODO: disable motor power
-      digitalWrite(PO_POWER_ENCODER, false);
+      // No Primary Power, encoders enabled constantly.
       break;
     case MODULE_PWR_CANISTER:
       digitalWrite(PO_POWER_CANISTER, false);

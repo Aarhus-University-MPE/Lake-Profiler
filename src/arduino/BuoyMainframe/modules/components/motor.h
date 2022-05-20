@@ -16,8 +16,6 @@ bool setPos = false;
 
 // Initialize motors and turns on encoder power
 bool InitializeMotors() {
-  // digitalWrite(PO_POWER_ENCODER, true); // Powered on by default
-
   // Initialize outputs
   digitalWrite(PO_MOTOR_DOWN, false);
   digitalWrite(PO_MOTOR_UP, false);
@@ -32,8 +30,6 @@ bool InitializeMotors() {
 void TerminateMotors() {
   // Save current position to EEPROM
   EEPROMSetMotorPos();
-  // Power off encoder
-  // digitalWrite(PO_POWER_ENCODER, false); // // Powered on by default
 
   // Motor termination
   digitalWrite(PO_MOTOR_DOWN, false);
