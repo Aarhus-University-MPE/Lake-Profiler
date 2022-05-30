@@ -26,8 +26,9 @@ static int at_send_check_response(String p_ack_str, int timeout_ms, String p_cmd
   memset(recv_buf, 0, sizeof(recv_buf));
   va_start(args, p_cmd_str);
   sprintf(buff, p_cmd, args);
-  Serial1.print(buff);  // args?
-  Serial.print(buff);   // args?
+  Serial1.print(buff);
+  Serial.print(F("Sending: "));
+  Serial.print(buff);
   va_end(args);
   delay(200);
   startMillis = millis();
@@ -87,22 +88,25 @@ void setup(void) {
   Serial1.begin(9600);
   Serial.print("E5 LORAWAN TEST\r\n");
 
-  if (at_send_check_response("+AT: OK", 100, "AT\r\n")) {
-    is_exist = true;
-    at_send_check_response("+ID: AppEui", 1000, "AT+ID\r\n");
-    at_send_check_response("+MODE: LWOTAA", 1000, "AT+MODE=LWOTAA\r\n");
-    at_send_check_response("+DR: EU868", 1000, "AT+DR=EU868\r\n");
-    at_send_check_response("+CH: NUM", 1000, "AT+CH=NUM,0-2\r\n");
-    at_send_check_response("+KEY: APPKEY", 1000, "AT+KEY=APPKEY,\"2B7E151628AED2A6ABF7158809CF4F3C\"\r\n");
-    at_send_check_response("+CLASS: C", 1000, "AT+CLASS=A\r\n");
-    at_send_check_response("+PORT: 8", 1000, "AT+PORT=8\r\n");
-    delay(200);
-    is_join = true;
-  } else {
-    is_exist = false;
-    Serial.print("No E5 module found.\r\n");
-    while (1)
-      ;
+  while (!is_join) {
+    if (at_send_check_response("+AT: OK", 1000, "AT\r\n")) {
+      is_exist = true;
+      at_send_check_response("+ID: AppEui", 1000, "AT+ID\r\n");
+      at_send_check_response("+MODE: LWOTAA", 1000, "AT+MODE=LWOTAA\r\n");
+      at_send_check_response("+DR: EU868", 1000, "AT+DR=EU868\r\n");
+      at_send_check_response("+CH: NUM", 1000, "AT+CH=NUM,0-2\r\n");
+      at_send_check_response("+KEY: APPKEY", 1000, "AT+KEY=APPKEY,\"2B7E151628AED2A6ABF7158809CF4F3C\"\r\n");
+      at_send_check_response("+CLASS: C", 1000, "AT+CLASS=A\r\n");
+      at_send_check_response("+PORT: 8", 1000, "AT+PORT=8\r\n");
+      delay(200);
+      is_join = true;
+    } else {
+      is_exist = false;
+      Serial.print("No E5 module found.\r\n");
+      delay(5000);
+      // while (1)
+      // ;
+    }
   }
 }
 
