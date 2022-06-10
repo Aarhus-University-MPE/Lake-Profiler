@@ -157,6 +157,7 @@
 #define LOGGING_START_TIMEOUT    5000
 
 // LORA
+#define COM_LORA_BAUDRATE        9600
 #define LORA_FREQUENCY           434.0
 #define CLIENT_ADDRESS           1
 #define SERVER_ADDRESS           2

@@ -14,8 +14,9 @@
 int lumValue = 314;
 
 bool LumInitialize() {
-  // pinMode(PA_LUM_SENSOR, INPUT);
-  return true;
+  pinMode(PA_LUM_SENSOR, INPUT);
+
+  return GetLumValue() != 0;
 }
 
 void LumTerminate() {
@@ -38,7 +39,6 @@ void LumRead() {
 
 int GetLumValue() {
   LumRead();
-  return 314;  // TODO: remove
   return lumValue;
 }
 

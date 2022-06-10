@@ -30,6 +30,8 @@ void parseCommandStrategy();
 void parseCommandModule();
 void parseCommandEncoder();
 void parseCommandPower();
+void parseCommandLogging();
+void parseCommandCanister();
 void CountDownPrint();
 const byte numChars = 200;
 
@@ -203,6 +205,7 @@ void AutonomyStopLog();
 void AutonomyState();
 bool AutonomyPowerCheck();
 void AutonomyStartCanister();
+bool LoggingActive();
 
 bool HandshakeReceived();
 bool AcknowledgeReceived();
@@ -310,3 +313,10 @@ void SetAlarm();
 void SetAlarm(uint8_t hour);
 uint8_t NextAlarm();
 uint8_t SetAlarmHourFromNow();
+
+// LoRa
+static int at_send_check_response(bool printResponse, String p_ack_str, int timeout_ms, String p_cmd_str, ...);
+static void recv_prase(char *p_msg);
+
+bool LoRaJoin();
+bool LoRaConfigure();

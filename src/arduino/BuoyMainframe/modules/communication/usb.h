@@ -96,6 +96,12 @@ void parseCommand() {
     case CMD_POWER:
       parseCommandPower();
       break;
+    case CMD_LOGGING:
+      parseCommandLogging();
+      break;
+    case CMD_CANISTER:
+      parseCommandCanister();
+      break;
     case '\0':
       break;
     default:
@@ -391,6 +397,34 @@ void parseCommandPower() {
     default:
       break;
   }
+}
+
+void parseCommandLogging() {
+  switch (receivedCMD[1]) {
+    case CMD_LOGGING_START:
+      DEBUG_PRINTLN(F("Manual Canister Start"));
+      ModuleEnable(MODULE_PWR_CANISTER);
+      ModuleEnable(MODULE_COMM_CANISTER);
+      break;
+    case CMD_LOGGING_BEGIN:
+      DEBUG_PRINTLN(F("Manual Log Start"));
+      COM_SERIAL_CANISTER.println("<L>");
+      break;
+    default:
+      break;
+  }
+}
+
+void parseCommandCanister() {
+  char *command = receivedCMD + 1;
+
+  DEBUG_PRINTLINE();
+  DEBUG_PRINT(F("Sending command to Canister: \"<"));
+  DEBUG_PRINT(command);
+  DEBUG_PRINTLN(F(">\""));
+  COM_SERIAL_CANISTER.print(F("<"));
+  COM_SERIAL_CANISTER.print(command);
+  COM_SERIAL_CANISTER.print(F(">"));
 }
 
 void CountDownPrint() {

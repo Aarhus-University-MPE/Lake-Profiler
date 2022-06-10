@@ -129,7 +129,7 @@ void parseCommandLog() {
 void BuoySendStart(uint8_t size) {
   COM_BUOY.print("<P");
   uint8_t sizePackage[1];
-  sizePackage[0] = size;
+  sizePackage[0] = size + 2;
   COM_BUOY.write(sizePackage, 1);
 }
 
@@ -155,6 +155,7 @@ bool BuoySendPackage(uint8_t package[], uint8_t size) {
     DEBUG_PRINTLN(F("Module Not Active!"));
     return false;
   }
+  if (size == 0) return true;
 
   PrintPackage(package, size);
 
@@ -164,13 +165,10 @@ bool BuoySendPackage(uint8_t package[], uint8_t size) {
   BuoySendEndline();
   ResetAcknowledge();
 
-  delay(5);
-  recvWithStartEndMarkers();
-
   int retry = 0;
-  while (!acknowledgeReceived && retry < 3) {
+  while (!acknowledgeReceived && retry < 5) {
     recvWithStartEndMarkers();
-    if (millis() - lastMillisSend > 200) {
+    if (millis() - lastMillisSend > 500) {
       retry++;
       DEBUG_PRINTLN(F("Failed to received ACK, resending"));
       BuoySendStart(size);
@@ -184,7 +182,7 @@ bool BuoySendPackage(uint8_t package[], uint8_t size) {
     DEBUG_PRINTLN(F("Failed to received ACK"));
     // Stop log report error
     BuoySendCommunicationError();
-    LoggingStop();
+    // LoggingStop(); // TODO: handle?
     return false;
   }
 
@@ -237,14 +235,14 @@ void PrintPackage(uint8_t package[], uint8_t size) {
   // DEBUG_PRINTLN(F("Sending Package uint8: "));
 
   DEBUG_PRINT(F("Message ("));
-  DEBUG_PRINT(size);
+  DEBUG_PRINT(size + 2);
   DEBUG_PRINT(F("): "));
 
   // Print package
-  // for (uint8_t i = 0; i < size; i++) {
-  //   DEBUG_PRINT2(package[i], HEX);
-  //   DEBUG_PRINT(F(" "));
-  // }
+  for (uint8_t i = 0; i < size; i++) {
+    DEBUG_PRINT2(package[i], HEX);
+    DEBUG_PRINT(F(" "));
+  }
 
   DEBUG_PRINTLN();
   // DEBUG_PRINTLINE();

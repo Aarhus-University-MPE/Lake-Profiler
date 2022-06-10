@@ -2,7 +2,7 @@
 
 void setup() {
   Serial.begin(115200);
-  Serial1.begin(9600);
+  Serial3.begin(9600);
 
   unsigned long startMillis = 0;
   int ch;
@@ -10,13 +10,13 @@ void setup() {
 
   while (1) {
     Serial.println(F("LoRa Test... "));
-    Serial1.print("AT\r\n");
+    Serial3.print("AT\r\n");
     recData     = false;
     startMillis = millis();
 
     while (millis() - startMillis < 200 && !recData) {
-      while (Serial1.available() > 0) {
-        ch = Serial1.read();
+      while (Serial3.available() > 0) {
+        ch = Serial3.read();
         Serial.print((char)ch);
         delay(2);
         recData = true;

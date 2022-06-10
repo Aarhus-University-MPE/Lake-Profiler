@@ -15,20 +15,20 @@ static int led       = 0;
 
 static int at_send_check_response(String p_ack_str, int timeout_ms, String p_cmd_str, ...) {
   int ch;
-  int num           = 0;
-  int index         = 0;
-  int startMillis   = 0;
-  const char *p_ack = p_ack_str.c_str();
-  const char *p_cmd = p_cmd_str.c_str();
+  int num                   = 0;
+  int index                 = 0;
+  unsigned long startMillis = 0;
+  const char *p_ack         = p_ack_str.c_str();
+  const char *p_cmd         = p_cmd_str.c_str();
   char buff[512];
 
   va_list args;
   memset(recv_buf, 0, sizeof(recv_buf));
   va_start(args, p_cmd_str);
   sprintf(buff, p_cmd, args);
-  Serial1.print(buff);
-  Serial.print(F("Sending: "));
-  Serial.print(buff);
+  Serial3.print(buff);
+  // Serial.print(F("Sending: "));
+  // Serial.print(buff);
   va_end(args);
   delay(200);
   startMillis = millis();
@@ -37,9 +37,9 @@ static int at_send_check_response(String p_ack_str, int timeout_ms, String p_cmd
     return 0;
   }
 
-  do {
-    while (Serial1.available() > 0) {
-      ch                = Serial1.read();
+  while (millis() - startMillis < timeout_ms) {
+    while (Serial3.available() > 0) {
+      ch                = Serial3.read();
       recv_buf[index++] = ch;
       Serial.print((char)ch);
       delay(2);
@@ -48,8 +48,7 @@ static int at_send_check_response(String p_ack_str, int timeout_ms, String p_cmd
     if (strstr(recv_buf, p_ack) != NULL) {
       return 1;
     }
-
-  } while (millis() - startMillis < timeout_ms);
+  }
   return 0;
 }
 
@@ -85,18 +84,17 @@ void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
 
-  Serial1.begin(9600);
+  Serial3.begin(9600);
   Serial.print("E5 LORAWAN TEST\r\n");
 
   while (!is_join) {
     if (at_send_check_response("+AT: OK", 1000, "AT\r\n")) {
       is_exist = true;
-      at_send_check_response("+ID: AppEui", 1000, "AT+ID\r\n");
       at_send_check_response("+MODE: LWOTAA", 1000, "AT+MODE=LWOTAA\r\n");
       at_send_check_response("+DR: EU868", 1000, "AT+DR=EU868\r\n");
       at_send_check_response("+CH: NUM", 1000, "AT+CH=NUM,0-2\r\n");
-      at_send_check_response("+KEY: APPKEY", 1000, "AT+KEY=APPKEY,\"2B7E151628AED2A6ABF7158809CF4F3C\"\r\n");
-      at_send_check_response("+CLASS: C", 1000, "AT+CLASS=A\r\n");
+      at_send_check_response("+KEY: APPKEY", 1000, "AT+KEY=APPKEY,\"2B7B151628AED2A6AAF7157609CF4F2C\"\r\n");
+      at_send_check_response("+CLASS: A", 1000, "AT+CLASS=A\r\n");
       at_send_check_response("+PORT: 8", 1000, "AT+PORT=8\r\n");
       delay(200);
       is_join = true;
@@ -117,15 +115,20 @@ void loop(void) {
     if (ret) {
       is_join = false;
     } else {
-      at_send_check_response("+ID: AppEui", 1000, "AT+ID\r\n");
+      at_send_check_response("+ID: DevAddr", 1000, "AT+ID=DevAddr\r\n");
+      at_send_check_response("+ID: DevEui", 1000, "AT+ID=DevEui\r\n");
+      at_send_check_response("+ID: AppEui", 1000, "AT+ID=AppEui\r\n");
       Serial.print("JOIN failed!\r\n\r\n");
       delay(5000);
     }
   } else {
     char cmd[128];
-    sprintf(cmd, "AT+CMSGHEX=\"%04X%04X\"\r\n", (int)314, (int)314);
+    sprintf(cmd, "AT+CMSGHEX=\"%d%d\"\r\n", (314, 314));
+    Serial.print(cmd);
+    Serial.println(F("Sending Message... "));
     ret = at_send_check_response("Done", 5000, cmd);
     if (ret) {
+      Serial.println(F("Message Sent!"));
       recv_prase(recv_buf);
     } else {
       Serial.print("Send failed!\r\n\r\n");

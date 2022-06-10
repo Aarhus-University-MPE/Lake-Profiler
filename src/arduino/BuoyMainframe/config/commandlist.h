@@ -67,6 +67,14 @@
 #define CMD_POWER_GET            'G'
 #define CMD_POWER_PRINT          'P'
 
-// <Cm54><CH14><CD19><CM5><CY22><CP>
+// LoggingOverride
+#define CMD_LOGGING              'L'
+#define CMD_LOGGING_START        'S'
+#define CMD_LOGGING_BEGIN        'B'
+
+// Canister
+#define CMD_CANISTER             'c'
+
+// <Cm53><CH10><CD2><CM6><CY22><CP>
 
 // <FRdata/22051915.csv><FRdata/22051915.log>

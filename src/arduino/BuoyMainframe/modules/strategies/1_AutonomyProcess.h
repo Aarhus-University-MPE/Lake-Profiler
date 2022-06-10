@@ -102,6 +102,7 @@ void AutonomyState() {
       AppendToLog(F("Bottom position reached"), true);
       AppendToLog(F("Full log complete"), true);
       AutonomyStopLog();
+      autonomyState = 0;
       break;
     default:
       autonomyState = 0;
@@ -208,6 +209,6 @@ void ButtonOverride() {
   }
 }
 
-// Move motor up until at end pos, then return true
-void AutonomyMotorProcess() {
+bool LoggingActive() {
+  return autonomyState > 0;
 }

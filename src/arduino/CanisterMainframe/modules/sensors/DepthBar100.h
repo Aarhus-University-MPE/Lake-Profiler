@@ -4,9 +4,6 @@
     Component:
       https://bluerobotics.com/store/sensors-sonars-cameras/sensors/bar100-sensor-r2-rp/
 
-    <TODO: Temporary, until replacement arrives:
-      https://bluerobotics.com/store/sensors-sonars-cameras/sensors/bar30-sensor-r1/
-
     Primary Library:
       https://github.com/bluerobotics/BlueRobotics_KellerLD_Library
 
@@ -26,7 +23,7 @@ bool DepthInitialize() {
   bar100Sensor.init();
   bar100Sensor.setFluidDensity(997);  // kg/m^3 (freshwater, 1029 for seawater)
 
-  return true;  // TODO: Remove
+  // return true;  // TODO: Remove
   return bar100Sensor.isInitialized();
 }
 

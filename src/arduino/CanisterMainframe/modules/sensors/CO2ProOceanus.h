@@ -6,6 +6,8 @@
     Data Format (csv):
       W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.697,1007.02,18.40,11.8,4095,2439,1895
 
+      500.00, 503.28
+
     Description:
       Start,Y,M,D,H,M,S,Ref [A/D], Current [A/D], Raw CO2 [ppm], Corrected CO2 [ppmv],
       Sensor Temp [C], Pressure [mBar], IR cell temp [C], Supply Voltage [V], Logger temp [A/D],
@@ -19,16 +21,20 @@
 #pragma once
 #include "../setup/modules.h"
 
-const byte numCharsCO2 = 200;
-const byte ppmIndexCO2 = 10;
-float co2Concentration = 3.14f;
-char dataCO2[numCharsCO2];
-char latestDataCO2[numCharsCO2] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.697,1007.02,18.40,11.8,4095,2439,1895";
-uint8_t packageSizeCO2          = 88;
+const byte numCharsCO2    = 200;
+const byte ppmIndexCO2    = 11;
+float co2Concentration    = -1.0;
+char dataCO2[numCharsCO2] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.697,1007.02,18.40,11.8,4095,2439,1895";
+
+char latestDataCO2_0[50] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,";
+char latestDataCO2_1[50] = "20.697,1007.02,18.40,11.8,4095,2439,1895";
+
+uint8_t packageSizeCO2_0 = 5;
+uint8_t packageSizeCO2_1 = 40;
 
 bool CO2Initialize() {
   COM_CO2.begin(COM_CO2_BAUDRATE);
-  return COM_CO2;
+  return false;
 }
 
 void CO2Terminate() {
@@ -85,31 +91,33 @@ void recvWithStartEndMarkersCO2() {
 }
 
 // Parses data string and extract desired values (CO2 Concentration)
-// TODO: Verify ppmindex extraction correct
 void parseDataCO2(uint8_t size) {
   if (dataCO2[2] != 'M') {  // "W M"
     return;
   }
-  DEBUG_PRINT(F("Received Data Package: "));
-  DEBUG_PRINTLN(dataCO2);
+  // DEBUG_PRINT(F("Received Data Package: "));
+  // DEBUG_PRINTLN(dataCO2);
 
-  memset(latestDataCO2, 0, numCharsCO2);
-  strcpy(latestDataCO2, dataCO2);
+  memset(latestDataCO2_0, 0, 50);
+  memset(latestDataCO2_1, 0, 50);
 
-  packageSizeCO2 = size;
+  // strcpy(latestDataCO2, dataCO2);
 
-  // char tempChars[numCharsCO2];
-  // char *strtokIndx;
-  // strcpy(tempChars, dataCO2);
+  packageSizeCO2_0 = min(50, size);
+  packageSizeCO2_1 = min(50, size - 50);
 
-  // // Scan forward to ppmIndexCO2, values separated by ","
-  // strtokIndx = strtok(tempChars, ",");
-  // for (size_t i = 0; i < ppmIndexCO2 - 1; i++) {
-  //   strtokIndx = strtok(NULL, ",");
-  // }
+  char tempChars[numCharsCO2];
+  char *strtokIndx;
+  strcpy(tempChars, dataCO2);
 
-  // // Convert to float (231546 = 231,546 ppm)
-  // co2Concentration = atoi(strtokIndx) / 1000.0f;
+  // Scan forward to ppmIndexCO2, values separated by ","
+  strtokIndx = strtok(tempChars, ",");
+  for (size_t i = 0; i < ppmIndexCO2 - 1; i++) {
+    strtokIndx = strtok(NULL, ",");
+  }
+
+  // Convert to float (231546 = 231,546 ppm)
+  co2Concentration = atof(strtokIndx);
 }
 
 float GetCo2Concentration() {
@@ -118,5 +126,7 @@ float GetCo2Concentration() {
 
 // Send latest package
 bool CO2SendPackage() {
-  return BuoySendPackage(latestDataCO2, packageSizeCO2);
+  if (!BuoySendPackage(latestDataCO2_0, packageSizeCO2_0)) return false;
+  // if (!BuoySendPackage(latestDataCO2_1, packageSizeCO2_1)) return false;
+  return true;
 }

@@ -22,7 +22,7 @@ uint8_t tempData;
 bool TempInitialize() {
   sensorTSY01.init();
 
-  return true;
+  return GetTemp() != 0;
 }
 
 void TempTerminate() {

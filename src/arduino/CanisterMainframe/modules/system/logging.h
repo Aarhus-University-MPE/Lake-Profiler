@@ -5,8 +5,8 @@ unsigned int sampleID, loggingSampleInterval;
 bool systemActive              = false;
 unsigned int sampleIndex       = 0;
 unsigned long lastMillisSensor = 0;
-const byte packageSize         = 5;
-uint8_t package[packageSize];
+uint8_t packageSize            = 23;
+uint8_t package[25];
 
 bool LoggingStart() {
   DEBUG_PRINTLINE();
@@ -19,17 +19,13 @@ bool LoggingStart() {
   SetSampleID();
   ReadSampleInterval();
 
-  if (!SystemEnablePrimary()) {
-    DEBUG_PRINTLINE();
-    DEBUG_PRINTLN(F("Logging Start Error!"));
-    systemActive = false;
-    DEBUG_PRINTLINE();
-    return systemActive;
-  }
+  SystemEnablePrimary();
+
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Logging Started Success"));
+  DEBUG_PRINTLN(F("Logging Started"));
   DEBUG_PRINTLINE();
-  BuoySendLogStart();
+
+  // BuoySendLogStart();
   systemActive = true;
 
   return systemActive;
@@ -45,26 +41,30 @@ void LoggingStop() {
 // Package header
 bool SendHeader() {
   BundleIdentifier(PACKAGE_0);
-  return BuoySendPackage(package, packageSize);
+  return BuoySendPackage(package, 5);
 }
 
 // Package footer
 bool SendFooter() {
   BundleIdentifier(PACKAGE_END);
-  return BuoySendPackage(package, packageSize);
+  return BuoySendPackage(package, 5);
 }
 // Send all packages
 bool SendPackage() {
   DEBUG_PRINTLN(F("Sending Package: "));
 
-  if (!SendHeader()) return false;
+  // if (!SendHeader()) return false;
   DEBUG_PRINTLINE();
-  if (!CH4SendPackage()) return false;
-  if (!CO2SendPackage()) return false;
-  if (!DepthSendPackage()) return false;
-  if (!TempSendPackage()) return false;
-  if (!LumSendPackage()) return false;
-  if (!SendFooter()) return false;
+  // if (!CH4SendPackage()) return false;
+  // if (!CO2SendPackage()) return false;
+  // if (!DepthSendPackage()) return false;
+  // if (!TempSendPackage()) return false;
+  // if (!LumSendPackage()) return false;
+
+  BuildPackage();
+  if (!BuoySendPackage(package, packageSize)) return false;
+
+  // if (!SendFooter()) return false;
   DEBUG_PRINTLINE();
   return true;
 }
@@ -77,10 +77,8 @@ void SensorBroadcast() {
 
   lastMillisSensor = millis();
 
-  // Rebuild Package with latest data
-  if (!SendPackage()) {
-    delay(5000);  // TODO: Remove?
-  }
+  // Rebuild and send Package with latest data
+  SendPackage();
 }
 
 // Primary Sensor Loop
@@ -125,6 +123,7 @@ void BundleIdentifier(PackageIdentifier identifier) {
   AppendUnsignedInt(sampleID, 1);
 
   // Sample index
+  sampleIndex = SampleIndex();
   AppendUnsignedInt(sampleIndex, 3);
 }
 
@@ -162,13 +161,13 @@ void AppendUnsignedInt(unsigned int data, int index) {
 /* Bundle data into a package
  */
 void BuildPackage() {
-  BundleIdentifier(PACKAGE_0);  // Byte 0,1,2,3,4,5,24,25,26
-
-  AppendFloat(GetCH4Concentration(), 6);   // Byte 6,7,8,9
-  AppendFloat(GetCo2Concentration(), 10);  // Byte 10,11,12,13
-  AppendFloat(GetDepth(), 14);             // Byte 14,15,16,17
-  AppendFloat(GetTemp(), 18);              // Byte 18,19,20,21
-  AppendInt(GetLumValue(), 22);            // Byte 22,23
+  BundleIdentifier(PACKAGE_0);  // Byte 0-5
+  // package[0] = '$';
+  AppendFloat(GetCH4Concentration(), 6);   // Byte 6-9
+  AppendFloat(GetCo2Concentration(), 10);  // Byte 10-13
+  AppendFloat(GetDepth(), 14);             // Byte 14-17
+  AppendFloat(GetTemp(), 18);              // Byte 18-21
+  AppendInt(GetLumValue(), 22);            // Byte 22-23
   // TimeStamp();                            // Timestamp added at top
 }
 

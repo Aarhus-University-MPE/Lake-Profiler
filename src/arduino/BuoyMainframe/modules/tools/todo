@@ -3,3 +3,4 @@ TODO:
   - Save datapackage to (ID) file
   - LoRa active from start @done
   - Power new conversion constants (float instead of analogread values) @done
+  - Rewrite canister to just constantly broadcast

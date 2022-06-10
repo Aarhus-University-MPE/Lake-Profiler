@@ -44,10 +44,11 @@ void ModuleEnable(uint8_t module) {
       break;
     case MODULE_NA4:
       break;
-    case MODULE_NA5:
+    case MODULE_LORA:
+      status = InitializeLora();
       break;
     case MODULE_COMM_LORA:
-      status = InitializeLora();
+      status = LoRaJoin();
       break;
     case MODULE_COMM_CANISTER:
       status = InitializeCanister();
@@ -138,8 +139,6 @@ void ModuleDisable(int module) {
       break;
     case MODULE_NA4:
       break;
-    case MODULE_NA5:
-      break;
     case MODULE_COMM_LORA:
       TerminateLora();
       break;
@@ -183,6 +182,8 @@ void ModuleDisable() {
 void SystemEnablePrimary() {
   ModuleEnable(MODULE_SD);
   ModuleEnable(MODULE_BLACKBOX);
+  ModuleEnable(MODULE_LORA);
+  ModuleEnable(MODULE_COMM_LORA);
 }
 
 // Runs system check and compares active modules to required

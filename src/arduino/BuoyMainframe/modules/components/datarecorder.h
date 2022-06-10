@@ -54,6 +54,7 @@ bool InitializeLoggingFiles() {
 // Append data to the current .log file
 void AppendToLog(char *logInput, bool endLine) {
   if (!SDReaderStatus()) return;
+  if (!LoggingActive()) return;
   SDWriteStream(fileLocationLog, true);
   SDWriteStream(logInput);
   if (endLine) SDWriteStreamNewLine();
@@ -78,6 +79,8 @@ void AppendToLog(char *logInput) {
 
 // Append data to the current data file
 void AppendToData(char *dataInput, bool endLine) {
+  if (!SDReaderStatus()) return;
+  if (!LoggingActive()) return;
   SDWriteStream(fileLocationData, true);
   SDWriteStream(dataInput);
   if (endLine) SDWriteStreamNewLine();
@@ -91,6 +94,8 @@ void AppendToData(char *dataInput) {
 
 // Append data to the current data file
 void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine) {
+  if (!SDReaderStatus()) return;
+  if (!LoggingActive()) return;
   SDWriteStream(fileLocationData, true);
   SDWriteStream(dataInput, size);
   if (endLine) SDWriteStreamNewLine();
