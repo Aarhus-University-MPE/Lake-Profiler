@@ -11,11 +11,12 @@ bool DataLogStart() {
 }
 
 void DataLogStop() {
-  ModuleDisable(MODULE_PWR_CANISTER);
-  ModuleDisable(MODULE_COMM_CANISTER);
-  AppendToLog(F("Log Complete"), true);
-  AppendToLog(F("Timestamp: "));
-  AppendToLog((String)now(), true);
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("Stopping Data Log"));
+  DEBUG_PRINTLINE();
+
+  AppendToLog(F("Data logging Stopped"), true);
+  TimeStampLog();
 }
 
 void DataLogInitialized() {
@@ -45,4 +46,9 @@ int GetWarmupTime() {
 
 void SetWarmupTime(int warmupTime) {
   EEPROM_WRITE_INT(MEMADDR_SYSTEM_WARMUP, warmupTime);
+}
+
+void TimeStampLog() {
+  AppendToLog(F("Timestamp: "));
+  AppendToLog((String)now(), true);
 }

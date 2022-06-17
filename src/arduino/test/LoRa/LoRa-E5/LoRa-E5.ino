@@ -13,7 +13,7 @@ static bool is_exist = false;
 static bool is_join  = false;
 static int led       = 0;
 
-static int at_send_check_response(String p_ack_str, int timeout_ms, String p_cmd_str, ...) {
+static int at_send_check_response(String p_ack_str, unsigned long timeout_ms, String p_cmd_str, ...) {
   int ch;
   int num                   = 0;
   int index                 = 0;
@@ -123,7 +123,7 @@ void loop(void) {
     }
   } else {
     char cmd[128];
-    sprintf(cmd, "AT+CMSGHEX=\"%d%d\"\r\n", (314, 314));
+    sprintf(cmd, "AT+CMSGHEX=\"%d%d\"\r\n", (int)314, (int)314);
     Serial.print(cmd);
     Serial.println(F("Sending Message... "));
     ret = at_send_check_response("Done", 5000, cmd);

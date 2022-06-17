@@ -42,8 +42,7 @@ bool InitializeLoggingFiles() {
   // Initialize log file
   AppendToLog(F("Data Log Initialing - "), false);
   AppendToLog(fileName, true);
-  AppendToLog(F("Timestamp: "));
-  AppendToLog((String)now(), true);
+  TimeStampLog();
 
   DEBUG_PRINT(F("Current time: "));
   DEBUG_PRINTLN(now());

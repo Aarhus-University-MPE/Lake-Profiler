@@ -223,6 +223,7 @@ void AppendToData(uint8_t *dataInput, uint8_t size);
 void AppendData(uint8_t size);
 void AppendData();
 void TimeStampData();
+void TimeStampLog();
 
 // additional
 void ModuleDisable();
@@ -320,3 +321,6 @@ static void recv_prase(char *p_msg);
 
 bool LoRaJoin();
 bool LoRaConfigure();
+bool LoRaBroadcastLog();
+bool LoRaBroadcastData();
+void LoRaBroadcastBegin();

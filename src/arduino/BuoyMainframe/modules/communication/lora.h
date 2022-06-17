@@ -16,6 +16,7 @@
 #include "../setup/modules.h"
 
 static char recv_buf[512];
+unsigned long lineRead = 0;
 
 bool InitializeLora() {
   COM_SERIAL_LORA.begin(COM_LORA_BAUDRATE);
@@ -158,4 +159,64 @@ static void recv_prase(char *p_msg) {
   p_start = strstr(p_msg, "SNR");
   if (p_start && (1 == sscanf(p_start, "SNR %d", &snr))) {
   }
+}
+
+// Initialize broadcast
+void LoRaBroadcastBegin() {
+  DEBUG_PRINTLN(F("Initializing LoRa Broadcast"));
+  lineRead = 0;
+}
+
+// Transmit log
+void LoRaTransmitLog() {
+  char cmd[128];
+  sprintf(cmd, "AT+CMSGHEX=\"%d%d\"\r\n", (314, 314));
+  Serial.print(cmd);
+  Serial.println(F("Sending Message... "));
+  ret = at_send_check_response("Done", 5000, cmd);
+  if (ret) {
+    Serial.println(F("Message Sent!"));
+    recv_prase(recv_buf);
+  } else {
+    Serial.print("Send failed!\r\n\r\n");
+  }
+  delay(5000);
+}
+
+// Transmit latest log
+bool LoRaBroadcastLog() {
+  if (!LoraStatus()) {
+    DEBUG_PRINTLN(F("LoRa Module Error!"));
+    return true;
+  }
+
+  if (!GetStatus(MODULE_COMM_LORA)) {
+    DEBUG_PRINTLN(F("LoRa Connection Error!"));
+    return true;
+  }
+
+  // Transmit data
+  if (lineRead == 0) {
+    DEBUG_PRINTLN(F("Broadcasting Log"));
+    InitializeLogRead();
+  }
+
+  return true;
+}
+
+// Transmit latest data
+bool LoRaBroadcastData() {
+  if (!LoraStatus()) {
+    DEBUG_PRINTLN(F("LoRa Module Error!"));
+    return true;
+  }
+
+  if (!GetStatus(MODULE_COMM_LORA)) {
+    DEBUG_PRINTLN(F("LoRa Connection Error!"));
+    return true;
+  }
+
+  // Transmit data
+
+  return true;
 }

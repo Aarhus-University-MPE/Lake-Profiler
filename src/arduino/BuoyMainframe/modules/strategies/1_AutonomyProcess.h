@@ -24,7 +24,8 @@ void AutonomyProcess() {
 // Autonomy logging state machine
 void AutonomyState() {
   switch (autonomyState) {
-    // Idle, await preset alarm
+    // Idle, await Warmup alarm
+    // TODO: incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)
     case 0:
       if (AlarmStatus(RTCC_ALM0)) autonomyState++;
       break;
@@ -41,68 +42,69 @@ void AutonomyState() {
       AutonomyStartCanister();
       autonomyState++;
       break;
-    // Await handshake from canister
+    // Await status from canister
     case 4:
-      if (AutonomyAwaitHandshake()) autonomyState++;
+      if (AutonomyAwaitHandshake()) autonomyState++;  // TODO: rework to await status
       break;
-    // Handshake received, send start command to canister
+    // Status received, set alarm to 1 hr from now (CH4 warmup period)
     case 5:
-      CanisterLogStart();
-      millisAutonomyStart = millis();
-      autonomyState++;
-      break;
-    // Await acknowledge from canister, confirming successful start
-    case 6:
-      if (AutonomyAwaitAcknowledge()) autonomyState++;
-      break;
-    // Acknowledge received, set alarm to 1 hr from now (CH4 warmup period)
-    case 7:
       DataLogInitialized();
       autonomyState++;
       break;
     // Await alarm signalling warmup period over
-    case 8:
+    case 6:
       if (AlarmStatus(RTCC_ALM1)) autonomyState++;
       break;
     // Alarm triggered start moving motor up
-    case 9:
+    case 7:
       MotorMove(MOTOR_DIR_UP);
       autonomyState++;
       break;
     // Await top position reached
-    case 10:
+    case 8:
       if (MotorPositionReached()) {
         MotorMove(MOTOR_DIR_HALT);
-        DEBUG_PRINTLINE();
-        DEBUG_PRINTLN(F("Top Position Reached!"));
-        DEBUG_PRINTLINE();
-        AppendToLog(F("Top Position Reached!"));
         autonomyState++;
       }
       break;
     // Top position reached, turn off canister and move to bottom position
-    case 11:
-      DataLogStop();
+    case 9:
       DEBUG_PRINTLINE();
-      DEBUG_PRINTLN(F("Moving to Bottom Position"));
+      DEBUG_PRINTLN(F("Top Position Reached!"));
       DEBUG_PRINTLINE();
+      AppendToLog(F("Top Position Reached, powering off canister"));
+
+      ModuleDisable(MODULE_PWR_CANISTER);
+      ModuleDisable(MODULE_COMM_CANISTER);
+
       MotorMove(MOTOR_DIR_DOWN);
       autonomyState++;
       break;
     // Await bottom position reached
-    case 12:
+    case 10:
       if (MotorPositionReached()) autonomyState++;
       break;
-    case 13:
+    // Bottom position reached, turn off motor and stop data logging
+    case 11:
       MotorMove(MOTOR_DIR_HALT);
       DEBUG_PRINTLINE();
-      DEBUG_PRINTLN(F("Bottom position reached, system idle until next logging"));
-      DEBUG_PRINTLN(F("Full log complete"));
+      DEBUG_PRINTLN(F("Bottom position reached"));
       DEBUG_PRINTLINE();
       AppendToLog(F("Bottom position reached"), true);
       AppendToLog(F("Full log complete"), true);
       AutonomyStopLog();
-      autonomyState = 0;
+      autonomyState++;
+      break;
+    // Start LoRa Broadcast
+    case 12:
+      LoRaBroadcastBegin();
+      autonomyState++;
+      break;
+    case 13:
+      if (LoRaBroadcastLog()) autonomyState++;
+      break;
+    case 14:
+      if (LoRaBroadcastData()) autonomyState = 0;
       break;
     default:
       autonomyState = 0;
@@ -124,13 +126,14 @@ bool AutonomyStartLog() {
   }
 }
 
-// Stopping current data log
+// Stopping current autonomous log
 void AutonomyStopLog() {
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Stopping Data Log"));
+  DEBUG_PRINTLN(F("Stopping Autonomous Log"));
   DEBUG_PRINTLINE();
 
   DataLogStop();
+
   autonomyState = 0;
 }
 
