@@ -30,7 +30,6 @@ unsigned long ToLong(bool b[]) {
 }
 
 bool LoggingStart();
-void parseCommandLog();
 
 bool SystemEnable(int module) {
   if (GetStatus(module)) return true;
@@ -128,29 +127,17 @@ void SystemDisable(int module) {
   SetStatus(module, status);
 }
 
+// Enable all primary sensors
 bool SystemEnablePrimary() {
-  if (!SystemEnable(MODULE_CH4)) {
-    BuoySendSensorError(MODULE_CH4);
-    // return false;
-  }
-  if (!SystemEnable(MODULE_CO2)) {
-    BuoySendSensorError(MODULE_CO2);
-    // return false;
-  }
-  if (!SystemEnable(MODULE_LUM)) {
-    BuoySendSensorError(MODULE_LUM);
-    // return false;
-  }
-  if (!SystemEnable(MODULE_DEPTH)) {
-    BuoySendSensorError(MODULE_DEPTH);
-    // return false;
-  }
-  if (!SystemEnable(MODULE_TEMP)) {
-    BuoySendSensorError(MODULE_TEMP);
-    // return false;
-  }
+  if (!SystemEnable(MODULE_CH4)) BuoySendSensorError(MODULE_CH4);
+  if (!SystemEnable(MODULE_CO2)) BuoySendSensorError(MODULE_CO2);
+  if (!SystemEnable(MODULE_LUM)) BuoySendSensorError(MODULE_LUM);
+  if (!SystemEnable(MODULE_DEPTH)) BuoySendSensorError(MODULE_DEPTH);
+  if (!SystemEnable(MODULE_TEMP)) BuoySendSensorError(MODULE_TEMP);
+
   return true;
 }
+
 // Disable all secondary systems
 void SystemDisable() {
   SystemDisable(MODULE_CH4);

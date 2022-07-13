@@ -1,5 +1,5 @@
 /*
-  GeoRover Backup CPU system constants
+  Lake Profiler Canistesr system constants
 
   Mads Rosenhøj Jepepsen
   Aarhus University
@@ -133,7 +133,6 @@
 // #define EEPROM_READ_FLOAT(addr, flt) (float)(((EEPROM.read(addr) << 0) & 0xFF) + ((EEPROM.read(addr+1) << 8) & 0xFF00) + ((EEPROM.read(addr+2) << 16) & 0xFF0000) + ((EEPROM.read(addr+3) << 24) & 0xFF000000))
 
 // Addresses
-#define MEMADDR_SAMPLEID                 0
 #define MEMADDR_SAMPLE_INTERVAL          MEMADDR_SAMPLEID + 2
 
 // Read write

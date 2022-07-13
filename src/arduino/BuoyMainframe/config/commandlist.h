@@ -1,6 +1,19 @@
-// ------------------------------------------------------------ //
-//                          COMMANDS                            //
-// ------------------------------------------------------------ //
+
+/*
+  Lake Profiler Command List
+  - Sent over Serial (USB)
+
+  Every message is wrapped with start and end mark
+    '<COMMAND>'
+
+  Example:
+    '<FL>' - Returns a list of all files on the local storage
+
+  Mads Rosenhøj Jepepsen
+  Aarhus University
+  2022
+*/
+
 #pragma once
 
 // Wrappers
@@ -75,6 +88,12 @@
 // Canister
 #define CMD_CANISTER             'c'
 
+// ------------------------------------------------------------ //
+//                      Example Commands                        //
+// ------------------------------------------------------------ //
+
+// Clock setup
 // <Cm53><CH10><CD2><CM6><CY22><CP>
 
+// Local storage Clear
 // <FRdata/22051915.csv><FRdata/22051915.log>

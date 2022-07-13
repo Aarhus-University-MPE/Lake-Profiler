@@ -60,25 +60,11 @@ void DepthRead() {
   bar100Sensor.read();
 }
 
-float GetDepth() {
+long GetDepth() {
   bar100Sensor.read();
-  return 3.14f;  // TODO: remove
-  return bar100Sensor.depth();
-}
 
-bool DepthSendPackage() {
-  union unpack pack;
-  uint8_t package[5];
+  float depth    = bar100Sensor.depth();
+  long longDepth = (long)(depth * 1000.0f);
 
-  // Add Depth Wrapper
-  package[0] = 'D';
-
-  // Convert Depth float to binary array
-  pack.f = GetDepth();
-  for (int i = 0; i < 4; i++) {
-    package[i + 1] = pack.b[i];
-  }
-
-  // Send Package over RS232
-  return BuoySendPackage(package, 5);
+  return longDepth;
 }

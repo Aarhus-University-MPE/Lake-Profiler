@@ -44,7 +44,7 @@ void AutonomyState() {
       break;
     // Await status from canister
     case 4:
-      if (AutonomyAwaitHandshake()) autonomyState++;  // TODO: rework to await status
+      if (AutonomyAwaitHandshake()) autonomyState++;  // TODO: rework to await a message
       break;
     // Status received, set alarm to 1 hr from now (CH4 warmup period)
     case 5:
@@ -70,7 +70,7 @@ void AutonomyState() {
     // Top position reached, turn off canister and move to bottom position
     case 9:
       DEBUG_PRINTLINE();
-      DEBUG_PRINTLN(F("Top Position Reached!"));
+      DEBUG_PRINTLN(F("Top Position Reached, powering off canister"));
       DEBUG_PRINTLINE();
       AppendToLog(F("Top Position Reached, powering off canister"));
 
@@ -82,11 +82,13 @@ void AutonomyState() {
       break;
     // Await bottom position reached
     case 10:
-      if (MotorPositionReached()) autonomyState++;
+      if (MotorPositionReached()) {
+        MotorMove(MOTOR_DIR_HALT);
+        autonomyState++;
+      }
       break;
     // Bottom position reached, turn off motor and stop data logging
     case 11:
-      MotorMove(MOTOR_DIR_HALT);
       DEBUG_PRINTLINE();
       DEBUG_PRINTLN(F("Bottom position reached"));
       DEBUG_PRINTLINE();
@@ -100,9 +102,11 @@ void AutonomyState() {
       LoRaBroadcastBegin();
       autonomyState++;
       break;
+    // Start Broadcasting log file
     case 13:
       if (LoRaBroadcastLog()) autonomyState++;
       break;
+    // Log file broadcast, start Broadcasting data file
     case 14:
       if (LoRaBroadcastData()) autonomyState = 0;
       break;

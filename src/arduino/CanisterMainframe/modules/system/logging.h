@@ -1,65 +1,24 @@
+/*
+  Lake Profiler Canister Logging functionalities
+
+  Mads Rosenhøj Jepepsen
+  Aarhus University
+  2022
+*/
+
 #pragma once
 #include "../setup/modules.h"
 
-unsigned int sampleID, loggingSampleInterval;
-bool systemActive              = false;
-unsigned int sampleIndex       = 0;
+unsigned int loggingSampleInterval;
 unsigned long lastMillisSensor = 0;
-uint8_t packageSize            = 23;
-uint8_t package[25];
+uint8_t packageSize            = 26;
+uint8_t packageIndex           = 0;
+uint8_t package[26];
 
-bool LoggingStart() {
-  DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Starting Logging Process"));
-  DEBUG_PRINTLINE();
-
-  sampleIndex      = 0;
-  lastMillisSensor = 0;
-
-  SetSampleID();
-  ReadSampleInterval();
-
-  SystemEnablePrimary();
-
-  DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Logging Started"));
-  DEBUG_PRINTLINE();
-
-  // BuoySendLogStart();
-  systemActive = true;
-
-  return systemActive;
-}
-
-void LoggingStop() {
-  DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Stopping Data Logging"));
-  DEBUG_PRINTLINE();
-  systemActive = false;
-}
-
-// Package header
-bool SendHeader() {
-  BundleIdentifier(PACKAGE_0);
-  return BuoySendPackage(package, 5);
-}
-
-// Package footer
-bool SendFooter() {
-  BundleIdentifier(PACKAGE_END);
-  return BuoySendPackage(package, 5);
-}
 // Send all packages
 bool SendPackage() {
-  DEBUG_PRINTLN(F("Sending Package: "));
-
-  // if (!SendHeader()) return false;
+  DEBUG_PRINTLN(F("Sending Package"));
   DEBUG_PRINTLINE();
-  // if (!CH4SendPackage()) return false;
-  // if (!CO2SendPackage()) return false;
-  // if (!DepthSendPackage()) return false;
-  // if (!TempSendPackage()) return false;
-  // if (!LumSendPackage()) return false;
 
   BuildPackage();
   if (!BuoySendPackage(package, packageSize)) return false;
@@ -71,9 +30,7 @@ bool SendPackage() {
 
 // Sensor Package Broadcast
 void SensorBroadcast() {
-  if (millis() - lastMillisSensor < loggingSampleInterval) {
-    return;
-  }
+  if (millis() - lastMillisSensor < loggingSampleInterval) return;
 
   lastMillisSensor = millis();
 
@@ -99,76 +56,70 @@ void SensorRead() {
   // TempRead();
 }
 
-void SetSampleID() {
-  sampleID = EEPROM_READ_UINT(MEMADDR_SAMPLEID) + 1;
-  EEPROM_WRITE_INT(MEMADDR_SAMPLEID, sampleID);
-}
-
-unsigned int SampleIndex() {
-  sampleIndex++;
-  return sampleIndex;
-}
-
-/* Add identifier to package
-  Bundle ID
-  0-9: Status
-*/
-void BundleIdentifier(PackageIdentifier identifier) {
-  // Message Wrapper
-
-  // Bundle ID
-  package[0] = identifier;
-
-  // Sample Routine ID
-  AppendUnsignedInt(sampleID, 1);
-
-  // Sample index
-  sampleIndex = SampleIndex();
-  AppendUnsignedInt(sampleIndex, 3);
-}
-
-void AppendFloat(float data, int index) {
+// Append value to package
+void AppendFloat(float data) {
   union unpack pack;
   pack.f = data;
 
   for (int i = 0; i < 4; i++) {
-    package[index + i] = pack.b[i];
+    package[packageIndex + i] = pack.b[i];
   }
+  packageIndex += 4;
 }
 
-void AppendInt(int data, int index) {
+// Append value to package
+void AppendInt(int data) {
   union unpack pack;
   pack.i = data;
 
-  package[index]     = pack.b[0];
-  package[index + 1] = pack.b[1];
+  package[packageIndex]     = pack.b[0];
+  package[packageIndex + 1] = pack.b[1];
 
-  // for (int i = 0; i < 2; i++) {
-  //   package[index + i] = pack.b[i];
-  // }
+  packageIndex += 2;
 }
-void AppendUnsignedInt(unsigned int data, int index) {
+
+// Append value to package
+void AppendLong(long data) {
+  union unpack pack;
+  pack.l = data;
+
+  package[packageIndex]     = pack.b[0];
+  package[packageIndex + 1] = pack.b[1];
+  package[packageIndex + 2] = pack.b[2];
+  package[packageIndex + 3] = pack.b[3];
+
+  packageIndex += 4;
+}
+
+// Append value to package
+void AppendUnsignedInt(unsigned int data) {
   union unpack pack;
   pack.ui = data;
 
-  package[index]     = pack.b[0];
-  package[index + 1] = pack.b[1];
+  package[packageIndex]     = pack.b[0];
+  package[packageIndex + 1] = pack.b[1];
 
-  // for (int i = 0; i < 2; i++) {
-  //   package[index + i] = pack.b[i];
-  // }
+  packageIndex += 2;
 }
+
+// Clear package and add package header
+void InitializePackage() {
+  memset(package, 0, packageSize);
+  package[0]   = PACKAGE_0;
+  packageIndex = 1;
+}
+
 /* Bundle data into a package
  */
 void BuildPackage() {
-  BundleIdentifier(PACKAGE_0);  // Byte 0-5
-  // package[0] = '$';
-  AppendFloat(GetCH4Concentration(), 6);   // Byte 6-9
-  AppendFloat(GetCo2Concentration(), 10);  // Byte 10-13
-  AppendFloat(GetDepth(), 14);             // Byte 14-17
-  AppendFloat(GetTemp(), 18);              // Byte 18-21
-  AppendInt(GetLumValue(), 22);            // Byte 22-23
-  // TimeStamp();                            // Timestamp added at top
+  InitializePackage();
+  AppendLong(GetCH4ConcentrationEstimate());  // Package 1 (4 bytes)
+  AppendLong(GetCH4Concentration());          // Package 2 (4 bytes)
+  AppendLong(GetCo2Raw());                    // Package 3 (4 bytes)
+  AppendLong(GetCo2Concentration());          // Package 4 (4 bytes)
+  AppendLong(GetDepth());                     // Package 5 (4 bytes)
+  AppendLong(GetTemp());                      // Package 6 (4 bytes)
+  AppendInt(GetLumValue());                   // Package 7 (2 bytes)
 }
 
 // Read last configured sampleInterval from EEPROM

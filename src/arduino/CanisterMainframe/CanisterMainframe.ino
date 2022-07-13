@@ -19,47 +19,25 @@ void setup() {
   DBG_ONLY(SystemEnable(MODULE_COMM_DBG));
   DEBUG_PRINT(F("Debug mode. Entered Setup... "));
 
-  // Setup finished
-  DEBUG_PRINTLN(F("Setup complete."));
-
   SystemEnable(MODULE_BUOY_COMM);
 
-  LoggingStart();
+  // Enable sensors
+  SystemEnablePrimary();
+
+  // Setup sample configuration
+  ReadSampleInterval();
+
+  // Setup finished
+  DEBUG_PRINTLN(F("Setup complete."));
 }
 
 // ------------------------------------------------------------ //
 //                          MAIN LOOP                           //
 // ------------------------------------------------------------ //
 void loop() {
-  DBG_ONLY(recvWithStartEndMarkersDebug());
+  DBG_ONLY(recvWithStartEndMarkersDebug());  // Scan commands from USB (Serial)
 
   recvWithStartEndMarkers();  // Scan commands from Buoy
 
-  // if (!systemActive) {
-  //   BuoyCommHandshake();
-  // }
-
-  // if (systemActive) {
-  SensorProcess();
-  // }
-  // DepthTest();
-  // delay(2000);
-
-  // TempTest();
-
-  // delay(2000);
-
-  // LumTest();
-  // delay(2000);
-
-  // parseDataCH4(149);
-  // DEBUG_PRINT(F("CH4 Level: "));
-  // DEBUG_PRINTLN(GetCH4Concentration());
-
-  // delay(2000);
-
-  // parseDataCO2(88);
-  // DEBUG_PRINT(F("CO2 Level: "));
-  // DEBUG_PRINTLN(GetCo2Concentration());
-  // DEBUG_PRINTLINE();
+  SensorProcess();  // Read/Broadcast sensor data
 }

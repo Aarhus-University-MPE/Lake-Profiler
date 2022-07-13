@@ -5,7 +5,4 @@
 void InitAllPins() {
   Wire.begin();
   Wire.setWireTimeout(1000);
-
-  // Heartbeat
-  pinMode(LED_BUILTIN, OUTPUT);
 }

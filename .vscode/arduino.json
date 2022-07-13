@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:mega",
-    "sketch": "src\\arduino\\test\\LoRa\\LoRa-E5\\LoRa-E5.ino",
+    "sketch": "src\\arduino\\CanisterMainframe\\CanisterMainframe.ino",
     "port": "COM3",
     "programmer": "AVR ISP",
     "output": "src/arduino/out",

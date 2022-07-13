@@ -24,20 +24,12 @@
 #pragma once
 #include "../setup/modules.h"
 
-const byte numCharsCH4    = 200;
-const byte ppmIndexCH4    = 30;
-float ch4Concentration    = -1.0f;
-char dataCH4[numCharsCH4] = "$CODB4,0,0,D,0,0,2021-03-31,06:18:13,,3,2996,2500000,104594,102668,,,314375,24624172,0,0,1,1334,0,0,0,426987,11338,962,40,7020,341271,342068,337591";
-
-char latestDataCH4_0[50] = "$CODB4,0,0,D,0,0,2021-03-31,06:18:13,,3,2996,250";
-char latestDataCH4_1[50] = "0000,104594,102668,,,314375,24624172,0,0,1,1334,";
-char latestDataCH4_2[50] = "0,0,0,426987,11338,962,40,7020,341271,342068,337";
-char latestDataCH4_3[50] = "591";
-
-uint8_t packageSizeCH4_0 = 5;
-uint8_t packageSizeCH4_1 = 50;
-uint8_t packageSizeCH4_2 = 50;
-uint8_t packageSizeCH4_3 = 3;
+const byte numCharsCH4         = 200;
+const byte ppmEstimateIndexCH4 = 29;
+const byte ppmIndexCH4         = 30;
+long ch4Concentration          = -1.0f;
+long ch4ConcentrationEstimate  = -1.0f;
+char dataCH4[numCharsCH4]      = "$CODB4,0,0,D,0,0,2021-03-31,06:18:13,,3,2996,2500000,104594,102668,,,314375,24624172,0,0,1,1334,0,0,0,426987,11338,962,40,7020,341271,342068,337591";
 
 bool CH4Initialize() {
   COM_CH4.begin(COM_CH4_BAUDRATE);
@@ -98,49 +90,21 @@ void recvWithStartEndMarkersCH4() {
 }
 
 // Parses data string and extract desired values (CH4 Concentration)
-// TODO: Verify ppmindex extraction correct
 void parseDataCH4(uint8_t size) {
-  if (dataCH4[5] != '4') {  // $CODB4 contains ppm values
-    return;
-  }
-  // DEBUG_PRINT(F("Received Data Package: "));
-  // DEBUG_PRINTLN(dataCH4);
+  // Verify message contains type being $CODB4
+  if (dataCH4[5] != '4') return;
 
-  memset(latestDataCH4_0, 0, 50);
-  memset(latestDataCH4_1, 0, 50);
-  memset(latestDataCH4_2, 0, 50);
-  memset(latestDataCH4_3, 0, 50);
-
-  // TODO: copy data 50 at a time
-  // strcpy(latestDataCH4, dataCH4);
-
-  packageSizeCH4_0 = min(50, size);
-  packageSizeCH4_0 = min(50, size - 50);
-  packageSizeCH4_0 = min(50, size - 100);
-  packageSizeCH4_0 = min(50, size - 150);
-
-  char tempChars[numCharsCH4];
-  char *strtokIndx;
-  strcpy(tempChars, dataCH4);
-
-  // Scan forward to ppmIndexCH4, values separated by ","
-  strtokIndx = strtok(tempChars, ",");
-  for (size_t i = 0; i < ppmIndexCH4 - 1; i++) {
-    strtokIndx = strtok(NULL, ",");
-  }
-
-  ch4Concentration = atof(strtokIndx);
+  // Extract concentration values
+  ch4Concentration         = ExtractLongFromCharArray(dataCH4, ppmIndexCH4);
+  ch4ConcentrationEstimate = ExtractLongFromCharArray(dataCH4, ppmEstimateIndexCH4);
 }
 
-float GetCH4Concentration() {
+// Return latest CH4 Concentratione value
+long GetCH4Concentration() {
   return ch4Concentration;
 }
 
-// Send latest package
-bool CH4SendPackage() {
-  if (!BuoySendPackage(latestDataCH4_0, packageSizeCH4_0)) return false;
-  // if (!BuoySendPackage(latestDataCH4_1, packageSizeCH4_1)) return false;
-  // if (!BuoySendPackage(latestDataCH4_2, packageSizeCH4_2)) return false;
-  // if (!BuoySendPackage(latestDataCH4_3, packageSizeCH4_3)) return false;
-  return true;
+// Return latest CH4 Concentratione Estimate value
+long GetCH4ConcentrationEstimate() {
+  return ch4ConcentrationEstimate;
 }

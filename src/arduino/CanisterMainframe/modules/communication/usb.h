@@ -82,9 +82,6 @@ void parseCommandDebug() {
   int sampleRate = atoi(sampleRateChar);
 
   switch (receivedCMDDebug[0]) {
-    case CMD_LOGGING:
-      parseCommandLog();
-      break;
     case CMD_SAMPLERATE:
       SetSampleInterval(sampleRate);
       break;

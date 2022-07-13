@@ -4,6 +4,8 @@ union unpack {
   char c;
   float f;
   unsigned int ui;
+  unsigned long ul;
+  long l;
   byte b[4];
 };
 
@@ -20,3 +22,41 @@ enum PackageIdentifier {
   PACKAGE_4              = 14,
   PACKAGE_END            = 19
 };
+
+// Return integer value extracted from char array
+int ExtractLongFromCharArray(char charArray[200], size_t index) {
+  char tempChars[200];
+  char *strtokIndx;
+  strcpy(tempChars, charArray);
+  long value = -1;
+
+  // Scan forward to index, values separated by ","
+  strtokIndx = strtok(tempChars, ",");
+  for (size_t i = 0; i < index - 1; i++) {
+    strtokIndx = strtok(NULL, ",");
+  }
+
+  value = atol(strtokIndx);
+
+  return value;
+}
+
+// Return integer value extracted from char array
+int ExtractLongFromCharArray(char charArray[200], size_t index, float scale) {
+  char tempChars[200];
+  char *strtokIndx;
+  strcpy(tempChars, charArray);
+  float value = 1.0f;
+  long lValue = -1;
+
+  // Scan forward to index, values separated by ","
+  strtokIndx = strtok(tempChars, ",");
+  for (size_t i = 0; i < index - 1; i++) {
+    strtokIndx = strtok(NULL, ",");
+  }
+
+  value  = atof(strtokIndx);
+  lValue = (long)(value * scale);
+
+  return lValue;
+}

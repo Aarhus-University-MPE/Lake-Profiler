@@ -1,13 +1,12 @@
-#pragma once
-
-#include "../setup/modules.h"
-
 /*  Service mode
 
     Strategy for Service mode.
     - Disables logging
     - Activates motor for surfacing Cansiter
 */
+#pragma once
+
+#include "../setup/modules.h"
 
 // Start sequence of strategy
 void StartStrategyService() {
@@ -24,7 +23,7 @@ void StartStrategyService() {
 
 // Main sequence of strategy
 void RunStrategyService() {
-  // Lift motor to surface
+  // Process input buttons and move motors accordingly
   MotorProcess();
 }
 
@@ -46,8 +45,5 @@ void FinishStrategyService() {
 
 // Strategy function
 void SelectFunctionService() {
-  // if (!InputButtonDebounce()) {
-  //   return;
-  // }
-  //
+  // if (!InputButtonDebounce()) return;
 }

@@ -46,10 +46,12 @@ bool DepthSendPackage();
 bool LumSendPackage();
 bool TempSendPackage();
 
-float GetCH4Concentration();
-float GetCo2Concentration();
-float GetDepth();
-float GetTemp();
+long GetCH4Concentration();
+long GetCH4ConcentrationEstimate();
+long GetCo2Raw();
+long GetCo2Concentration();
+long GetDepth();
+long GetTemp();
 int GetLumValue();
 
 void recvWithStartEndMarkersCH4();

@@ -47,24 +47,10 @@ void TempRead() {
   sensorTSY01.read();
 }
 
-float GetTemp() {
+long GetTemp() {
   TempRead();
-  return sensorTSY01.temperature();
-}
+  float temp = sensorTSY01.temperature();
 
-bool TempSendPackage() {
-  union unpack pack;
-  uint8_t package[5];
-
-  // Add Temperature Wrapper
-  package[0] = 'T';
-
-  // Convert Temperature float to binary array
-  pack.f = GetTemp();
-  for (int i = 0; i < 4; i++) {
-    package[i + 1] = pack.b[i];
-  }
-
-  // Send Package over RS232
-  return BuoySendPackage(package, 5);
+  long longTemp = (long)(temp * 1000.0f);
+  return longTemp;
 }

@@ -22,15 +22,12 @@
 #include "../setup/modules.h"
 
 const byte numCharsCO2    = 200;
+const byte ppmIndexCO2Raw = 10;
 const byte ppmIndexCO2    = 11;
-float co2Concentration    = -1.0;
+long co2Concentration     = -1.0;
+long co2Raw               = -1.0;
+
 char dataCO2[numCharsCO2] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.697,1007.02,18.40,11.8,4095,2439,1895";
-
-char latestDataCO2_0[50] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,";
-char latestDataCO2_1[50] = "20.697,1007.02,18.40,11.8,4095,2439,1895";
-
-uint8_t packageSizeCO2_0 = 5;
-uint8_t packageSizeCO2_1 = 40;
 
 bool CO2Initialize() {
   COM_CO2.begin(COM_CO2_BAUDRATE);
@@ -92,41 +89,17 @@ void recvWithStartEndMarkersCO2() {
 
 // Parses data string and extract desired values (CO2 Concentration)
 void parseDataCO2(uint8_t size) {
-  if (dataCO2[2] != 'M') {  // "W M"
-    return;
-  }
-  // DEBUG_PRINT(F("Received Data Package: "));
-  // DEBUG_PRINTLN(dataCO2);
+  // Verify message contains type ("W M")
+  if (dataCO2[2] != 'M') return;
 
-  memset(latestDataCO2_0, 0, 50);
-  memset(latestDataCO2_1, 0, 50);
-
-  // strcpy(latestDataCO2, dataCO2);
-
-  packageSizeCO2_0 = min(50, size);
-  packageSizeCO2_1 = min(50, size - 50);
-
-  char tempChars[numCharsCO2];
-  char *strtokIndx;
-  strcpy(tempChars, dataCO2);
-
-  // Scan forward to ppmIndexCO2, values separated by ","
-  strtokIndx = strtok(tempChars, ",");
-  for (size_t i = 0; i < ppmIndexCO2 - 1; i++) {
-    strtokIndx = strtok(NULL, ",");
-  }
-
-  // Convert to float (231546 = 231,546 ppm)
-  co2Concentration = atof(strtokIndx);
+  co2Concentration = ExtractLongFromCharArray(dataCO2, ppmIndexCO2, 1000.0f);
+  co2Raw           = ExtractLongFromCharArray(dataCO2, ppmIndexCO2Raw, 1000.0f);
 }
 
-float GetCo2Concentration() {
+long GetCo2Concentration() {
   return co2Concentration;
 }
 
-// Send latest package
-bool CO2SendPackage() {
-  if (!BuoySendPackage(latestDataCO2_0, packageSizeCO2_0)) return false;
-  // if (!BuoySendPackage(latestDataCO2_1, packageSizeCO2_1)) return false;
-  return true;
+long GetCo2Raw() {
+  return co2Concentration;
 }

@@ -4,3 +4,4 @@ TODO:
   - LoRa active from start @done
   - Power new conversion constants (float instead of analogread values) @done
   - Rewrite canister to just constantly broadcast
+  - Incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)

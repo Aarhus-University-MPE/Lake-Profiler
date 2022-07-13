@@ -1,8 +1,14 @@
-// ------------------------------------------------------------ //
-//                           EEPROM                             //
-// ------------------------------------------------------------ //
+/*
+  Lake Profiler EEPROM memory allocation
+
+  Mads Rosenhøj Jepepsen
+  Aarhus University
+  2022
+*/
+
 #pragma once
 
+// Read/Write functions
 #define EEPROM_READ_INT(addr)            (int)(((EEPROM.read(addr) << 0) & 0xFF) + ((EEPROM.read(addr + 1) << 8) & 0xFF00))
 
 #define EEPROM_WRITE_INT(addr, intValue) EEPROM.put(addr, intValue)
@@ -25,3 +31,6 @@
 #define MEMADDR_BATTERY_MIN              16
 
 #define MEMADDR_SYSTEM_WARMUP            18
+
+// Sample Information
+#define MEMADDR_SAMPLEID                 20

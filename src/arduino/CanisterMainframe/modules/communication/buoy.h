@@ -106,9 +106,6 @@ void parseCommand() {
   int sampleRate = atoi(sampleRateChar);
 
   switch (receivedCMD[0]) {
-    case CMD_LOGGING:
-      parseCommandLog();
-      break;
     case CMD_SAMPLERATE:
       SetSampleInterval(sampleRate);
       break;
@@ -119,11 +116,6 @@ void parseCommand() {
     default:
       break;
   }
-}
-
-void parseCommandLog() {
-  BuoyCommAck();
-  LoggingStart();
 }
 
 void BuoySendStart(uint8_t size) {
@@ -137,17 +129,8 @@ void BuoySendStart() {
   COM_BUOY.print("<");
 }
 
-void BuoySendLogStart() {
-  DEBUG_PRINTLN(F("Sending LogStart Command"));
-  COM_BUOY.println("<N>");
-}
-
 void BuoySendEndline() {
   COM_BUOY.print(">\r\n");
-}
-
-void ResetAcknowledge() {
-  acknowledgeReceived = false;
 }
 
 bool BuoySendPackage(uint8_t package[], uint8_t size) {
@@ -163,54 +146,56 @@ bool BuoySendPackage(uint8_t package[], uint8_t size) {
   COM_BUOY.write(package, size);
   unsigned long lastMillisSend = millis();
   BuoySendEndline();
-  ResetAcknowledge();
 
-  int retry = 0;
-  while (!acknowledgeReceived && retry < 5) {
-    recvWithStartEndMarkers();
-    if (millis() - lastMillisSend > 500) {
-      retry++;
-      DEBUG_PRINTLN(F("Failed to received ACK, resending"));
-      BuoySendStart(size);
-      COM_BUOY.write(package, size);
-      BuoySendEndline();
-      lastMillisSend = millis();
-    }
-  }
+  // Check for received acknowledge
 
-  if (!acknowledgeReceived) {
-    DEBUG_PRINTLN(F("Failed to received ACK"));
-    // Stop log report error
-    BuoySendCommunicationError();
-    // LoggingStop(); // TODO: handle?
-    return false;
-  }
+  // ResetAcknowledge();
+  // int retry = 0;
+  // while (!acknowledgeReceived && retry < 5) {
+  //   recvWithStartEndMarkers();
+  //   if (millis() - lastMillisSend > 500) {
+  //     retry++;
+  //     DEBUG_PRINTLN(F("Failed to received ACK, resending"));
+  //     BuoySendStart(size);
+  //     COM_BUOY.write(package, size);
+  //     BuoySendEndline();
+  //     lastMillisSend = millis();
+  //   }
+  // }
+
+  // if (!acknowledgeReceived) {
+  //   DEBUG_PRINTLN(F("Failed to received ACK"));
+  //   // Stop log report error
+  //   BuoySendCommunicationError();
+  //   // LoggingStop(); // TODO: handle?
+  //   return false;
+  // }
 
   return true;
 }
 
-bool BuoySendPackage(char package[], uint8_t size) {
-  if (!GetStatus(MODULE_BUOY_COMM)) {
-    DEBUG_PRINTLN(F("Module Not Active!"));
-    return false;
-  }
-  // PrintPackage(package, size);
+// bool BuoySendPackage(char package[], uint8_t size) {
+//   if (!GetStatus(MODULE_BUOY_COMM)) {
+//     DEBUG_PRINTLN(F("Module Not Active!"));
+//     return false;
+//   }
+//   // PrintPackage(package, size);
 
-  union unpack pack;
-  uint8_t packagei8[size];
-  for (size_t i = 0; i < size; i++) {
-    pack.c       = package[i];
-    packagei8[i] = pack.i8;
-  }
+//   union unpack pack;
+//   uint8_t packagei8[size];
+//   for (size_t i = 0; i < size; i++) {
+//     pack.c       = package[i];
+//     packagei8[i] = pack.i8;
+//   }
 
-  return BuoySendPackage(packagei8, size);
-}
+//   return BuoySendPackage(packagei8, size);
+// }
 
-void BuoySendCommunicationError() {
-  BuoySendStart();
-  COM_BUOY.print(PACKAGE_ERROR_COMM_ACK);
-  BuoySendEndline();
-}
+// void BuoySendCommunicationError() {
+//   BuoySendStart();
+//   COM_BUOY.print(PACKAGE_ERROR_COMM_ACK);
+//   BuoySendEndline();
+// }
 
 void BuoySendSensorError(byte sensorModule) {
   if (!GetStatus(MODULE_BUOY_COMM)) {
