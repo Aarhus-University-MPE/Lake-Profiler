@@ -93,7 +93,7 @@ bool LoRaConfigure() {
 // Connect to Network
 bool LoRaJoin() {
   if (!LoraStatus()) return false;
-  return at_send_check_response(true, "+JOIN: Network joined", 12000, "AT+JOIN\r\n");
+  return at_send_check_response(false, "+JOIN: Network joined", 12000, "AT+JOIN\r\n");
 }
 
 static int at_send_check_response(bool printResponse, String p_ack_str, int timeout_ms, String p_cmd_str, ...) {
@@ -173,7 +173,8 @@ void LoRaTransmitLog() {
   sprintf(cmd, "AT+CMSGHEX=\"%d%d\"\r\n", (314, 314));
   Serial.print(cmd);
   Serial.println(F("Sending Message... "));
-  ret = at_send_check_response("Done", 5000, cmd);
+  int ret;
+  ret = at_send_check_response(false, "Done", 5000, cmd);
   if (ret) {
     Serial.println(F("Message Sent!"));
     recv_prase(recv_buf);
@@ -198,7 +199,7 @@ bool LoRaBroadcastLog() {
   // Transmit data
   if (lineRead == 0) {
     DEBUG_PRINTLN(F("Broadcasting Log"));
-    InitializeLogRead();
+    // InitializeLogRead(); TODO: add
   }
 
   return true;

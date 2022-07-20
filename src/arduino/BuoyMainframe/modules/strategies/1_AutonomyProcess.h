@@ -27,15 +27,28 @@ void AutonomyState() {
     // Idle, await Warmup alarm
     // TODO: incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)
     case 0:
-      if (AlarmStatus(RTCC_ALM0)) autonomyState++;
+      if (AlarmStatus(RTCC_ALM0)) {
+        autonomyState++;
+        DEBUG_PRINTLN(F("Alarm case 0"));
+      }
       break;
     // Alarm triggered start logging process
     case 1:
-      if (AutonomyStartLog()) autonomyState++;
+      if (AutonomyStartLog()) {
+        autonomyState++;
+      } else {
+        autonomyState = 0;
+        SetAlarm();
+      }
       break;
     // Check Battery Levels
     case 2:
-      if (AutonomyPowerCheck()) autonomyState++;
+      if (AutonomyPowerCheck()) {
+        autonomyState++;
+      } else {
+        autonomyState = 0;
+        SetAlarm();
+      }
       break;
     // Power Levels sufficient, power up canister
     case 3:
@@ -94,7 +107,7 @@ void AutonomyState() {
       DEBUG_PRINTLINE();
       AppendToLog(F("Bottom position reached"), true);
       AppendToLog(F("Full log complete"), true);
-      AutonomyStopLog();
+      AutonomyStopLog();  // TODO: Remove?
       autonomyState++;
       break;
     // Start LoRa Broadcast
@@ -108,7 +121,14 @@ void AutonomyState() {
       break;
     // Log file broadcast, start Broadcasting data file
     case 14:
-      if (LoRaBroadcastData()) autonomyState = 0;
+      if (LoRaBroadcastData()) autonomyState++;
+      break;
+    case 15:
+      DEBUG_PRINTLINE();
+      DEBUG_PRINT(F("Logging Sample Complete, Waiting for next timestamp - "));
+      PrintAlarmTime();
+      DEBUG_PRINTLINE();
+      autonomyState = 0;
       break;
     default:
       autonomyState = 0;
@@ -138,7 +158,7 @@ void AutonomyStopLog() {
 
   DataLogStop();
 
-  autonomyState = 0;
+  // autonomyState = 0; TODO: ??
 }
 
 // Check battery level
@@ -207,7 +227,7 @@ void ButtonOverride() {
   if (digitalRead(PI_BUTTON_MOTOR_DOWN) || digitalRead(PI_BUTTON_MOTOR_UP)) return;
 
   // If currently inactive start logging (Waiting for Alarm0 or Alarm1)
-  if (autonomyState == 8 || autonomyState == 0) {
+  if (autonomyState == 6 || autonomyState == 0) {
     autonomyState++;
   }
   // If currently logging, stop

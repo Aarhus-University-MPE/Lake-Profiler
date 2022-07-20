@@ -1,12 +1,16 @@
 #pragma once
 #include "../setup/modules.h"
 
-int motorDirection   = 1;
-int encoderCount     = 0;
-int encoderRotations = 0;
+int motorDirection           = 1;
+int encoderCount             = 0;
+int encoderRotations         = 0;
+unsigned long millisEncoderA = 0;
+unsigned long millisEncoderZ = 0;
 
 // Increments encoder values
 void EncoderAInterrupt() {
+  if (millis() - millisEncoderA < 5) return;
+  millisEncoderA = millis();
   motorDirection = digitalRead(PI_ENCODER_B) ? 1 : -1;
   encoderCount += motorDirection;
 }
@@ -19,6 +23,8 @@ void EncoderBInterrupt() {
 
 // Increments encoder values
 void EncoderZInterrupt() {
+  if (millis() - millisEncoderZ < 50) return;
+  millisEncoderZ = millis();
   encoderRotations += motorDirection;
   encoderCount = 0;
 }
@@ -120,4 +126,5 @@ void EncoderPrintPos(uint8_t direction) {
 void EEPROMGetMotorPos() {
   encoderCount     = EEPROM_READ_INT(MEMADDR_ENCODER_COUNT);
   encoderRotations = EEPROM_READ_INT(MEMADDR_ENCODER_ROTATION);
+  // EncoderPrintPos();
 }

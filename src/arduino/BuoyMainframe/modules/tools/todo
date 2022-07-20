@@ -5,3 +5,5 @@ TODO:
   - Power new conversion constants (float instead of analogread values) @done
   - Rewrite canister to just constantly broadcast
   - Incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)
+  - Alarm
+    - Alarm 1 hour from now (24:00 turns into 18:00)

@@ -91,8 +91,8 @@ void ModuleEnableMode() {
     case MODE_SYSTEMTEST:
       break;
     case MODE_AUTONOMOUS:
-      // ModuleEnable(MODULE_COMM_LORA); // TODO: Temporary removed
       ModuleEnable(MODULE_CLOCK);
+      ModuleEnable(MODULE_MOTOR);
       break;
     case MODE_SERVICE:
       ModuleEnable(MODULE_PWR_MOTOR);
@@ -182,8 +182,8 @@ void ModuleDisable() {
 void SystemEnablePrimary() {
   ModuleEnable(MODULE_SD);
   ModuleEnable(MODULE_BLACKBOX);
-  ModuleEnable(MODULE_LORA);
-  ModuleEnable(MODULE_COMM_LORA);
+  // ModuleEnable(MODULE_LORA); TODO: readd
+  // ModuleEnable(MODULE_COMM_LORA);
 }
 
 // Runs system check and compares active modules to required

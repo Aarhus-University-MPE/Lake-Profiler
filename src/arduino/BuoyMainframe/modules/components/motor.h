@@ -154,8 +154,14 @@ void MotorSetState() {
   }
 }
 
+unsigned long millisPrintMotorPos = 0;
+
 // Returns true if endposition reached for specified direction
 bool MotorPositionReached(uint8_t dir) {
+  if (millis() - millisPrintMotorPos > 1000) {
+    millisPrintMotorPos = millis();
+    EncoderPrintPos();
+  }
   switch (dir) {
     case MOTOR_DIR_UP:
       return GetEncoderRotations() >= GetEncoderRotationsTop() && GetEncoderCount() >= GetEncoderCountTop();

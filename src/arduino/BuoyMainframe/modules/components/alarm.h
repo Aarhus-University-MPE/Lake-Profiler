@@ -99,6 +99,14 @@ void SetAlarm(byte hour) {
 // Set Alarm1 to 1 hour from now
 uint8_t SetAlarmHourFromNow() {
   uint8_t hourNow = RTCC.getHour(RTCC_RTCC);
+  // DEBUG_PRINT(F("Current hour: "));
+  // DEBUG_PRINT2(hourNow, HEX);
+  // DEBUG_PRINTLN();
+
+  // DEBUG_PRINT(F("1 hour from now: "));
+  // DEBUG_PRINT2(HourToHex(HexToHour(hourNow) + 1), HEX);
+  // DEBUG_PRINTLN();
+
   SetAlarm(HourToHex(HexToHour(hourNow) + 1), RTCC_ALM1);
   return (HexToHour(hourNow) + 1);
 }
@@ -145,6 +153,11 @@ void EnableAlarm(uint8_t alarm) {
   RTCC.enableAlarm(alarm, RTCC_ALMC1);
 }
 
+void PrintAlarmTime() {
+  DEBUG_PRINT2(RTCC.getHour(RTCC_ALM0), HEX);
+  DEBUG_PRINTLN(F(":00"));
+}
+
 bool CheckAlarm() {
   if (!RTCC.checkFlag(RTCC_ALM0)) {
     return false;
@@ -176,6 +189,8 @@ uint8_t NextAlarm() {
   uint8_t hour   = RTCC.getHour(RTCC_RTCC);
   uint8_t minute = RTCC.getMin(RTCC_RTCC);
 
+  hour = HexToHour(hour);
+
   // DEBUG_PRINT(F("Current time: "));
   // DEBUG_PRINT2(hour, HEX);
   // DEBUG_PRINT(F(":"));
@@ -183,13 +198,22 @@ uint8_t NextAlarm() {
   // DEBUG_PRINTLN();
 
   int8_t hourDifference = -1;
-  uint8_t i             = 0;
+  int i                 = 0;
 
-  hourDifference = alarm[i] - hour;
+  hourDifference = HexToHour(alarm[i]) - hour;
 
-  while (hourDifference <= GetWarmupTime() + 1 && i < alarmFrequency) {
+  while (hourDifference <= GetWarmupTime() + 1 && i < alarmFrequency - 1) {
     i++;
-    hourDifference = alarm[i] - hour;
+    hourDifference = HexToHour(alarm[i]) - hour;
+    // DEBUG_PRINT(F("Hour: "));
+    // DEBUG_PRINT2(alarm[i], HEX);
+    // DEBUG_PRINT(F(" - Difference"));
+    // DEBUG_PRINT(hourDifference);
+    // DEBUG_PRINTLN();
+  }
+
+  if (alarm[i] - GetWarmupTime() < 0) {
+    i = 0;
   }
 
   // Check for wrap around (0:00 - 1 hr, = 24:00 - 1 hr)

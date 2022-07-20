@@ -93,7 +93,7 @@
 // ------------------------------------------------------------ //
 
 // Clock setup
-// <Cm53><CH10><CD2><CM6><CY22><CP>
+// <Cm00><CH17><CD19><CM7><CY22><CP>
 
 // Local storage Clear
 // <FRdata/22051915.csv><FRdata/22051915.log>

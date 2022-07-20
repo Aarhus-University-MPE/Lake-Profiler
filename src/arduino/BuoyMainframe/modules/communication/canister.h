@@ -139,7 +139,8 @@ void parseCommandCan(uint8_t size) {
 }
 
 bool HandshakeReceived() {
-  return handshakeReceived;
+  return true;  // TODO: incoorporate sensor package received
+  // return handshakeReceived;
 }
 
 bool AcknowledgeReceived() {
@@ -252,24 +253,24 @@ void PrintPackageInfo(uint8_t size) {
   DEBUG_PRINT2(receivedCMDCan[6], HEX);
   DEBUG_PRINT(F(" "));
   DEBUG_PRINT2(receivedCMDCan[5], HEX);
-  DEBUG_PRINT(F(" - (Expected Size: "));
-  DEBUG_PRINT(receivedCMDCan[1]);
-  DEBUG_PRINT(F(" - Actual Size: "));
-  DEBUG_PRINT(size);
-  DEBUG_PRINTLN(F(")"));
+  // DEBUG_PRINT(F(" - (Expected Size: "));
+  // DEBUG_PRINT(receivedCMDCan[1]);
+  // DEBUG_PRINT(F(" - Actual Size: "));
+  // DEBUG_PRINT(size);
+  // DEBUG_PRINTLN(F(")"));
 
-  DEBUG_PRINT(F(" CO2: "));
-  pack.b[0] = receivedCMDCan[12];
-  pack.b[1] = receivedCMDCan[13];
-  pack.b[2] = receivedCMDCan[14];
-  pack.b[3] = receivedCMDCan[15];
+  // DEBUG_PRINT(F(" CO2: "));
+  // pack.b[0] = receivedCMDCan[12];
+  // pack.b[1] = receivedCMDCan[13];
+  // pack.b[2] = receivedCMDCan[14];
+  // pack.b[3] = receivedCMDCan[15];
 
-  DEBUG_PRINTLN(pack.f);
+  // DEBUG_PRINTLN(pack.f);
 
-  for (uint8_t i = 0; i < size; i++) {
-    DEBUG_PRINT2(receivedCMDCan[i], HEX);
-    DEBUG_PRINT(F(" "));
-  }
+  // for (uint8_t i = 0; i < size; i++) {
+  //   DEBUG_PRINT2(receivedCMDCan[i], HEX);
+  //   DEBUG_PRINT(F(" "));
+  // }
   DEBUG_PRINTLN();
   // break;
   // }

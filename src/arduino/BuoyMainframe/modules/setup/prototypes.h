@@ -227,6 +227,7 @@ void TimeStampLog();
 
 // additional
 void ModuleDisable();
+void ModuleDisable(int module);
 void SystemTest(bool);
 void SystemTest();
 void SetStatus(bool);
@@ -284,6 +285,7 @@ void GetTimeStamp(char *fileName);
 void SetClock();
 void UpdateUnixTime();
 void EnableAlarm(uint8_t alarm);
+void PrintAlarmTime();
 
 // Clock
 void parseCommandClock();
