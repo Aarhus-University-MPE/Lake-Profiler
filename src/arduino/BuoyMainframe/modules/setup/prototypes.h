@@ -187,6 +187,8 @@ bool InitializeSDReader();
 bool InitializeRTC();
 bool InitializeLora();
 bool InitializeCanister();
+bool LoRaInitializeBroadcastLog();
+bool LoRaInitializeBroadcastData();
 bool InitBlackBox();
 bool BatteryStatus();
 void TerminateMotors();
@@ -222,6 +224,8 @@ void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine);
 void AppendToData(uint8_t *dataInput, uint8_t size);
 void AppendData(uint8_t size);
 void AppendData();
+bool LogFileLoad();
+bool DataFileLoad();
 void TimeStampData();
 void TimeStampLog();
 

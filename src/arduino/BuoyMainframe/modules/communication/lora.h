@@ -33,35 +33,14 @@ bool LoraStatus() {
   return GetStatus(MODULE_LORA);
 }
 
-void LoraSendMsg(uint8_t data[], uint8_t size) {
-  // DEBUG_PRINT(F("Sending msg to server.. "));
-  // if (manager.sendtoWait(data, sizeof(data), SERVER_ADDRESS)) {
-  //   DEBUG_PRINTLN(F(" Success"));
-  //   uint8_t len = sizeof(buf);
-  //   uint8_t from;
+// void LoraRecMsg() {
+//   // uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+//   // uint8_t len = sizeof(buf);
 
-  //   if (manager.recvfromAckTimeout(buf, &len, 2000, &from)) {
-  //     DEBUG_PRINT("got reply from : 0x");
-  //     DEBUG_PRINT2(from, HEX);
-  //     DEBUG_PRINT(": ");
-  //     DEBUG_PRINTLN((char*)buf);
-  //   } else {
-  //     DEBUG_PRINTLN("No reply from server.");
-  //   }
-  // } else {
-  //   DEBUG_PRINTLN(F(" Failed"));
-  // }
-  // rf95.waitPacketSent();
-}
-
-void LoraRecMsg() {
-  // uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-  // uint8_t len = sizeof(buf);
-
-  // if (rf95.recv(buf, &len)) {
-  //   DEBUG_PRINTLN((char*)buf);
-  // }
-}
+//   // if (rf95.recv(buf, &len)) {
+//   //   DEBUG_PRINTLN((char*)buf);
+//   // }
+// }
 
 void TerminateLora() {
   COM_SERIAL_LORA.end();
@@ -161,16 +140,15 @@ static void recv_prase(char *p_msg) {
   }
 }
 
-// Initialize broadcast
-void LoRaBroadcastBegin() {
-  DEBUG_PRINTLN(F("Initializing LoRa Broadcast"));
+// Reset broadcast
+void LoRaBroadcastReset() {
   lineRead = 0;
 }
 
 // Transmit log
 void LoRaTransmitLog() {
   char cmd[128];
-  sprintf(cmd, "AT+CMSGHEX=\"%d%d\"\r\n", (314, 314));
+  sprintf(cmd, "AT+CMSGHEX=\"%d%d\"\r\n", (int)314, (int)314);
   Serial.print(cmd);
   Serial.println(F("Sending Message... "));
   int ret;
@@ -182,6 +160,48 @@ void LoRaTransmitLog() {
     Serial.print("Send failed!\r\n\r\n");
   }
   delay(5000);
+}
+
+bool LoRaInitializeBroadcastLog() {
+  LoRaBroadcastReset();
+
+  // Check File Integrity
+  if (!LogFileLoad()) {
+    DEBUG_PRINTLN(F("Log File Error!"));
+    return false;
+  }
+
+  DEBUG_PRINTLN(F("Broadcasting Log"));
+  return true;
+}
+
+bool LoRaInitializeBroadcastData() {
+  LoRaBroadcastReset();
+
+  // Check File Integrity
+  if (!DataFileLoad()) {
+    DEBUG_PRINTLN(F("Data File Error!"));
+    return false;
+  }
+
+  DEBUG_PRINTLN(F("Broadcasting Data Initialized"));
+  return true;
+}
+
+// Append package to cmd string
+void LoRaBuildCommand(uint8_t package[30], char cmd[128]) {
+  char *cmdPtr = cmd;
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"");
+
+  int i;
+
+  for (i = 0; i < 3; i++) {
+    if (i > 0) {
+      cmdPtr += sprintf(cmdPtr, " ");
+    }
+    cmdPtr += sprintf(cmdPtr, "%02X", package[i]);
+  }
+  cmdPtr += sprintf(cmdPtr, "\"\n\r");
 }
 
 // Transmit latest log
@@ -196,13 +216,20 @@ bool LoRaBroadcastLog() {
     return true;
   }
 
-  // Transmit data
-  if (lineRead == 0) {
-    DEBUG_PRINTLN(F("Broadcasting Log"));
-    // InitializeLogRead(); TODO: add
-  }
+  uint8_t package[30];
 
-  return true;
+  // Read line from log file
+  bool endOfPackage = true;  // TODO: Remove
+  // bool endOfPackage = LogReadLine(package);
+
+  // Build Lora package
+  char cmd[128];
+  LoRaBuildCommand(package, cmd);
+
+  // Send package over LoRa
+  if (at_send_check_response(false, "Done", 5000, cmd)) lineRead++;  // TODO: limit to x retries
+
+  return endOfPackage;
 }
 
 // Transmit latest data
@@ -217,7 +244,18 @@ bool LoRaBroadcastData() {
     return true;
   }
 
-  // Transmit data
+  uint8_t package[30];
 
-  return true;
+  // Read line from Data file
+  bool endOfPackage = true;  // TODO: Remove
+  // bool endOfPackage = DataReadLine(package);
+
+  // Build Lora package
+  char cmd[128];
+  LoRaBuildCommand(package, cmd);
+
+  // Send package over LoRa
+  if (at_send_check_response(false, "Done", 5000, cmd)) lineRead++;  // TODO: limit to x retries
+
+  return endOfPackage;
 }

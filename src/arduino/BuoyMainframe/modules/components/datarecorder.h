@@ -120,3 +120,19 @@ void TimeStampData() {
 
   AppendToData(timeStampData, 4, true);
 }
+
+// TODO: load latest log file
+bool LogFileLoad() {
+  // Load Log file
+
+  // Check first line
+  return true;
+}
+
+// TODO: load latest data file
+bool DataFileLoad() {
+  // Load Data file
+
+  // Check first line
+  return true;
+}
