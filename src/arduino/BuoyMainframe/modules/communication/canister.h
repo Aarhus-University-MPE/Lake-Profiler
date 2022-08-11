@@ -250,28 +250,73 @@ void PrintPackageInfo(uint8_t size) {
 
   //   default:
   DEBUG_PRINT(F("Sensor Package "));
-  DEBUG_PRINT2(receivedCMDCan[6], HEX);
-  DEBUG_PRINT(F(" "));
-  DEBUG_PRINT2(receivedCMDCan[5], HEX);
-  // DEBUG_PRINT(F(" - (Expected Size: "));
-  // DEBUG_PRINT(receivedCMDCan[1]);
-  // DEBUG_PRINT(F(" - Actual Size: "));
-  // DEBUG_PRINT(size);
-  // DEBUG_PRINTLN(F(")"));
+  // DEBUG_PRINT2(receivedCMDCan[6], HEX);
+  // DEBUG_PRINT(F(" "));
+  // DEBUG_PRINT2(receivedCMDCan[5], HEX);
+  DEBUG_PRINT(F(" - (Expected Size: "));
+  DEBUG_PRINT(receivedCMDCan[1]);
+  DEBUG_PRINT(F(" - Actual Size: "));
+  DEBUG_PRINT(size);
+  DEBUG_PRINTLN(F(")"));
 
-  // DEBUG_PRINT(F(" CO2: "));
-  // pack.b[0] = receivedCMDCan[12];
-  // pack.b[1] = receivedCMDCan[13];
-  // pack.b[2] = receivedCMDCan[14];
-  // pack.b[3] = receivedCMDCan[15];
+  // DEBUG_PRINT(F("CH4 estimate: "));
+  // pack.b[0] = receivedCMDCan[3];
+  // pack.b[1] = receivedCMDCan[4];
+  // pack.b[2] = receivedCMDCan[5];
+  // pack.b[3] = receivedCMDCan[6];
 
-  // DEBUG_PRINTLN(pack.f);
+  // DEBUG_PRINTLN(pack.l);
 
+  // DEBUG_PRINT(F("CH4: "));
+  // pack.b[0] = receivedCMDCan[7];
+  // pack.b[1] = receivedCMDCan[8];
+  // pack.b[2] = receivedCMDCan[9];
+  // pack.b[3] = receivedCMDCan[10];
+
+  // DEBUG_PRINTLN(pack.l);
+
+  // DEBUG_PRINT(F("CO2 raw: "));
+  // pack.b[0] = receivedCMDCan[11];
+  // pack.b[1] = receivedCMDCan[12];
+  // pack.b[2] = receivedCMDCan[13];
+  // pack.b[3] = receivedCMDCan[14];
+
+  // DEBUG_PRINTLN(pack.l);
+
+  // DEBUG_PRINT(F("CO2: "));
+  // pack.b[0] = receivedCMDCan[15];
+  // pack.b[1] = receivedCMDCan[16];
+  // pack.b[2] = receivedCMDCan[17];
+  // pack.b[3] = receivedCMDCan[18];
+
+  // DEBUG_PRINTLN(pack.l);
+
+  // DEBUG_PRINT(F("Depth: "));
+  // pack.b[0] = receivedCMDCan[19];
+  // pack.b[1] = receivedCMDCan[20];
+  // pack.b[2] = receivedCMDCan[21];
+  // pack.b[3] = receivedCMDCan[22];
+
+  // DEBUG_PRINTLN(pack.l);
+
+  // DEBUG_PRINT(F("Temp: "));
+  // pack.b[0] = receivedCMDCan[23];
+  // pack.b[1] = receivedCMDCan[24];
+  // pack.b[2] = receivedCMDCan[25];
+  // pack.b[3] = receivedCMDCan[26];
+
+  // DEBUG_PRINTLN(pack.l);
+
+  // DEBUG_PRINT(F("Lum: "));
+  // pack.b[0] = receivedCMDCan[27];
+  // pack.b[1] = receivedCMDCan[28];
+
+  // DEBUG_PRINTLN(pack.i);
   // for (uint8_t i = 0; i < size; i++) {
   //   DEBUG_PRINT2(receivedCMDCan[i], HEX);
   //   DEBUG_PRINT(F(" "));
   // }
-  DEBUG_PRINTLN();
+  // DEBUG_PRINTLN();
   // break;
   // }
 }

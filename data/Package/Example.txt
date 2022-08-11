@@ -1,0 +1,4 @@
+<  28 10 1  2  3  4  1  2  3  4  1  2  3  4  1  2  3  4  1  2  3  4  1  2  3  4  1  2  > 
+50 1C A  FC FF FF FF FD FF FF FF FF FF FF FF FF FF FF FF B7 FF FF FF 2D 5A 0  0  XX XX 6D
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+         CH4Estimate ----CH4--- --CO2Raw--- ----CO2----  --Depth--- ---Temp---- --Lum-

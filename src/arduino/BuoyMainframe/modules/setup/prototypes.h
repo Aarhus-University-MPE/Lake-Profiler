@@ -228,6 +228,8 @@ bool LogFileLoad();
 bool DataFileLoad();
 void TimeStampData();
 void TimeStampLog();
+bool DataReadLine(uint8_t *package, int &size);
+bool LogReadLine(uint8_t *package, int &size);
 
 // additional
 void ModuleDisable();

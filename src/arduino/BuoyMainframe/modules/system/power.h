@@ -8,7 +8,6 @@
 */
 
 #pragma once
-#include <LowPower.h>
 
 #include "../setup/modules.h"
 
@@ -16,8 +15,6 @@
 // 13V .. 11.7V -> ~3.25V .. 2.93V -> 665 .. 599
 const float batteryScale  = 69.23;
 const float batteryOffset = -800.0f;
-
-bool charge;  // Battery Charge status
 
 int BatteryLevel() {
   float batteryLevel = batteryScale * BatteryVoltage() + batteryOffset;
@@ -72,7 +69,7 @@ bool BatteryStatus(bool print) {
 }
 
 void StandbyMode() {
-  LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
+  // LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 }
 
 void wakeUp() {

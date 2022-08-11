@@ -174,16 +174,16 @@ void ModuleDisable() {
   ModuleDisable(MODULE_PWR_CANISTER);
   ModuleDisable(MODULE_MOTOR);
   ModuleDisable(MODULE_CLOCK);
-  ModuleDisable(MODULE_COMM_LORA);
-  ModuleDisable(MODULE_COMM_CANISTER);
+  // ModuleDisable(MODULE_COMM_LORA);
+  // ModuleDisable(MODULE_COMM_CANISTER);
 }
 
 // Enables Primary Systems
 void SystemEnablePrimary() {
   ModuleEnable(MODULE_SD);
   ModuleEnable(MODULE_BLACKBOX);
-  // ModuleEnable(MODULE_LORA); TODO: readd
-  // ModuleEnable(MODULE_COMM_LORA);
+  ModuleEnable(MODULE_LORA);
+  ModuleEnable(MODULE_COMM_LORA);
 }
 
 // Runs system check and compares active modules to required

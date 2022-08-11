@@ -212,9 +212,9 @@ uint8_t NextAlarm() {
     // DEBUG_PRINTLN();
   }
 
-  if (alarm[i] - GetWarmupTime() < 0) {
-    i = 0;
-  }
+  // if (alarm[i] - GetWarmupTime() < 0) {
+  //   i = 0;
+  // }
 
   // Check for wrap around (0:00 - 1 hr, = 24:00 - 1 hr)
   if (alarm[i] - GetWarmupTime() < 0) {

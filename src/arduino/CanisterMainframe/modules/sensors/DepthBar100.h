@@ -23,7 +23,6 @@ bool DepthInitialize() {
   bar100Sensor.init();
   bar100Sensor.setFluidDensity(997);  // kg/m^3 (freshwater, 1029 for seawater)
 
-  // return true;  // TODO: Remove
   return bar100Sensor.isInitialized();
 }
 

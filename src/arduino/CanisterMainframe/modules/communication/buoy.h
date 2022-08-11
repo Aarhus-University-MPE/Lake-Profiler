@@ -147,30 +147,6 @@ bool BuoySendPackage(uint8_t package[], uint8_t size) {
   unsigned long lastMillisSend = millis();
   BuoySendEndline();
 
-  // Check for received acknowledge
-
-  // ResetAcknowledge();
-  // int retry = 0;
-  // while (!acknowledgeReceived && retry < 5) {
-  //   recvWithStartEndMarkers();
-  //   if (millis() - lastMillisSend > 500) {
-  //     retry++;
-  //     DEBUG_PRINTLN(F("Failed to received ACK, resending"));
-  //     BuoySendStart(size);
-  //     COM_BUOY.write(package, size);
-  //     BuoySendEndline();
-  //     lastMillisSend = millis();
-  //   }
-  // }
-
-  // if (!acknowledgeReceived) {
-  //   DEBUG_PRINTLN(F("Failed to received ACK"));
-  //   // Stop log report error
-  //   BuoySendCommunicationError();
-  //   // LoggingStop(); // TODO: handle?
-  //   return false;
-  // }
-
   return true;
 }
 

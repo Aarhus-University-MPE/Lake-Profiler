@@ -13,8 +13,8 @@
 // Debug configuration flag - Comment out to unset
 // #define DEBUG_BLACKBOX_AND_PRINT
 // #define DEBUG_BLACKBOX
-#define DEBUG_SERIAL
-// #define DEBUG_NONE
+// #define DEBUG_SERIAL
+#define DEBUG_NONE
 
 // Executes if DEBUG flag is set.
 #if defined(DEBUG_BLACKBOX_AND_PRINT)
@@ -133,7 +133,7 @@
 // #define EEPROM_READ_FLOAT(addr, flt) (float)(((EEPROM.read(addr) << 0) & 0xFF) + ((EEPROM.read(addr+1) << 8) & 0xFF00) + ((EEPROM.read(addr+2) << 16) & 0xFF0000) + ((EEPROM.read(addr+3) << 24) & 0xFF000000))
 
 // Addresses
-#define MEMADDR_SAMPLE_INTERVAL          MEMADDR_SAMPLEID + 2
+#define MEMADDR_SAMPLE_INTERVAL          0
 
 // Read write
 // #define EEPROM_WRITE_INDEX(waypointIndex) EEPROM.put(MEMADDR_WAYPOINTIDX_START, waypointIndex)

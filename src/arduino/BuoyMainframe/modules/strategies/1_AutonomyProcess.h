@@ -111,19 +111,19 @@ void AutonomyState() {
       autonomyState++;
       break;
     // Start Broadcasting log file
-    case 12:
-      if (LoRaInitializeBroadcastLog()) {
-        autonomyState++;
-      } else {
-        autonomyState = 0;  // TODO: Replace with Log Stop Error
-      }
-      break;
-    // Await Log Broadcast to finish
-    case 13:
-      if (LoRaBroadcastLog()) autonomyState++;
-      break;
+    // case 12:
+    //   if (LoRaInitializeBroadcastLog()) {
+    //     autonomyState++;
+    //   } else {
+    //     autonomyState = 0;  // TODO: Replace with Log Stop Error
+    //   }
+    //   break;
+    // // Await Log Broadcast to finish
+    // case 13:
+    //   if (LoRaBroadcastLog()) autonomyState++;
+    //   break;
     // Start Broadcast data file
-    case 14:
+    case 12:
       if (LoRaInitializeBroadcastData()) {
         autonomyState++;
       } else {
@@ -131,10 +131,10 @@ void AutonomyState() {
       }
       break;
     // Log file broadcast, start Broadcasting data file
-    case 15:
+    case 13:
       if (LoRaBroadcastData()) autonomyState++;
       break;
-    case 16:
+    case 14:
       DEBUG_PRINTLINE();
       DEBUG_PRINT(F("Logging Sample Complete, Waiting for next timestamp - "));
       PrintAlarmTime();

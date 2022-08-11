@@ -25,13 +25,13 @@ const byte numCharsCO2    = 200;
 const byte ppmIndexCO2Raw = 10;
 const byte ppmIndexCO2    = 11;
 long co2Concentration     = -1.0;
-long co2Raw               = -1.0;
+long co2Raw               = -2.0;
 
 char dataCO2[numCharsCO2] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.697,1007.02,18.40,11.8,4095,2439,1895";
 
 bool CO2Initialize() {
   COM_CO2.begin(COM_CO2_BAUDRATE);
-  return false;
+  return COM_CO2;
 }
 
 void CO2Terminate() {
@@ -101,5 +101,5 @@ long GetCo2Concentration() {
 }
 
 long GetCo2Raw() {
-  return co2Concentration;
+  return co2Raw;
 }

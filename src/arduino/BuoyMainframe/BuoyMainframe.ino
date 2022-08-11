@@ -33,6 +33,7 @@ void setup() {
 // ------------------------------------------------------------ //
 void loop() {
   ModeUpdater();
+  SystemEnablePrimary();
 
   strategyMethods[1][mode]();
 

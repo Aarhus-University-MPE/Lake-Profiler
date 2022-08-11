@@ -7,6 +7,8 @@
 
 char fileLocationData[22];
 char fileLocationLog[22];
+File logFile;
+File dataFile;
 
 // Create logging files (YYMMDDHH.log and YYMMDDHH.csv)
 bool InitializeLoggingFiles() {
@@ -124,15 +126,79 @@ void TimeStampData() {
 // TODO: load latest log file
 bool LogFileLoad() {
   // Load Log file
+  logFile = SD.open(fileLocationLog);
 
   // Check first line
-  return true;
+  if (logFile) {
+    return true;
+  } else {
+    DEBUG_PRINTLN(F("File not found!"));
+    return false;
+  }
 }
 
 // TODO: load latest data file
 bool DataFileLoad() {
   // Load Data file
+  dataFile = SD.open(fileLocationData);
 
-  // Check first line
-  return true;
+  if (dataFile) {
+    return true;
+  } else {
+    DEBUG_PRINTLN(F("File not found!"));
+    return false;
+  }
+}
+
+bool LogReadLine(uint8_t *package, int &size) {
+  // read data
+  if (!SDReaderStatus()) return true;
+
+  if (!logFile) return true;
+
+  size         = 0;
+  bool endLine = false;
+
+  while (logFile.available() && !endLine) {
+    uint8_t data  = logFile.read();
+    package[size] = data;
+    size++;
+    if (data == '\n') endLine = true;
+  }
+  if (!logFile.available()) {
+    return true;
+    DEBUG_PRINTLN(F("End of File"));
+    logFile.close();
+  }
+
+  return false;
+}
+
+bool DataReadLine(uint8_t *package, int &size) {
+  // read data
+  if (!SDReaderStatus()) return true;
+
+  if (!dataFile) return true;
+
+  size         = 0;
+  bool endLine = false;
+
+  while (dataFile.available() && !endLine) {
+    uint8_t data  = dataFile.read();
+    package[size] = data;
+    DEBUG_PRINT2(data, HEX);
+    DEBUG_PRINT(F(" "));
+    size++;
+    if (data == '\n') {
+      endLine = true;
+      DEBUG_PRINTLN();
+    }
+  }
+  if (!dataFile.available()) {
+    return true;
+    DEBUG_PRINTLN(F("End of File"));
+    dataFile.close();
+  }
+
+  return false;
 }

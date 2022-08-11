@@ -52,6 +52,7 @@ union unpack {
   char c;
   float f;
   unsigned int ui;
+  long l;
   byte b[4];
 };
 

@@ -189,13 +189,14 @@ bool LoRaInitializeBroadcastData() {
 }
 
 // Append package to cmd string
-void LoRaBuildCommand(uint8_t package[30], char cmd[128]) {
+void LoRaBuildCommand(uint8_t package[30], char cmd[128], int size) {
   char *cmdPtr = cmd;
   cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"");
 
   int i;
-
-  for (i = 0; i < 3; i++) {
+  DEBUG_PRINT(F("Size: "));
+  DEBUG_PRINTLN(size);
+  for (i = 0; i < size; i++) {
     if (i > 0) {
       cmdPtr += sprintf(cmdPtr, " ");
     }
@@ -217,17 +218,20 @@ bool LoRaBroadcastLog() {
   }
 
   uint8_t package[30];
+  int size = 0;
 
   // Read line from log file
-  bool endOfPackage = true;  // TODO: Remove
-  // bool endOfPackage = LogReadLine(package);
+  bool endOfPackage = LogReadLine(package, size);
 
   // Build Lora package
   char cmd[128];
-  LoRaBuildCommand(package, cmd);
+  LoRaBuildCommand(package, cmd, size);
 
   // Send package over LoRa
-  if (at_send_check_response(false, "Done", 5000, cmd)) lineRead++;  // TODO: limit to x retries
+  int ret = 0;
+  while (ret < 5 && !at_send_check_response(false, "Done", 5000, cmd)) {
+    ret++;
+  }
 
   return endOfPackage;
 }
@@ -245,17 +249,21 @@ bool LoRaBroadcastData() {
   }
 
   uint8_t package[30];
+  int size = 0;
 
   // Read line from Data file
-  bool endOfPackage = true;  // TODO: Remove
-  // bool endOfPackage = DataReadLine(package);
+  bool endOfPackage = DataReadLine(package, size);
 
   // Build Lora package
   char cmd[128];
-  LoRaBuildCommand(package, cmd);
-
+  LoRaBuildCommand(package, cmd, size);
+  DEBUG_PRINTLN(F("Sending package: "));
+  DEBUG_PRINT(cmd);
   // Send package over LoRa
-  if (at_send_check_response(false, "Done", 5000, cmd)) lineRead++;  // TODO: limit to x retries
-
+  int ret = 0;
+  while (ret < 5 && !at_send_check_response(false, "Done", 5000, cmd) && size > 0) {
+    DEBUG_PRINTLN(F("Failed, retrying..."));
+    ret++;
+  }
   return endOfPackage;
 }

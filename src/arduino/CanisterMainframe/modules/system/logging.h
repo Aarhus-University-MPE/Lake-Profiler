@@ -11,9 +11,9 @@
 
 unsigned int loggingSampleInterval;
 unsigned long lastMillisSensor = 0;
-uint8_t packageSize            = 26;
+uint8_t packageSize            = 28;
 uint8_t packageIndex           = 0;
-uint8_t package[26];
+uint8_t package[28];
 
 // Send all packages
 bool SendPackage() {
