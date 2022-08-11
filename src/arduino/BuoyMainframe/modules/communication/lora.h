@@ -75,7 +75,80 @@ bool LoRaJoin() {
   return at_send_check_response(false, "+JOIN: Network joined", 12000, "AT+JOIN\r\n");
 }
 
-static int at_send_check_response(bool printResponse, String p_ack_str, int timeout_ms, String p_cmd_str, ...) {
+// Send Low power message over LoRa, and next alarm hour
+void LoRaBroadcastLowPower() {
+  if (!LoraStatus()) return;
+  char cmd[128];
+  char *cmdPtr = cmd;
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"2 %02X %02X\"\r\n", BatteryLevelHex(), NextAlarm());
+
+  DEBUG_PRINTLN(F("Sending package: "));
+  DEBUG_PRINT(cmd);
+
+  int ret = 0;
+  while (ret < 5 && !at_send_check_response(false, "RXWIN1", 10000, cmd)) {
+    if (ret == 0) {
+      DEBUG_PRINT(F("Failed, retrying attempt: "));
+    }
+    DEBUG_PRINT(F("("));
+    DEBUG_PRINT(ret + 1);
+    DEBUG_PRINT(F("/5)..."));
+
+    // Broadcast Delay
+    delay(LORA_BROADCAST_DELAY);
+    ret++;
+  }
+  if (ret == 5) {
+    DEBUG_PRINTLN(F("Failed"));
+  } else {
+    DEBUG_PRINTLN(F("Success"));
+  }
+}
+
+// Send Log begin over LoRa along with current time stamp
+void LoRaBroadcastLogBegin() {
+  if (!LoraStatus()) return;
+  char cmd[128];
+  char *cmdPtr = cmd;
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"1 ");
+
+  // Current time
+  unsigned long timeStamp = (unsigned long)now();
+
+  // Convert timestamp to binary
+  for (uint8_t i = 0; i < 4; i++) {
+    if (i > 0) {
+      cmdPtr += sprintf(cmdPtr, " ");
+    }
+    cmdPtr += sprintf(cmdPtr, "%02X", ((timeStamp >> (8 * i)) & 0XFF));
+  }
+
+  cmdPtr += sprintf(cmdPtr, "\"\r\n");
+
+  DEBUG_PRINTLN(F("Sending package: "));
+  DEBUG_PRINT(cmd);
+
+  int ret = 0;
+  while (ret < 5 && !at_send_check_response(false, "RXWIN1", 10000, cmd)) {
+    if (ret == 0) {
+      DEBUG_PRINT(F("Failed, retrying attempt: "));
+    }
+    DEBUG_PRINT(F("("));
+    DEBUG_PRINT(ret + 1);
+    DEBUG_PRINT(F("/5)..."));
+
+    // Broadcast Delay
+    delay(LORA_BROADCAST_DELAY);
+    ret++;
+  }
+  if (ret == 5) {
+    DEBUG_PRINTLN(F("Failed"));
+  } else {
+    DEBUG_PRINTLN(F("Success"));
+  }
+}
+
+static int at_send_check_response(bool printResponse, String p_ack_str, unsigned long timeout_ms, String p_cmd_str, ...) {
   int ch;
   int num                   = 0;
   int index                 = 0;
@@ -106,7 +179,7 @@ static int at_send_check_response(bool printResponse, String p_ack_str, int time
       if (printResponse) {
         DEBUG_PRINT((char)ch);
       }
-      delay(2);
+      delay(5);
     }
 
     if (strstr(recv_buf, p_ack) != NULL) {
@@ -189,20 +262,17 @@ bool LoRaInitializeBroadcastData() {
 }
 
 // Append package to cmd string
-void LoRaBuildCommand(uint8_t package[30], char cmd[128], int size) {
+void LoRaBuildCommand(uint8_t package[34], char cmd[128], int size) {
   char *cmdPtr = cmd;
   cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"");
 
-  int i;
-  DEBUG_PRINT(F("Size: "));
-  DEBUG_PRINTLN(size);
-  for (i = 0; i < size; i++) {
+  for (int i = 0; i < size; i++) {
     if (i > 0) {
       cmdPtr += sprintf(cmdPtr, " ");
     }
     cmdPtr += sprintf(cmdPtr, "%02X", package[i]);
   }
-  cmdPtr += sprintf(cmdPtr, "\"\n\r");
+  cmdPtr += sprintf(cmdPtr, "\"\r\n");
 }
 
 // Transmit latest log
@@ -248,7 +318,7 @@ bool LoRaBroadcastData() {
     return true;
   }
 
-  uint8_t package[30];
+  uint8_t package[34];
   int size = 0;
 
   // Read line from Data file
@@ -259,11 +329,34 @@ bool LoRaBroadcastData() {
   LoRaBuildCommand(package, cmd, size);
   DEBUG_PRINTLN(F("Sending package: "));
   DEBUG_PRINT(cmd);
+
   // Send package over LoRa
   int ret = 0;
-  while (ret < 5 && !at_send_check_response(false, "Done", 5000, cmd) && size > 0) {
-    DEBUG_PRINTLN(F("Failed, retrying..."));
+  while (ret < MAX_LORA_BROADCAST && !at_send_check_response(false, "RXWIN1", 10000, cmd) && size > 0) {
+    if (ret == 0) {
+      DEBUG_PRINT(F("Failed, retrying attempt: "));
+    }
+    DEBUG_PRINT(F("("));
+    DEBUG_PRINT(ret + 1);
+    DEBUG_PRINT(F("/"));
+    DEBUG_PRINT(MAX_LORA_BROADCAST);
+    DEBUG_PRINT(F(")... "));
+
+    // Broadcast Delay
+    delay(LORA_BROADCAST_DELAY);
+
     ret++;
   }
+  DEBUG_PRINTLN(F("Success"));
+  DEBUG_PRINTLINE();
+
+  // Limit broadcast attemps
+  if (ret == MAX_LORA_BROADCAST) {
+    DEBUG_PRINTLINE();
+    DEBUG_PRINTLN(F("LoRa Broadcast failed"));
+    DEBUG_PRINTLINE();
+    return true;
+  }
+
   return endOfPackage;
 }

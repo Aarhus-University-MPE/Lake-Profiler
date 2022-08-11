@@ -7,6 +7,7 @@
 
 char fileLocationData[22];
 char fileLocationLog[22];
+unsigned long dataIndex = 0;
 File logFile;
 File dataFile;
 
@@ -48,6 +49,9 @@ bool InitializeLoggingFiles() {
 
   DEBUG_PRINT(F("Current time: "));
   DEBUG_PRINTLN(now());
+
+  // Initialize dataIndex
+  dataIndex = 0;
 
   return true;
 }
@@ -103,9 +107,21 @@ void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine) {
   SDQuit();
 }
 
-// Append dat without lineend
+// Append data without lineend
 void AppendToData(uint8_t *dataInput, uint8_t size) {
   AppendToData(dataInput, size, false);
+}
+
+// Append and incre
+void AppendIndexToData() {
+  uint8_t indexData[4];
+  // Convert index to binary
+  for (uint8_t i = 0; i < 4; i++) {
+    indexData[i] = ((dataIndex >> (8 * i)) & 0XFF);
+  }
+
+  dataIndex++;
+  AppendToData(indexData, 4, false);
 }
 
 // Add current timestamp
@@ -113,17 +129,17 @@ void TimeStampData() {
   uint8_t timeStampData[4];
   unsigned long timeStamp = (unsigned long)now();
 
+  // Convert timestamp to binary
   for (uint8_t i = 0; i < 4; i++) {
     timeStampData[i] = ((timeStamp >> (8 * i)) & 0XFF);
   }
 
-  DEBUG_PRINT(F("Current time: "));
-  DEBUG_PRINTLN(timeStamp);
+  // DEBUG_PRINT(F("Current time: "));
+  // DEBUG_PRINTLN(timeStamp);
 
   AppendToData(timeStampData, 4, true);
 }
 
-// TODO: load latest log file
 bool LogFileLoad() {
   // Load Log file
   logFile = SD.open(fileLocationLog);
@@ -137,7 +153,6 @@ bool LogFileLoad() {
   }
 }
 
-// TODO: load latest data file
 bool DataFileLoad() {
   // Load Data file
   dataFile = SD.open(fileLocationData);
@@ -150,30 +165,7 @@ bool DataFileLoad() {
   }
 }
 
-bool LogReadLine(uint8_t *package, int &size) {
-  // read data
-  if (!SDReaderStatus()) return true;
-
-  if (!logFile) return true;
-
-  size         = 0;
-  bool endLine = false;
-
-  while (logFile.available() && !endLine) {
-    uint8_t data  = logFile.read();
-    package[size] = data;
-    size++;
-    if (data == '\n') endLine = true;
-  }
-  if (!logFile.available()) {
-    return true;
-    DEBUG_PRINTLN(F("End of File"));
-    logFile.close();
-  }
-
-  return false;
-}
-
+// Read single line from data file
 bool DataReadLine(uint8_t *package, int &size) {
   // read data
   if (!SDReaderStatus()) return true;
@@ -184,20 +176,55 @@ bool DataReadLine(uint8_t *package, int &size) {
   bool endLine = false;
 
   while (dataFile.available() && !endLine) {
-    uint8_t data  = dataFile.read();
-    package[size] = data;
-    DEBUG_PRINT2(data, HEX);
-    DEBUG_PRINT(F(" "));
-    size++;
-    if (data == '\n') {
-      endLine = true;
-      DEBUG_PRINTLN();
+    uint8_t data = dataFile.read();
+    if (data == '\r') {
+      uint8_t data2 = dataFile.read();
+      if (data2 == '\n') {
+        // DEBUG_PRINTLN();
+        endLine = true;
+      } else {
+        package[size] = data2;
+        size++;
+      }
+    }
+    if (!endLine) {
+      package[size] = data;
+      size++;
+      // DEBUG_PRINT2(data, HEX);
+      // DEBUG_PRINT(F(" "));
     }
   }
   if (!dataFile.available()) {
     return true;
     DEBUG_PRINTLN(F("End of File"));
     dataFile.close();
+  }
+
+  return false;
+}
+
+bool LogReadLine(uint8_t *package, int &size) {
+  // read data
+  if (!SDReaderStatus()) return true;
+
+  if (!logFile) return true;
+
+  size         = 0;
+  bool endLine = false;
+
+  while (logFile.available() && !endLine) {
+    uint8_t data = logFile.read();
+    if (data == '\r') {
+      endLine = true;
+    } else {
+      package[size] = data;
+      size++;
+    }
+  }
+  if (!logFile.available()) {
+    return true;
+    DEBUG_PRINTLN(F("End of File"));
+    logFile.close();
   }
 
   return false;

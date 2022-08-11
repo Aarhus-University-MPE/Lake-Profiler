@@ -117,6 +117,8 @@ bool BatteryStatus();
 bool BatteryStatus(bool print);
 void SetBatteryMinLevel(uint8_t batteryLevel);
 uint8_t GetBatteryMinLevel();
+int BatteryLevel();
+uint8_t BatteryLevelHex();
 
 // System Status
 bool SystemStatus[MODULE_COUNT];
@@ -207,9 +209,10 @@ void AutonomyStopLog();
 void AutonomyState();
 bool AutonomyPowerCheck();
 void AutonomyStartCanister();
+void AutonomyErrorStop();
 bool LoggingActive();
 
-bool HandshakeReceived();
+bool DataReceived();
 bool AcknowledgeReceived();
 
 // Data Recoder
@@ -222,6 +225,7 @@ void AppendToData(char *dataInput, bool endLine);
 void AppendToData(char *dataInput);
 void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine);
 void AppendToData(uint8_t *dataInput, uint8_t size);
+void AppendIndexToData();
 void AppendData(uint8_t size);
 void AppendData();
 bool LogFileLoad();
@@ -245,8 +249,6 @@ void SetAlarm();
 
 void printTime(uint8_t);
 void RTCPrint();
-
-int BatteryLevel();
 
 void MotorProcess();
 void BlackBoxPrint();
@@ -280,6 +282,7 @@ int GetWarmupTime();
 void SetWarmupTime(int warmupTime);
 
 void DataLogActivate();
+bool DataLogActive();
 
 float BatteryVoltage();
 void parsePackage(uint8_t size);
@@ -324,7 +327,7 @@ uint8_t NextAlarm();
 uint8_t SetAlarmHourFromNow();
 
 // LoRa
-static int at_send_check_response(bool printResponse, String p_ack_str, int timeout_ms, String p_cmd_str, ...);
+static int at_send_check_response(bool printResponse, String p_ack_str, unsigned long timeout_ms, String p_cmd_str, ...);
 static void recv_prase(char *p_msg);
 
 bool LoRaJoin();
@@ -332,3 +335,5 @@ bool LoRaConfigure();
 bool LoRaBroadcastLog();
 bool LoRaBroadcastData();
 void LoRaBroadcastBegin();
+void LoRaBroadcastLowPower();
+void LoRaBroadcastLogBegin();

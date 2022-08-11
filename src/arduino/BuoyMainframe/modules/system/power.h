@@ -22,6 +22,10 @@ int BatteryLevel() {
   return max((int)batteryLevel, 0);
 }
 
+uint8_t BatteryLevelHex() {
+  return (uint8_t)BatteryLevel();
+}
+
 // Checks voltage levels above critical values?
 bool VoltageCheck() {
   return BatteryLevel() > GetBatteryMinLevel();

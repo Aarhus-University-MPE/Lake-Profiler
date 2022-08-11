@@ -184,6 +184,13 @@ void SystemEnablePrimary() {
   ModuleEnable(MODULE_BLACKBOX);
   ModuleEnable(MODULE_LORA);
   ModuleEnable(MODULE_COMM_LORA);
+
+  // Retry Connection
+  // int ret = 0;
+  // while (!GetStatus(MODULE_COMM_LORA) && ret < 5) {
+  //   ModuleEnable(MODULE_COMM_LORA);
+  //   ret++;
+  // }
 }
 
 // Runs system check and compares active modules to required

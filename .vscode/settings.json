@@ -24,6 +24,7 @@
         "utility": "cpp",
         "*.tcc": "cpp",
         "random": "cpp",
-        "cstdarg": "cpp"
+        "cstdarg": "cpp",
+        "istream": "cpp"
     }
 }

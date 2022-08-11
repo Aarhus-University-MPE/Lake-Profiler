@@ -81,13 +81,14 @@ void MotorMove(uint8_t dir) {
   if (motorState == MOTOR_DIR_UP || motorState == MOTOR_DIR_DOWN) {
     digitalWrite(PO_MOTOR_DOWN, false);
     digitalWrite(PO_MOTOR_UP, false);
-    DEBUG_PRINTLN(F("Moving Halt"));
+    // DEBUG_PRINTLN(F("Moving Halt"));
     motorState = MOTOR_DIR_HALT;
     // delay(500);
     return;
   }
 
-  EncoderPrintPos();
+  // Print current encoder position
+  // EncoderPrintPos();
 
   motorState = dir;
   switch (dir) {
@@ -108,7 +109,7 @@ void MotorMove(uint8_t dir) {
     case MOTOR_DIR_HALT:
       digitalWrite(PO_MOTOR_UP, false);
       digitalWrite(PO_MOTOR_DOWN, false);
-      DEBUG_PRINTLN(F("Moving Halt"));
+      // DEBUG_PRINTLN(F("Moving Halt"));
       digitalWrite(LED_BUILTIN, false);
       break;
     default:
@@ -160,7 +161,7 @@ unsigned long millisPrintMotorPos = 0;
 bool MotorPositionReached(uint8_t dir) {
   if (millis() - millisPrintMotorPos > 1000) {
     millisPrintMotorPos = millis();
-    EncoderPrintPos();
+    // EncoderPrintPos();
   }
   switch (dir) {
     case MOTOR_DIR_UP:

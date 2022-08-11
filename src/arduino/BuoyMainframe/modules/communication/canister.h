@@ -14,12 +14,12 @@
 
 uint8_t receivedCMDCan[numChars];
 char receivedCMDCanChar[numChars];
-bool handshakeReceived   = false;
+bool dataReceived        = false;
 bool acknowledgeReceived = false;
 
 bool InitializeCanister() {
   COM_SERIAL_CANISTER.begin(CANISTER_BAUDRATE);
-  handshakeReceived   = false;
+  dataReceived        = false;
   acknowledgeReceived = false;
 
   return COM_SERIAL_CANISTER;
@@ -97,7 +97,7 @@ void parseCommandCan(uint8_t size) {
     case 'H':
       DEBUG_PRINTLN(F("Handshake Received"));
       AppendToLog(F("Handshake Received"), true);
-      handshakeReceived = true;
+      dataReceived = true;
       break;
     case 0x41:
       DEBUG_PRINTLINE();
@@ -108,6 +108,7 @@ void parseCommandCan(uint8_t size) {
     case 'P':
       if (receivedCMDCan[1] != size) return;
       parsePackage(size);
+      dataReceived = true;
       break;
     case 'N':
       parseLogStart();
@@ -138,9 +139,9 @@ void parseCommandCan(uint8_t size) {
   }
 }
 
-bool HandshakeReceived() {
-  return true;  // TODO: incoorporate sensor package received
-  // return handshakeReceived;
+bool DataReceived() {
+  // return true;  // TODO: incoorporate sensor package received
+  return dataReceived;
 }
 
 bool AcknowledgeReceived() {
@@ -148,51 +149,17 @@ bool AcknowledgeReceived() {
 }
 
 void parsePackage(uint8_t size) {
-  CanisterAcknowledge();
+  // CanisterAcknowledge();
+  if (!DataLogActive()) {
+    // DEBUG_PRINTLN(F("Data log not active!"));
+    return;
+  }
 
   PrintPackageInfo(size);
 
-  char separator[2] = ";";
+  AppendData(size);
 
-  // TODO: Error handler?
-  switch (receivedCMDCan[2]) {
-    // New Package
-    case 0xA:
-      AppendData(size);
-      break;
-    // CH4
-    case '$':
-      AppendToData(separator);
-      AppendData();  // Append as Char
-      break;
-    // CO2
-    case 'W':
-      AppendToData(separator);
-      AppendData();  // Append as Char
-      break;
-    // Depth
-    case 'D':
-      AppendToData(separator);
-      AppendData(size);
-      break;
-    // Temperature
-    case 'T':
-      AppendToData(separator);
-      AppendData(size);
-      break;
-    // Luminesence
-    case 'L':
-      AppendToData(separator);
-      AppendData(size);
-      break;
-    // End of package
-    case 0x13:
-      AppendToData(separator);
-      TimeStampData();
-      break;
-    default:
-      break;
-  }
+  TimeStampData();
 }
 
 // Create file with current timestamp in name
@@ -210,20 +177,16 @@ void parseLogStart() {
 
 // Append data to data file
 void AppendData(uint8_t size) {
-  uint8_t *dataPtr = receivedCMDCan + 1;
+  // Array pointer (include/skip indicator)
+  uint8_t *dataPtr = receivedCMDCan + 2;
 
-  AppendToData(dataPtr, size - 1);
-
-  // Print data to console
-  // for (int i = 0; i < size - 1; i++) {
-  //   DEBUG_PRINT2(dataPtr[i], HEX);
-  //   DEBUG_PRINT(F(" "));
-  // }
-  // DEBUG_PRINTLN();
+  AppendIndexToData();
+  AppendToData(dataPtr, size - 2);
 }
 
 // Append data to data file
 void AppendData() {
+  // Array pointer (include/skip indicator)
   char *dataPtr = receivedCMDCanChar + 1;
 
   AppendToData(dataPtr);
@@ -249,13 +212,13 @@ void PrintPackageInfo(uint8_t size) {
   //     break;
 
   //   default:
-  DEBUG_PRINT(F("Sensor Package "));
+  DEBUG_PRINT(F("Sensor Package ("));
   // DEBUG_PRINT2(receivedCMDCan[6], HEX);
   // DEBUG_PRINT(F(" "));
   // DEBUG_PRINT2(receivedCMDCan[5], HEX);
-  DEBUG_PRINT(F(" - (Expected Size: "));
-  DEBUG_PRINT(receivedCMDCan[1]);
-  DEBUG_PRINT(F(" - Actual Size: "));
+  // DEBUG_PRINT(F(" - (Expected Size: "));
+  // DEBUG_PRINT(receivedCMDCan[1]);
+  // DEBUG_PRINT(F(" - Actual Size: "));
   DEBUG_PRINT(size);
   DEBUG_PRINTLN(F(")"));
 
@@ -312,11 +275,11 @@ void PrintPackageInfo(uint8_t size) {
   // pack.b[1] = receivedCMDCan[28];
 
   // DEBUG_PRINTLN(pack.i);
-  // for (uint8_t i = 0; i < size; i++) {
-  //   DEBUG_PRINT2(receivedCMDCan[i], HEX);
-  //   DEBUG_PRINT(F(" "));
-  // }
-  // DEBUG_PRINTLN();
+  for (uint8_t i = 0; i < size; i++) {
+    DEBUG_PRINT2(receivedCMDCan[i], HEX);
+    DEBUG_PRINT(F(" "));
+  }
+  DEBUG_PRINTLN();
   // break;
   // }
 }

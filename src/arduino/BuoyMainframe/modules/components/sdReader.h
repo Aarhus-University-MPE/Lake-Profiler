@@ -125,7 +125,15 @@ void SDDownload(char fileName[]) {
         uint8_t data = file.read();
         Serial.print(data, HEX);
         Serial.print(F(" "));
-        if (data == '\n') Serial.println();
+        if (data == '\r') {
+          uint8_t data2 = file.read();
+          if (data2 == '\n') {
+            Serial.println();
+          } else {
+            Serial.print(data2, HEX);
+            Serial.print(F(" "));
+          }
+        }
       }
       file.close();
       DEBUG_PRINTLINE();
@@ -217,7 +225,7 @@ bool SDWriteStream(char fileNameOrData[], bool customFileEnd) {
     return SDOpenWriteStream(fileNameOrData, customFileEnd);
   }
 
-  // DEBUG_PRINT(F("Wrinting to file: "));
+  // DEBUG_PRINT(F("Writing to file: "));
   // DEBUG_PRINTLN(fileNameOrData);
 
   activeWriteFile.write(fileNameOrData);
@@ -248,7 +256,7 @@ bool SDWriteStream(uint8_t data[], uint8_t size, bool customFileEnd) {
     return false;
   }
 
-  // DEBUG_PRINT(F("Wrinting to file: "));
+  // DEBUG_PRINT(F("Writing to file: "));
   // DEBUG_PRINTLN(data);
 
   activeWriteFile.write(data, size);
@@ -275,9 +283,11 @@ bool SDWriteStreamNewLine() {
     return false;
   }
 
-  // DEBUG_PRINTLN(F("Wrinting newline char to file"));
+  // DEBUG_PRINTLN(F("Writing newline char to file"));
 
+  activeWriteFile.write('\r');
   activeWriteFile.write('\n');
+
   return true;
 }
 

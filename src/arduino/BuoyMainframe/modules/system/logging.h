@@ -1,6 +1,8 @@
 #pragma once
 #include "../setup/modules.h"
 
+bool datalogActive = false;
+
 bool DataLogStart() {
   // Create logging files (.csv and .log)
   if (!InitializeLoggingFiles()) {
@@ -17,6 +19,7 @@ void DataLogStop() {
 
   AppendToLog(F("Data logging Stopped"), true);
   TimeStampLog();
+  datalogActive = false;
 }
 
 void DataLogInitialized() {
@@ -51,4 +54,13 @@ void SetWarmupTime(int warmupTime) {
 void TimeStampLog() {
   AppendToLog(F("Timestamp: "));
   AppendToLog((String)now(), true);
+}
+
+// Enable datalogging
+void DataLogActivate() {
+  datalogActive = true;
+}
+
+bool DataLogActive() {
+  return datalogActive;
 }

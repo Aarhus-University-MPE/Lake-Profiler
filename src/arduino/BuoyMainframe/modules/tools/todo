@@ -7,3 +7,4 @@ TODO:
   - Incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)
   - Alarm
     - Alarm 1 hour from now (24:00 turns into 18:00)
+  - Alarm when insufficient battery (+1) (should work, double check)

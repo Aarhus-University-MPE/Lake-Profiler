@@ -154,10 +154,12 @@
 
 // Canister Comm (RS232)
 #define CANISTER_BAUDRATE        19200
-#define LOGGING_START_TIMEOUT    5000
+#define LOGGING_START_TIMEOUT    10000
 
 // LORA
 #define COM_LORA_BAUDRATE        9600
 #define LORA_FREQUENCY           434.0
 #define CLIENT_ADDRESS           1
 #define SERVER_ADDRESS           2
+#define MAX_LORA_BROADCAST       10
+#define LORA_BROADCAST_DELAY     5000
