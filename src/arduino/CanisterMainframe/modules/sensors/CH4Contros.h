@@ -89,6 +89,22 @@ void recvWithStartEndMarkersCH4() {
   }
 }
 
+// Print CH4 data package
+void printDataCH4(uint8_t size) {
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("CH4 Data: "));
+  for (size_t i = 0; i < size; i++) {
+    DEBUG_PRINT(F(" "));
+    DEBUG_PRINT(dataCH4[i]);
+  }
+  DEBUG_PRINTLN();
+  DEBUG_PRINT(F("CH4 Concentration: "));
+  DEBUG_PRINT(ch4Concentration);
+  DEBUG_PRINT(F(", CH4 Concentration Estimate: "));
+  DEBUG_PRINTLN(ch4ConcentrationEstimate);
+  DEBUG_PRINTLINE();
+}
+
 // Parses data string and extract desired values (CH4 Concentration)
 void parseDataCH4(uint8_t size) {
   // Verify message contains type being $CODB4
@@ -97,6 +113,9 @@ void parseDataCH4(uint8_t size) {
   // Extract concentration values
   ch4Concentration         = ExtractLongFromCharArray(dataCH4, ppmIndexCH4);
   ch4ConcentrationEstimate = ExtractLongFromCharArray(dataCH4, ppmEstimateIndexCH4);
+
+  // Print data package
+  printDataCH4(size);
 }
 
 // Return latest CH4 Concentratione value

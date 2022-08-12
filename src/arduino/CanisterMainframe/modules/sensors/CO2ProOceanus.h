@@ -87,13 +87,33 @@ void recvWithStartEndMarkersCO2() {
   }
 }
 
+// Print CO2 data package
+void printDataCO2(uint8_t size) {
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("CO2 Data: "));
+  for (size_t i = 0; i < size; i++) {
+    DEBUG_PRINT(F(" "));
+    DEBUG_PRINT(dataCO2[i]);
+  }
+  DEBUG_PRINTLN();
+  DEBUG_PRINT(F("CO2 Concentration: "));
+  DEBUG_PRINT(co2Concentration);
+  DEBUG_PRINT(F(", CO2 Raw: "));
+  DEBUG_PRINTLN(co2Raw);
+  DEBUG_PRINTLINE();
+}
+
 // Parses data string and extract desired values (CO2 Concentration)
 void parseDataCO2(uint8_t size) {
   // Verify message contains type ("W M")
   if (dataCO2[2] != 'M') return;
 
+  // Extract concentration values
   co2Concentration = ExtractLongFromCharArray(dataCO2, ppmIndexCO2, 1000.0f);
   co2Raw           = ExtractLongFromCharArray(dataCO2, ppmIndexCO2Raw, 1000.0f);
+
+  // Print data package
+  printDataCO2(size);
 }
 
 long GetCo2Concentration() {
