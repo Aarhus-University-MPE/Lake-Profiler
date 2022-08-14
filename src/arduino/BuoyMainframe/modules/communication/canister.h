@@ -139,8 +139,8 @@ void parseCommandCan(uint8_t size) {
   }
 }
 
+// returns true if data has been received since last init
 bool DataReceived() {
-  // return true;  // TODO: incoorporate sensor package received
   return dataReceived;
 }
 
@@ -148,14 +148,11 @@ bool AcknowledgeReceived() {
   return acknowledgeReceived;
 }
 
+// Process data package
 void parsePackage(uint8_t size) {
-  // CanisterAcknowledge();
-  if (!DataLogActive()) {
-    // DEBUG_PRINTLN(F("Data log not active!"));
-    return;
-  }
+  if (!DataLogActive()) return;
 
-  PrintPackageInfo(size);
+  // PrintPackageInfo(size);
 
   AppendData(size);
 
@@ -195,91 +192,116 @@ void AppendData() {
   // DEBUG_PRINTLN(dataPtr);
 }
 
-// Print package information
-void PrintPackageInfo(uint8_t size) {
+// Print latest CH4 Package values
+void PrintCH4() {
   union unpack pack;
 
-  DEBUG_PRINTLINE();
-  // switch (receivedCMDCan[2]) {
-  //   case 0xA:
-  //     DEBUG_PRINT(F("- Package Size: "));
-  //     DEBUG_PRINT(size);
-  //     DEBUG_PRINTLN();
-  //     break;
-  //   case 0x13:
-  //     DEBUG_PRINTLN(F("End of Package"));
-  //     DEBUG_PRINTLINE();
-  //     break;
+  // CH4 concentration Estimate
+  pack.b[0] = receivedCMDCan[3];
+  pack.b[1] = receivedCMDCan[4];
+  pack.b[2] = receivedCMDCan[5];
+  pack.b[3] = receivedCMDCan[6];
 
-  //   default:
-  DEBUG_PRINT(F("Sensor Package ("));
-  // DEBUG_PRINT2(receivedCMDCan[6], HEX);
-  // DEBUG_PRINT(F(" "));
-  // DEBUG_PRINT2(receivedCMDCan[5], HEX);
-  // DEBUG_PRINT(F(" - (Expected Size: "));
-  // DEBUG_PRINT(receivedCMDCan[1]);
-  // DEBUG_PRINT(F(" - Actual Size: "));
-  DEBUG_PRINT(size);
-  DEBUG_PRINTLN(F(")"));
+  DEBUG_PRINT(F("CH4 estimate: "));
+  DEBUG_PRINTLN(pack.l);
 
-  // DEBUG_PRINT(F("CH4 estimate: "));
-  // pack.b[0] = receivedCMDCan[3];
-  // pack.b[1] = receivedCMDCan[4];
-  // pack.b[2] = receivedCMDCan[5];
-  // pack.b[3] = receivedCMDCan[6];
+  // CH4 concentration
+  pack.b[0] = receivedCMDCan[7];
+  pack.b[1] = receivedCMDCan[8];
+  pack.b[2] = receivedCMDCan[9];
+  pack.b[3] = receivedCMDCan[10];
 
-  // DEBUG_PRINTLN(pack.l);
+  DEBUG_PRINT(F("CH4: "));
+  DEBUG_PRINTLN(pack.l);
+}
 
-  // DEBUG_PRINT(F("CH4: "));
-  // pack.b[0] = receivedCMDCan[7];
-  // pack.b[1] = receivedCMDCan[8];
-  // pack.b[2] = receivedCMDCan[9];
-  // pack.b[3] = receivedCMDCan[10];
+// Print lates CO2 Package values
+void PrintCO2() {
+  union unpack pack;
 
-  // DEBUG_PRINTLN(pack.l);
+  // CO2 Raw values
+  pack.b[0] = receivedCMDCan[11];
+  pack.b[1] = receivedCMDCan[12];
+  pack.b[2] = receivedCMDCan[13];
+  pack.b[3] = receivedCMDCan[14];
 
-  // DEBUG_PRINT(F("CO2 raw: "));
-  // pack.b[0] = receivedCMDCan[11];
-  // pack.b[1] = receivedCMDCan[12];
-  // pack.b[2] = receivedCMDCan[13];
-  // pack.b[3] = receivedCMDCan[14];
+  DEBUG_PRINT(F("CO2 raw: "));
+  DEBUG_PRINTLN(pack.l);
 
-  // DEBUG_PRINTLN(pack.l);
+  // CO2 concentration
+  pack.b[0] = receivedCMDCan[15];
+  pack.b[1] = receivedCMDCan[16];
+  pack.b[2] = receivedCMDCan[17];
+  pack.b[3] = receivedCMDCan[18];
 
-  // DEBUG_PRINT(F("CO2: "));
-  // pack.b[0] = receivedCMDCan[15];
-  // pack.b[1] = receivedCMDCan[16];
-  // pack.b[2] = receivedCMDCan[17];
-  // pack.b[3] = receivedCMDCan[18];
+  DEBUG_PRINT(F("CO2: "));
+  DEBUG_PRINTLN(pack.l);
+}
 
-  // DEBUG_PRINTLN(pack.l);
+// Print lates Depth Package values
+void PrintDepth() {
+  union unpack pack;
 
-  // DEBUG_PRINT(F("Depth: "));
-  // pack.b[0] = receivedCMDCan[19];
-  // pack.b[1] = receivedCMDCan[20];
-  // pack.b[2] = receivedCMDCan[21];
-  // pack.b[3] = receivedCMDCan[22];
+  pack.b[0] = receivedCMDCan[19];
+  pack.b[1] = receivedCMDCan[20];
+  pack.b[2] = receivedCMDCan[21];
+  pack.b[3] = receivedCMDCan[22];
 
-  // DEBUG_PRINTLN(pack.l);
+  DEBUG_PRINT(F("Depth: "));
+  DEBUG_PRINTLN(pack.l);
+}
 
-  // DEBUG_PRINT(F("Temp: "));
-  // pack.b[0] = receivedCMDCan[23];
-  // pack.b[1] = receivedCMDCan[24];
-  // pack.b[2] = receivedCMDCan[25];
-  // pack.b[3] = receivedCMDCan[26];
+// Print lates Temperature Package values
+void PrintTemp() {
+  union unpack pack;
 
-  // DEBUG_PRINTLN(pack.l);
+  pack.b[0] = receivedCMDCan[23];
+  pack.b[1] = receivedCMDCan[24];
+  pack.b[2] = receivedCMDCan[25];
+  pack.b[3] = receivedCMDCan[26];
 
-  // DEBUG_PRINT(F("Lum: "));
-  // pack.b[0] = receivedCMDCan[27];
-  // pack.b[1] = receivedCMDCan[28];
+  DEBUG_PRINT(F("Temp: "));
+  DEBUG_PRINTLN(pack.l);
+}
 
-  // DEBUG_PRINTLN(pack.i);
+// Print lates Luminesence Package values
+void PrintLum() {
+  union unpack pack;
+
+  pack.b[0] = receivedCMDCan[27];
+  pack.b[1] = receivedCMDCan[28];
+
+  DEBUG_PRINT(F("Lum: "));
+  DEBUG_PRINTLN(pack.i);
+}
+
+// Print lates Package size info
+void PrintPackageSize(uint8_t size) {
+  DEBUG_PRINT(F("Expected Size: "));
+  DEBUG_PRINT(receivedCMDCan[1]);
+  DEBUG_PRINT(F(" - Actual Size: "));
+  DEBUG_PRINTLN(size);
+}
+
+// Print latest package in HEX
+void PrintFullPackage(uint8_t size) {
   for (uint8_t i = 0; i < size; i++) {
     DEBUG_PRINT2(receivedCMDCan[i], HEX);
     DEBUG_PRINT(F(" "));
   }
   DEBUG_PRINTLN();
-  // break;
-  // }
+}
+
+// Print package information
+void PrintPackageInfo(uint8_t size) {
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("Sensor Package"));
+  // PrintPackageSize(size);
+  // PrintFullPackage(size);
+  PrintCH4();
+  PrintCO2();
+  PrintDepth();
+  PrintTemp();
+  PrintLum();
+  // DEBUG_PRINTLINE();
 }

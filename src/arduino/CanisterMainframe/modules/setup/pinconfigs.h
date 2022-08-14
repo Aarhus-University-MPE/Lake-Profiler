@@ -5,4 +5,6 @@
 void InitAllPins() {
   Wire.begin();
   Wire.setWireTimeout(1000);
+
+  pinMode(LED_BUILTIN, OUTPUT);
 }

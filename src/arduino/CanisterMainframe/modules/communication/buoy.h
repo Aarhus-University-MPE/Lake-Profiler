@@ -140,7 +140,7 @@ bool BuoySendPackage(uint8_t package[], uint8_t size) {
   }
   if (size == 0) return true;
 
-  PrintPackage(package, size);
+  // PrintPackage(package, size);
 
   BuoySendStart(size);
   COM_BUOY.write(package, size);

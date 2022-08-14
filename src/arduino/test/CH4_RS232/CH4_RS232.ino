@@ -6,7 +6,7 @@
   2022
 */
 
-//const String testCMD = "WTF\r\n";
+// const String testCMD = "WTF\r\n";
 const String testCMD = "CODPV,0,0,R\r\n";
 bool msgSent         = false;
 
@@ -33,23 +33,18 @@ void setup() {
 }
 
 unsigned long lastMillisSent;
-char data[10];
 void loop() {
-  // if (millis() - lastMillisSent > 1000) {
-  //   lastMillisSent = millis();
-  //   Serial1.print(testCMD);
-  //   msgSent = true;
-  //   Serial.println();
-  //   Serial.println("--------");
-  //   Serial.println("Sent msg");
-  // }
-  if(Serial1.available()>0) {
-    Serial.write(Serial1.read());
+  if (millis() - lastMillisSent > 1000) {
+    lastMillisSent = millis();
+    Serial1.print("CODPV,0,0,R\r\n");
+  }
+  if (Serial2.available() > 0) {
+    Serial.write(Serial2.read());
   }
 }
 
 bool RS232Initialize() {
-  Serial1.begin(9600);
+  Serial2.begin(115200);
   return Serial1;
 }
 

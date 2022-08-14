@@ -31,6 +31,12 @@ char dataCO2[numCharsCO2] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.
 
 bool CO2Initialize() {
   COM_CO2.begin(COM_CO2_BAUDRATE);
+
+  // delay(50);
+  // COM_CO2.write(0x1b);  // Initiate Communication
+  delay(50);
+  COM_CO2.write(0x31);  // Sensor ON
+
   return COM_CO2;
 }
 
@@ -88,19 +94,20 @@ void recvWithStartEndMarkersCO2() {
 }
 
 // Print CO2 data package
-void printDataCO2(uint8_t size) {
+void PrintCO2Payload(uint8_t size) {
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("CO2 Data: "));
   for (size_t i = 0; i < size; i++) {
-    DEBUG_PRINT(F(" "));
     DEBUG_PRINT(dataCO2[i]);
   }
   DEBUG_PRINTLN();
+}
+
+void PrintDataCO2() {
   DEBUG_PRINT(F("CO2 Concentration: "));
   DEBUG_PRINT(co2Concentration);
   DEBUG_PRINT(F(", CO2 Raw: "));
   DEBUG_PRINTLN(co2Raw);
-  DEBUG_PRINTLINE();
 }
 
 // Parses data string and extract desired values (CO2 Concentration)
@@ -113,7 +120,9 @@ void parseDataCO2(uint8_t size) {
   co2Raw           = ExtractLongFromCharArray(dataCO2, ppmIndexCO2Raw, 1000.0f);
 
   // Print data package
-  printDataCO2(size);
+  DEBUG_PRINTLN(F("CO2 Data"));
+  // PrintCO2Payload(size);
+  // PrintDataCO2();
 }
 
 long GetCo2Concentration() {

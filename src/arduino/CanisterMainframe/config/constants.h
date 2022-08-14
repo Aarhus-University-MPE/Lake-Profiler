@@ -13,8 +13,8 @@
 // Debug configuration flag - Comment out to unset
 // #define DEBUG_BLACKBOX_AND_PRINT
 // #define DEBUG_BLACKBOX
-#define DEBUG_SERIAL
-// #define DEBUG_NONE
+// #define DEBUG_SERIAL
+#define DEBUG_NONE
 
 // Executes if DEBUG flag is set.
 #if defined(DEBUG_BLACKBOX_AND_PRINT)

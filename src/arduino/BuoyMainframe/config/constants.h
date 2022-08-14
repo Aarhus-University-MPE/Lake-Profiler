@@ -80,17 +80,6 @@
 // ------------------------------------------------------------ //
 #define SystemVersion            "0.3.54"
 
-// Binary codes for Status LED flags, Red Yellow Green
-#define BINARY_CODE_LED_GRN      B001  // 001
-#define BINARY_CODE_LED_YEL      B010  // 010
-#define BINARY_CODE_LED_RED      B100  // 100
-
-// LED blink durations (ms)
-#define LED_BLINK_VERY_LONG      2000
-#define LED_BLINK_LONG           1000
-#define LED_BLINK_SHORT          250
-#define LED_BLINK_VERY_SHORT     100
-
 // Button debounce
 #define BUTTON_DBOUNCE_TIME      50
 #define BUTTON_DBOUNCE_TIME_LONG 1000
@@ -154,7 +143,7 @@
 
 // Canister Comm (RS232)
 #define CANISTER_BAUDRATE        19200
-#define LOGGING_START_TIMEOUT    10000
+#define LOGGING_START_TIMEOUT    3000000
 
 // LORA
 #define COM_LORA_BAUDRATE        9600

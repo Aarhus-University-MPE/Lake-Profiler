@@ -17,7 +17,7 @@ void setup() {
 
   // Debug
   DBG_ONLY(SystemEnable(MODULE_COMM_DBG));
-  DEBUG_PRINT(F("Debug mode. Entered Setup... "));
+  DEBUG_PRINTLN(F("Debug mode. Entered Setup... "));
 
   SystemEnable(MODULE_BUOY_COMM);
 
@@ -29,6 +29,7 @@ void setup() {
 
   // Setup finished
   DEBUG_PRINTLN(F("Setup complete."));
+  DEBUG_PRINTLINE();
 }
 
 // ------------------------------------------------------------ //

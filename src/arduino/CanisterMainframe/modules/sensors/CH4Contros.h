@@ -33,6 +33,15 @@ char dataCH4[numCharsCH4]      = "$CODB4,0,0,D,0,0,2021-03-31,06:18:13,,3,2996,2
 
 bool CH4Initialize() {
   COM_CH4.begin(COM_CH4_BAUDRATE);
+
+  // delay(50);
+  // COM_CH4.print(F("$COCFG,0,0,W,1\r\n"));
+  // delay(50);
+  // CH4Read();
+  // COM_CH4.println(F("1"));
+  // delay(50);
+  // CH4Read();
+
   return COM_CH4;
 }
 
@@ -61,6 +70,7 @@ void recvWithStartEndMarkersCH4() {
   char rc;
 
   while (COM_CH4.available() > 0) {
+    // DEBUG_PRINTLN(F("CH4 Data"));
     rc = COM_CH4.read();
 
     if (recvInProgress == true) {
@@ -94,7 +104,6 @@ void printDataCH4(uint8_t size) {
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("CH4 Data: "));
   for (size_t i = 0; i < size; i++) {
-    DEBUG_PRINT(F(" "));
     DEBUG_PRINT(dataCH4[i]);
   }
   DEBUG_PRINTLN();
@@ -115,7 +124,8 @@ void parseDataCH4(uint8_t size) {
   ch4ConcentrationEstimate = ExtractLongFromCharArray(dataCH4, ppmEstimateIndexCH4);
 
   // Print data package
-  printDataCH4(size);
+  DEBUG_PRINTLN(F("CH4 Data"));
+  // printDataCH4(size);
 }
 
 // Return latest CH4 Concentratione value

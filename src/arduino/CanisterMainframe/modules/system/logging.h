@@ -23,8 +23,12 @@ bool SendPackage() {
   BuildPackage();
   if (!BuoySendPackage(package, packageSize)) return false;
 
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(50);
+  digitalWrite(LED_BUILTIN, LOW);
+
   // if (!SendFooter()) return false;
-  DEBUG_PRINTLINE();
+  // DEBUG_PRINTLINE();
   return true;
 }
 

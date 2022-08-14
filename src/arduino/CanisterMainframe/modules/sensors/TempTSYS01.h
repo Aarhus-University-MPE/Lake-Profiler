@@ -52,5 +52,6 @@ long GetTemp() {
   float temp = sensorTSY01.temperature();
 
   long longTemp = (long)(temp * 1000.0f);
+
   return longTemp;
 }
