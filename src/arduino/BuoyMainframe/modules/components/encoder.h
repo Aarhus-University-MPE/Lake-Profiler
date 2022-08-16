@@ -47,12 +47,18 @@ int GetEncoderRotationsTop() {
 int GetEncoderRotationsBottom() {
   return EEPROM_READ_INT(MEMADDR_ENCODER_ROTATION_BOTTOM);
 }
+int GetEncoderRotationsService() {
+  return EEPROM_READ_INT(MEMADDR_ENCODER_ROTATION_SERVICE);
+}
 
 int GetEncoderCountTop() {
   return EEPROM_READ_INT(MEMADDR_ENCODER_COUNT_TOP);
 }
 int GetEncoderCountBottom() {
   return EEPROM_READ_INT(MEMADDR_ENCODER_COUNT_BOTTOM);
+}
+int GetEncoderCountService() {
+  return EEPROM_READ_INT(MEMADDR_ENCODER_COUNT_SERVICE);
 }
 
 void SetEncoderRotationsTop(int value) {
@@ -61,6 +67,9 @@ void SetEncoderRotationsTop(int value) {
 void SetEncoderRotationsBottom(int value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_ROTATION_BOTTOM, value);
 }
+void SetEncoderRotationsService(int value) {
+  EEPROM_WRITE_INT(MEMADDR_ENCODER_ROTATION_SERVICE, value);
+}
 
 void SetEncoderCountTop(int value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT_TOP, value);
@@ -68,11 +77,17 @@ void SetEncoderCountTop(int value) {
 void SetEncoderCountBottom(int value) {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT_BOTTOM, value);
 }
+void SetEncoderCountService(int value) {
+  EEPROM_WRITE_INT(MEMADDR_ENCODER_COUNT_SERVICE, value);
+}
 
 // Save current position as top position
 void SetEncoderTop() {
   DEBUG_PRINT(F("Setting Top Position - "));
   EncoderPrintPos();
+
+  encoderCount     = 0;
+  encoderRotations = 0;
 
   SetEncoderCountTop(encoderCount);
   SetEncoderRotationsTop(encoderRotations);
@@ -85,6 +100,35 @@ void SetEncoderBottom() {
 
   SetEncoderCountBottom(encoderCount);
   SetEncoderRotationsBottom(encoderRotations);
+}
+
+// Save bottom position as offset from top position
+void SetEncoderDepth(float depth) {
+  // PI * D * rot = depth
+  int depthChangeRotation = (int)(depth / (PI * ENCODER_WHEEL_DIAMETER));
+
+  // 100 counts/rev
+  int depthChangeCount = (int)(depth / (PI * ENCODER_WHEEL_DIAMETER) * 100.0f) - depthChangeRotation * 100;
+
+  SetEncoderCountBottom(-depthChangeCount);
+  SetEncoderRotationsBottom(-depthChangeRotation);
+
+  DEBUG_PRINT(F("Setting Bottom Position - "));
+  EncoderPrintPos(MOTOR_DIR_DOWN);
+}
+
+void SetEncoderServiceDepth(float depth) {
+  // PI * D * rot = depth
+  int depthChangeRotation = (int)(depth / (PI * ENCODER_WHEEL_DIAMETER));
+
+  // 100 counts/rev
+  int depthChangeCount = (int)(depth / (PI * ENCODER_WHEEL_DIAMETER) * 100.0f) - depthChangeRotation * 100;
+
+  SetEncoderCountService(-depthChangeCount);
+  SetEncoderRotationsService(-depthChangeRotation);
+
+  DEBUG_PRINT(F("Setting Service Position - "));
+  EncoderPrintPos(MOTOR_DIR_SERVICE);
 }
 
 // Save current position in EEPROM
@@ -116,7 +160,12 @@ void EncoderPrintPos(uint8_t direction) {
       DEBUG_PRINT(F(", Rotations: "));
       DEBUG_PRINTLN(GetEncoderRotationsBottom());
       break;
-
+    case MOTOR_DIR_SERVICE:
+      DEBUG_PRINT(F("Service Position - Count: "));
+      DEBUG_PRINT(GetEncoderCountService());
+      DEBUG_PRINT(F(", Rotations: "));
+      DEBUG_PRINTLN(GetEncoderRotationsService());
+      break;
     default:
       break;
   }

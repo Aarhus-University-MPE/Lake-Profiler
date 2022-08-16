@@ -124,6 +124,11 @@ void AppendIndexToData() {
   AppendToData(indexData, 4, false);
 }
 
+// Return total number of data lines
+unsigned long GetDataLines() {
+  return dataIndex;
+}
+
 // Add current timestamp
 void TimeStampData() {
   uint8_t timeStampData[4];

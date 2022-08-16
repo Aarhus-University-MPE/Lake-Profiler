@@ -22,6 +22,8 @@ void StartStrategyAutonomous() {
   // Set Alarm
   InitializeAlarm();
 
+  AutonomyReset();
+
   DEBUG_PRINTLINE();
   DEBUG_PRINTLN(F("Strategy (Autonomous): Initialized"));
   DEBUG_PRINTLINE();

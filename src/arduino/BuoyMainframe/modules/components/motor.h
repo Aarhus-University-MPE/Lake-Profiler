@@ -56,7 +56,7 @@ void MotorProcess() {
   }
   // Up Button Pressed
   else if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
-    MotorMove(MOTOR_DIR_UP);
+    MotorMove(MOTOR_DIR_SERVICE);
     delay(250);
   }
   // Down Button Pressed
@@ -102,6 +102,13 @@ void MotorMove(uint8_t dir) {
     case MOTOR_DIR_DOWN:
       digitalWrite(PO_MOTOR_DOWN, true);
       digitalWrite(PO_MOTOR_UP, false);
+      digitalWrite(LED_BUILTIN, true);
+      DEBUG_PRINT(F("Moving towards: "));
+      EncoderPrintPos(dir);
+      break;
+    case MOTOR_DIR_SERVICE:
+      digitalWrite(PO_MOTOR_DOWN, false);
+      digitalWrite(PO_MOTOR_UP, true);
       digitalWrite(LED_BUILTIN, true);
       DEBUG_PRINT(F("Moving towards: "));
       EncoderPrintPos(dir);
@@ -169,6 +176,9 @@ bool MotorPositionReached(uint8_t dir) {
       break;
     case MOTOR_DIR_DOWN:
       return GetEncoderRotations() <= GetEncoderRotationsBottom() && GetEncoderCount() <= GetEncoderCountBottom();
+      break;
+    case MOTOR_DIR_SERVICE:
+      return GetEncoderRotations() >= GetEncoderRotationsService() && GetEncoderCount() >= GetEncoderCountService();
       break;
     default:
       break;

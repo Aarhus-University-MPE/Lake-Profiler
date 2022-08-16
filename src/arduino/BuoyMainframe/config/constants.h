@@ -125,10 +125,13 @@
 
 #define MOTOR_DIR_UP             1
 #define MOTOR_DIR_DOWN           2
+#define MOTOR_DIR_SERVICE        3
 #define MOTOR_DIR_HALT           0
 
 #define ENCODER_UPDATE_PERIOD    250
 #define TIMEOUT_SET_POS          5000
+
+#define ENCODER_WHEEL_DIAMETER   0.2f
 
 // ------------------------------------------------------------ //
 //                        COMMUNICATION                         //

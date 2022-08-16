@@ -58,6 +58,9 @@ void TimeStampLog() {
 
 // Enable datalogging
 void DataLogActivate() {
+  DEBUG_PRINTLINE();
+  DEBUG_PRINTLN(F("Logging active!"));
+  DEBUG_PRINTLINE();
   datalogActive = true;
 }
 

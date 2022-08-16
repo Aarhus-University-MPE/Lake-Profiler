@@ -105,6 +105,8 @@ void SetEncoderCountBottom(int value);
 
 void SetEncoderTop();
 void SetEncoderBottom();
+void SetEncoderDepth(float depth);
+void SetEncoderServiceDepth(float depth);
 void EEPROMSetMotorPos();
 
 void EncoderPrintPos();
@@ -210,6 +212,7 @@ void AutonomyState();
 bool AutonomyPowerCheck();
 void AutonomyStartCanister();
 void AutonomyErrorStop();
+void AutonomyReset();
 bool LoggingActive();
 
 bool DataReceived();
@@ -225,6 +228,7 @@ void AppendToData(char *dataInput, bool endLine);
 void AppendToData(char *dataInput);
 void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine);
 void AppendToData(uint8_t *dataInput, uint8_t size);
+unsigned long GetDataLines();
 void AppendIndexToData();
 void AppendData(uint8_t size);
 void AppendData();

@@ -152,7 +152,7 @@ bool AcknowledgeReceived() {
 void parsePackage(uint8_t size) {
   if (!DataLogActive()) return;
 
-  // PrintPackageInfo(size);
+  PrintPackageInfo(size);
 
   AppendData(size);
 
@@ -295,13 +295,15 @@ void PrintFullPackage(uint8_t size) {
 // Print package information
 void PrintPackageInfo(uint8_t size) {
   DEBUG_PRINTLINE();
-  DEBUG_PRINTLN(F("Sensor Package"));
+  DEBUG_PRINT(F("Sensor Package: "));
+  DEBUG_PRINTLN(GetDataLines() + 1);
+
   // PrintPackageSize(size);
   // PrintFullPackage(size);
   PrintCH4();
-  PrintCO2();
-  PrintDepth();
-  PrintTemp();
-  PrintLum();
+  // PrintCO2();
+  // PrintDepth();
+  // PrintTemp();
+  // PrintLum();
   // DEBUG_PRINTLINE();
 }

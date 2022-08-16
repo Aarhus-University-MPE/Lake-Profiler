@@ -19,18 +19,20 @@
 
 #define MEMADDR_ENCODER_ROTATION_TOP     4
 #define MEMADDR_ENCODER_ROTATION_BOTTOM  6
+#define MEMADDR_ENCODER_ROTATION_SERVICE 8
 
-#define MEMADDR_ENCODER_COUNT_TOP        8
-#define MEMADDR_ENCODER_COUNT_BOTTOM     10
+#define MEMADDR_ENCODER_COUNT_TOP        10
+#define MEMADDR_ENCODER_COUNT_BOTTOM     12
+#define MEMADDR_ENCODER_COUNT_SERVICE    14
 
 // Alarm
-#define MEMADDR_ALARM_FREQUENCY          12
-#define MEMADDR_ALARM_START              14
+#define MEMADDR_ALARM_FREQUENCY          16
+#define MEMADDR_ALARM_START              18
 
 // Battery
-#define MEMADDR_BATTERY_MIN              16
+#define MEMADDR_BATTERY_MIN              20
 
-#define MEMADDR_SYSTEM_WARMUP            18
+#define MEMADDR_SYSTEM_WARMUP            22
 
 // Sample Information
-#define MEMADDR_SAMPLEID                 20
+#define MEMADDR_SAMPLEID                 24

@@ -33,7 +33,9 @@ void setup() {
 // ------------------------------------------------------------ //
 void loop() {
   ModeUpdater();
-  SystemEnablePrimary();
+
+  // Reattempt LoRa connection
+  ModuleEnable(MODULE_COMM_LORA);
 
   strategyMethods[1][mode]();
 

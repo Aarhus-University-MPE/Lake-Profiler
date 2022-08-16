@@ -354,6 +354,12 @@ void parseCommandAlarm() {
 }
 
 void parseCommandEncoder() {
+  char *depthPtr           = receivedCMD + 2;
+  char depthChar[numChars] = {0};
+  strcpy(depthChar, depthPtr);
+
+  float depthFloat = atoi(depthChar);
+
   switch (receivedCMD[1]) {
     case CMD_ENCODER_PRINT_POS:
       EncoderPrintPos();
@@ -369,6 +375,12 @@ void parseCommandEncoder() {
       break;
     case CMD_ENCODER_SET_TOP:
       SetEncoderTop();
+      break;
+    case CMD_ENCODER_SET_DEPTH:
+      SetEncoderDepth(depthFloat);
+      break;
+    case CMD_ENCODER_SET_SERVICE:
+      SetEncoderServiceDepth(depthFloat);
       break;
     default:
       break;

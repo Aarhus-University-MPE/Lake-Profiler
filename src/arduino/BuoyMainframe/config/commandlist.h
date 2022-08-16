@@ -73,6 +73,8 @@
 #define CMD_ENCODER_PRINT_BOTTOM 'B'
 #define CMD_ENCODER_SET_TOP      't'
 #define CMD_ENCODER_SET_BOTTOM   'b'
+#define CMD_ENCODER_SET_DEPTH    'D'
+#define CMD_ENCODER_SET_SERVICE  'S'
 
 // Power
 #define CMD_POWER                'P'
@@ -93,7 +95,7 @@
 // ------------------------------------------------------------ //
 
 // Clock setup
-// <Cm31><CH14><CD13><CM8><CY22><CP>
+// <Cm18><CH10><CD15><CM8><CY22><CP>
 
 // Local storage Clear
 // <FRdata/22051915.csv><FRdata/22051915.log>

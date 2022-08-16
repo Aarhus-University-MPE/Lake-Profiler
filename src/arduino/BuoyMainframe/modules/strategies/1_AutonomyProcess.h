@@ -34,6 +34,7 @@ void AutonomyState() {
       break;
     // Alarm triggered start logging process
     case 1:
+
       LoRaBroadcastLogBegin();
       if (AutonomyStartLog()) {
         autonomyState++;
@@ -99,8 +100,9 @@ void AutonomyState() {
       DEBUG_PRINTLINE();
       AppendToLog(F("Top Position Reached, powering off canister"));
 
-      // TODO: Delay, halt, wait, etc?
+      delay(50);
       ModuleDisable(MODULE_PWR_CANISTER);
+      delay(50);
       // ModuleDisable(MODULE_COMM_CANISTER);
 
       MotorMove(MOTOR_DIR_DOWN);
@@ -148,6 +150,7 @@ void AutonomyState() {
     case 14:
       if (LoRaBroadcastData()) {
         autonomyState++;
+        DEBUG_PRINTLINE();
         DEBUG_PRINTLN(F("LoRa Broadcast complete"));
         DEBUG_PRINTLINE();
       }
@@ -163,6 +166,10 @@ void AutonomyState() {
       autonomyState = 0;
       break;
   }
+}
+
+void AutonomyReset() {
+  autonomyState = 0;
 }
 
 // Start new data log
@@ -278,7 +285,7 @@ void ButtonOverride() {
   }
   // If currently logging, stop
   else {
-    AutonomyStopLog();
+    // AutonomyStopLog();
   }
 }
 

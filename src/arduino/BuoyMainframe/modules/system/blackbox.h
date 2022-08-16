@@ -73,11 +73,14 @@ void BlackBoxPrint() {
 }
 
 void BlackBoxEmpty() {
+  if (!BlackBoxStatus()) return;
+
   if (SD.exists("Blackbox.csv")) {
     DEBUG_PRINTLN(F("BLACKBOX CLEARED"));
     SD.remove("Blackbox.csv");
     InitBlackBox();
   } else {
+    SetStatus(MODULE_BLACKBOX, false);
     DEBUG_PRINTLN(F("BLACKBOX ERROR"));
   }
 }
@@ -87,9 +90,8 @@ bool BlackBoxStatus() {
 }
 
 void BlackBoxAppend(String blackBoxInput) {
-  if (!BlackBoxStatus()) {
-    return;
-  }
+  if (!BlackBoxStatus()) return;
+
   File blackBoxFile = SD.open("Blackbox.csv", FILE_WRITE);
   if (blackBoxFile) {
     if (newLine) {
@@ -100,9 +102,8 @@ void BlackBoxAppend(String blackBoxInput) {
     blackBoxFile.print(blackBoxInput);
     blackBoxFile.close();
   } else {
-    DEBUG_PRINTLN(F("Blackbox Error"));
-
     SetStatus(MODULE_BLACKBOX, false);
+    DEBUG_PRINTLN(F("Blackbox Error"));
   }
 }
 
@@ -126,9 +127,8 @@ void BlackBoxAppendln(int blackBoxInput) {
 }
 
 void BlackBoxAppend(long int blackBoxInput, int type) {
-  if (!BlackBoxStatus()) {
-    return;
-  }
+  if (!BlackBoxStatus()) return;
+
   File blackBoxFile = SD.open("Blackbox.csv", FILE_WRITE);
   if (blackBoxFile) {
     if (newLine) {
@@ -139,9 +139,8 @@ void BlackBoxAppend(long int blackBoxInput, int type) {
     blackBoxFile.print(blackBoxInput, type);
     blackBoxFile.close();
   } else {
-    DEBUG_PRINTLN(F("Blackbox Error"));
-
     SetStatus(MODULE_BLACKBOX, false);
+    DEBUG_PRINTLN(F("Blackbox Error"));
   }
 }
 

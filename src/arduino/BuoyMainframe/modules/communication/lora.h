@@ -72,7 +72,19 @@ bool LoRaConfigure() {
 // Connect to Network
 bool LoRaJoin() {
   if (!LoraStatus()) return false;
-  return at_send_check_response(false, "+JOIN: Network joined", 12000, "AT+JOIN\r\n");
+  int ret = 0;
+
+  // 3 attempts to connect to network
+  while (ret < 3) {
+    if (at_send_check_response(false, "+JOIN: Network joined", 12000, "AT+JOIN\r\n")) {
+      return true;
+    } else {
+      DEBUG_PRINT(F(" failed, retrying.. "));
+    }
+    ret++;
+  }
+
+  return false;
 }
 
 // Send Low power message over LoRa, and next alarm hour
@@ -258,6 +270,7 @@ bool LoRaInitializeBroadcastData() {
   }
 
   DEBUG_PRINTLN(F("Broadcasting Data Initialized"));
+  DEBUG_PRINTLINE();
   return true;
 }
 
@@ -327,8 +340,13 @@ bool LoRaBroadcastData() {
   // Build Lora package
   char cmd[128];
   LoRaBuildCommand(package, cmd, size);
-  DEBUG_PRINTLN(F("Sending package: "));
-  DEBUG_PRINT(cmd);
+
+  DEBUG_PRINT(F("Sending package ("));
+  DEBUG_PRINT(lineRead + 1);
+  DEBUG_PRINT(F(" of "));
+  DEBUG_PRINT(GetDataLines());
+  DEBUG_PRINTLN(F(")"));
+  // DEBUG_PRINT(cmd);
 
   // Send package over LoRa
   int ret = 0;
@@ -347,8 +365,10 @@ bool LoRaBroadcastData() {
 
     ret++;
   }
-  DEBUG_PRINTLN(F("Success"));
-  DEBUG_PRINTLINE();
+  // DEBUG_PRINTLN(F("Success"));
+  // DEBUG_PRINTLINE();
+
+  lineRead++;
 
   // Limit broadcast attemps
   if (ret == MAX_LORA_BROADCAST) {
