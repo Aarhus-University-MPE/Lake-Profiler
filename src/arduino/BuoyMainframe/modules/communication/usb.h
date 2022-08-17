@@ -358,7 +358,8 @@ void parseCommandEncoder() {
   char depthChar[numChars] = {0};
   strcpy(depthChar, depthPtr);
 
-  float depthFloat = atoi(depthChar);
+  int depthInt     = atoi(depthChar);
+  float depthFloat = depthInt / 100.0f;
 
   switch (receivedCMD[1]) {
     case CMD_ENCODER_PRINT_POS:
