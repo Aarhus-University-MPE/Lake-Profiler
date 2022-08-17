@@ -73,8 +73,8 @@
 #define CMD_ENCODER_PRINT_BOTTOM 'B'
 #define CMD_ENCODER_SET_TOP      't'
 #define CMD_ENCODER_SET_BOTTOM   'b'
-#define CMD_ENCODER_SET_DEPTH    'D'
-#define CMD_ENCODER_SET_SERVICE  'S'
+#define CMD_ENCODER_SET_DEPTH    'D'  // Service depth in cm offset from 0 position (top logging position)
+#define CMD_ENCODER_SET_SERVICE  'S'  // Service depth in cm offset from 0 position (top logging position)
 
 // Power
 #define CMD_POWER                'P'

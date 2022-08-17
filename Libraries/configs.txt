@@ -1,0 +1,5 @@
+Copy library folders to
+
+arduino\libraries
+
+Default direction (C:\Program Files (x86)\Arduino\libraries\)
