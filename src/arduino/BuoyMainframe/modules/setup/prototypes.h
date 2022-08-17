@@ -121,6 +121,7 @@ void SetBatteryMinLevel(uint8_t batteryLevel);
 uint8_t GetBatteryMinLevel();
 int BatteryLevel();
 uint8_t BatteryLevelHex();
+uint8_t BatteryVoltageHex();
 
 // System Status
 bool SystemStatus[MODULE_COUNT];

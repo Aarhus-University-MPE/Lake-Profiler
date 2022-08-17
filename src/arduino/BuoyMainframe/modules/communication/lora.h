@@ -92,7 +92,7 @@ void LoRaBroadcastLowPower() {
   if (!LoraStatus()) return;
   char cmd[128];
   char *cmdPtr = cmd;
-  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"2 %02X %02X\"\r\n", BatteryLevelHex(), NextAlarm());
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"2 %02X %02X %02X\"\r\n", BatteryLevelHex(), BatteryVoltageHex(), NextAlarm());
 
   DEBUG_PRINTLN(F("Sending package: "));
   DEBUG_PRINT(cmd);

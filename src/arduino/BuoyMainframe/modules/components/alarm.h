@@ -73,6 +73,9 @@ void SetAlarm(byte hourHex, uint8_t src) {
     DEBUG_PRINTLN(F("Clock Error"));
     return;
   }
+
+  if (hourHex == 0x24) hourHex = 0x00;
+
   RTCC.setSec(src, 0x00);
   RTCC.setMin(src, 0x00);
   RTCC.setHour(src, hourHex);  // Start 1 hour before for warmup
@@ -186,40 +189,23 @@ bool AlarmStatus(uint8_t src) {
 }
 
 uint8_t NextAlarm() {
-  uint8_t hour   = RTCC.getHour(RTCC_RTCC);
-  uint8_t minute = RTCC.getMin(RTCC_RTCC);
+  uint8_t hour = RTCC.getHour(RTCC_RTCC);
 
   hour = HexToHour(hour);
-
-  // DEBUG_PRINT(F("Current time: "));
-  // DEBUG_PRINT2(hour, HEX);
-  // DEBUG_PRINT(F(":"));
-  // DEBUG_PRINT2(minute, HEX);
-  // DEBUG_PRINTLN();
 
   int8_t hourDifference = -1;
   int i                 = 0;
 
   hourDifference = HexToHour(alarm[i]) - hour;
 
-  while (hourDifference <= GetWarmupTime() + 1 && i < alarmFrequency - 1) {
+  while (hourDifference < GetWarmupTime() + 1 && i < alarmFrequency - 1) {
     i++;
     hourDifference = HexToHour(alarm[i]) - hour;
-    // DEBUG_PRINT(F("Hour: "));
-    // DEBUG_PRINT2(alarm[i], HEX);
-    // DEBUG_PRINT(F(" - Difference"));
-    // DEBUG_PRINT(hourDifference);
-    // DEBUG_PRINTLN();
   }
 
-  // if (alarm[i] - GetWarmupTime() < 0) {
-  //   i = 0;
-  // }
-
-  // Check for wrap around (0:00 - 1 hr, = 24:00 - 1 hr)
-  if (alarm[i] - GetWarmupTime() < 0) {
-    return HourToHex(HexToHour(alarm[i]) + 24 - GetWarmupTime());
-  } else {
-    return HourToHex(HexToHour(alarm[i]) - GetWarmupTime());
+  if (hourDifference < GetWarmupTime() + 1) {
+    i = 0;
   }
+
+  return HourToHex(HexToHour(alarm[i]) - GetWarmupTime());
 }
