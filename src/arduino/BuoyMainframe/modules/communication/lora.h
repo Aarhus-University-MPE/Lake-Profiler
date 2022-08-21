@@ -5,6 +5,9 @@
     Component:
       https://wiki.seeedstudio.com/Grove_LoRa_E5_New_Version/
 
+    Online Data:
+      https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back=6h
+      https://prototype.asap-forecast.com/docs/#/default/get_logs__category_
     By
     Mads Rosenhoej Jeppesen - Aarhus 2021
     mrj@mpe.au.dk
@@ -32,15 +35,6 @@ bool InitializeLora() {
 bool LoraStatus() {
   return GetStatus(MODULE_LORA);
 }
-
-// void LoraRecMsg() {
-//   // uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-//   // uint8_t len = sizeof(buf);
-
-//   // if (rf95.recv(buf, &len)) {
-//   //   DEBUG_PRINTLN((char*)buf);
-//   // }
-// }
 
 void TerminateLora() {
   COM_SERIAL_LORA.end();

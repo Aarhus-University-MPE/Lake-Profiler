@@ -12,14 +12,21 @@
 #include "../setup/modules.h"
 
 // BatteryReading = 3 kOhm / (3 kOhm + 9 kOhm) * Battery Voltage
-// 13V .. 11.7V -> ~3.25V .. 2.93V -> 665 .. 599
-const float batteryScale  = 69.23;
-const float batteryOffset = -800.0f;
+// 12.6V .. 10.5V -> ~3.15V .. 2.65V -> 645 .. 542
+const float batteryScaleA = 28.722f;
+const float batteryScaleB = -617.39f;
+const float batteryOffset = 3318.3f;
 
 int BatteryLevel() {
-  float batteryLevel = batteryScale * BatteryVoltage() + batteryOffset;
+  float batteryVoltage = BatteryVoltage();
 
-  return max((int)batteryLevel, 0);
+  // Check over/under charged
+  if (batteryVoltage < BATTERY_VOLTAGE_MIN) return 0;
+  if (batteryVoltage > BATTERY_VOLTAGE_MAX) return 100;
+
+  float batteryLevel = batteryScaleA * batteryVoltage * batteryVoltage + batteryScaleB * batteryVoltage + batteryOffset;
+
+  return (int)batteryLevel;
 }
 
 // Return battery Level in Hex

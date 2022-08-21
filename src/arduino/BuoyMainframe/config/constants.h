@@ -119,6 +119,9 @@
 
 #define BATTERY_MIN_LEVEL        50
 
+#define BATTERY_VOLTAGE_MIN      10.7f
+#define BATTERY_VOLTAGE_MAX      12.6f
+
 // ------------------------------------------------------------ //
 //                           MOTORS                             //
 // ------------------------------------------------------------ //
