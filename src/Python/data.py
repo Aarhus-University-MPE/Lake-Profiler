@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import os
 
 bashCommand = "curl -o \"D:/Projects/Lake-Profiler/data/LoRa/battery.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
-bashCommand += "25h\""
+bashCommand += "5d\""
 
 os.system(bashCommand)
 
@@ -26,9 +26,14 @@ for column in data.columns:
     if ("payload_hex:" in column):
         loraMsg = column.split('"')[1]
         payload = loraMsg.split(' ')
-
-        level.append(int('0x'+payload[2], 0))
-        voltage.append(int('0x'+payload[3], 0) / 10)
+        try:
+            if (payload[1] == "3"):
+                level.append(int('0x'+payload[2], 0))
+                voltage.append(int('0x'+payload[3], 0) / 10)
+            else:
+                time.pop()
+        except:
+            time.pop()
 
 
 # plotting the points
@@ -47,25 +52,8 @@ plt.ylabel('Charge Level [%]')
 # giving a title to my graph
 plt.title('Battery Level (Estimate)')
 
-# function to show the plot
-plt.show()
+ax.set_facecolor('xkcd:grey')
 
-
-# plotting the points
-fig, ax = plt.subplots()
-ax.plot(time, voltage)
-
-myFmt = mdates.DateFormatter('%H:%M')
-ax.xaxis.set_major_formatter(myFmt)
-
-plt.gcf().autofmt_xdate()
-
-# naming the x axis
-plt.xlabel('Time')
-# naming the y axis
-plt.ylabel('Battery Voltage [V]')
-# giving a title to my graph
-plt.title('Battery Level (Estimate)')
-
+fig.patch.set_facecolor('xkcd:grey')
 # function to show the plot
 plt.show()
