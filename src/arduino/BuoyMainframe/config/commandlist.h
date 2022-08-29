@@ -88,7 +88,9 @@
 #define CMD_LOGGING_BEGIN        'B'
 
 // Canister
-#define CMD_CANISTER             'c'
+#define CMD_SAMPLE               's'
+#define CMD_SAMPLE_IDGET         'I'
+#define CMD_SAMPLE_IDSET         'i'
 
 // ------------------------------------------------------------ //
 //                      Example Commands                        //

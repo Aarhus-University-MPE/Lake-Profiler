@@ -156,6 +156,8 @@ void parsePackage(uint8_t size) {
 
   AppendData(size);
 
+  IdStampData();
+
   TimeStampData();
 }
 

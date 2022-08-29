@@ -31,7 +31,7 @@ void parseCommandModule();
 void parseCommandEncoder();
 void parseCommandPower();
 void parseCommandLogging();
-void parseCommandCanister();
+void parseCommandSample();
 void CountDownPrint();
 const byte numChars = 200;
 
@@ -342,3 +342,10 @@ bool LoRaBroadcastData();
 void LoRaBroadcastBegin();
 void LoRaBroadcastLowPower();
 void LoRaBroadcastLogBegin();
+void LoRaBroadcastPowerLevel();
+void LoRaHeartbeat();
+
+unsigned int IncrementSampleID();
+unsigned int GetSampleID();
+void SetSampleID(unsigned int idValue);
+void IdStampData();

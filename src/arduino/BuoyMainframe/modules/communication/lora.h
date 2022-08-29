@@ -81,6 +81,19 @@ bool LoRaJoin() {
   return false;
 }
 
+unsigned long millisLastLoraHeartbeat = -LORA_HEARTBEAT_PERIOD;
+void LoRaHeartbeat() {
+  if (LoggingActive()) return;
+
+  if (digitalRead(PO_MOTOR_DOWN) || digitalRead(PO_MOTOR_UP)) return;
+
+  if (millis() - millisLastLoraHeartbeat < LORA_HEARTBEAT_PERIOD) return;
+
+  millisLastLoraHeartbeat = millis();
+
+  LoRaBroadcastPowerLevel();
+}
+
 // Send Low power message over LoRa, and next alarm hour
 void LoRaBroadcastLowPower() {
   if (!LoraStatus()) return;
@@ -111,12 +124,43 @@ void LoRaBroadcastLowPower() {
   }
 }
 
+// Broadcast current power level
+void LoRaBroadcastPowerLevel() {
+  if (!LoraStatus()) return;
+
+  char cmd[128];
+  char *cmdPtr = cmd;
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"3 %02X %02X\"\r\n", BatteryLevelHex(), BatteryVoltageHex());
+
+  DEBUG_PRINTLN(F("Sending package: "));
+  DEBUG_PRINT(cmd);
+
+  int ret = 0;
+  while (ret < 5 && !at_send_check_response(false, "RXWIN1", 10000, cmd)) {
+    if (ret == 0) {
+      DEBUG_PRINT(F("Failed, retrying attempt: "));
+    }
+    DEBUG_PRINT(F("("));
+    DEBUG_PRINT(ret + 1);
+    DEBUG_PRINT(F("/5)..."));
+
+    // Broadcast Delay
+    delay(LORA_BROADCAST_DELAY);
+    ret++;
+  }
+  if (ret == 5) {
+    DEBUG_PRINTLN(F("Failed"));
+  } else {
+    DEBUG_PRINTLN(F("Success"));
+  }
+}
+
 // Send Log begin over LoRa along with current time stamp
 void LoRaBroadcastLogBegin() {
   if (!LoraStatus()) return;
   char cmd[128];
   char *cmdPtr = cmd;
-  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"1 ");
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"1 %02X %02X ", BatteryLevelHex(), BatteryVoltageHex());
 
   // Current time
   unsigned long timeStamp = (unsigned long)now();
@@ -269,7 +313,7 @@ bool LoRaInitializeBroadcastData() {
 }
 
 // Append package to cmd string
-void LoRaBuildCommand(uint8_t package[34], char cmd[128], int size) {
+void LoRaBuildCommand(uint8_t package[40], char cmd[128], int size) {
   char *cmdPtr = cmd;
   cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"");
 
@@ -294,7 +338,7 @@ bool LoRaBroadcastLog() {
     return true;
   }
 
-  uint8_t package[30];
+  uint8_t package[45];
   int size = 0;
 
   // Read line from log file
@@ -325,7 +369,7 @@ bool LoRaBroadcastData() {
     return true;
   }
 
-  uint8_t package[34];
+  uint8_t package[40];
   int size = 0;
 
   // Read line from Data file

@@ -158,3 +158,4 @@
 #define SERVER_ADDRESS           2
 #define MAX_LORA_BROADCAST       10
 #define LORA_BROADCAST_DELAY     5000
+#define LORA_HEARTBEAT_PERIOD    900000L  // 15 min
