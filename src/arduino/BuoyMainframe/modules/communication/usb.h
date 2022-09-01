@@ -99,8 +99,8 @@ void parseCommand() {
     case CMD_LOGGING:
       parseCommandLogging();
       break;
-    case CMD_CANISTER:
-      parseCommandCanister();
+    case CMD_SAMPLE:
+      parseCommandSample();
       break;
     case '\0':
       break;
@@ -428,16 +428,24 @@ void parseCommandLogging() {
   }
 }
 
-void parseCommandCanister() {
-  char *command = receivedCMD + 1;
+void parseCommandSample() {
+  char *idPtr           = receivedCMD + 2;
+  char idChar[numChars] = {0};
+  strcpy(idChar, idPtr);
 
-  DEBUG_PRINTLINE();
-  DEBUG_PRINT(F("Sending command to Canister: \"<"));
-  DEBUG_PRINT(command);
-  DEBUG_PRINTLN(F(">\""));
-  COM_SERIAL_CANISTER.print(F("<"));
-  COM_SERIAL_CANISTER.print(command);
-  COM_SERIAL_CANISTER.print(F(">"));
+  int idInt = atoi(idChar);
+
+  switch (receivedCMD[1]) {
+    case CMD_SAMPLE_IDGET:
+      DEBUG_PRINT(F("Sample ID: "));
+      DEBUG_PRINTLN((int)GetSampleID());
+      break;
+    case CMD_SAMPLE_IDSET:
+      SetSampleID((unsigned int)idInt);
+      break;
+    default:
+      break;
+  }
 }
 
 void CountDownPrint() {

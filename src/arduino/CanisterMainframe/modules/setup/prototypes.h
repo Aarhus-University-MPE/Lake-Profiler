@@ -77,6 +77,7 @@ void BuildPackage();
 void ReadSampleInterval();
 void SetSampleInterval(unsigned int sampleInterval);
 void SetSampleID();
+void GetSampleID();
 void PrintPackage(uint8_t package[], uint8_t size);
 void PrintPackage(char package[], uint8_t size);
 void BundleIdentifier(PackageIdentifier identifier);

@@ -37,6 +37,8 @@ void loop() {
   // Reattempt LoRa connection
   ModuleEnable(MODULE_COMM_LORA);
 
+  LoRaHeartbeat();
+
   strategyMethods[1][mode]();
 
   HeartbeatBlackBox();

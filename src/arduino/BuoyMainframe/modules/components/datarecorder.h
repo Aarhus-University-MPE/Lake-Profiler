@@ -8,6 +8,7 @@
 char fileLocationData[22];
 char fileLocationLog[22];
 unsigned long dataIndex = 0;
+unsigned int sampleID   = 0;
 File logFile;
 File dataFile;
 
@@ -52,8 +53,25 @@ bool InitializeLoggingFiles() {
 
   // Initialize dataIndex
   dataIndex = 0;
+  sampleID  = IncrementSampleID();
+
+  DEBUG_PRINT(F("Sample id: "));
+  DEBUG_PRINTLN((int)sampleID);
 
   return true;
+}
+
+void SetSampleID(unsigned int idValue) {
+  EEPROM_WRITE_UINT(MEMADDR_SAMPLEID, idValue);
+}
+
+unsigned int GetSampleID() {
+  return EEPROM_READ_UINT(MEMADDR_SAMPLEID);
+}
+
+unsigned int IncrementSampleID() {
+  SetSampleID(GetSampleID() + 1);
+  return GetSampleID();
 }
 
 // Append data to the current .log file
@@ -129,6 +147,14 @@ unsigned long GetDataLines() {
   return dataIndex;
 }
 
+// Append sample ID to data row
+void IdStampData() {
+  union unpack pack;
+
+  pack.ui = sampleID;
+  AppendToData(pack.b, 2, false);
+}
+
 // Add current timestamp
 void TimeStampData() {
   uint8_t timeStampData[4];
@@ -141,7 +167,6 @@ void TimeStampData() {
 
   // DEBUG_PRINT(F("Current time: "));
   // DEBUG_PRINTLN(timeStamp);
-
   AppendToData(timeStampData, 4, true);
 }
 
