@@ -173,7 +173,7 @@ void ModuleDisable() {
   ModuleDisable(MODULE_PWR_MOTOR);
   ModuleDisable(MODULE_PWR_CANISTER);
   ModuleDisable(MODULE_MOTOR);
-  ModuleDisable(MODULE_CLOCK);
+  // ModuleDisable(MODULE_CLOCK);
   // ModuleDisable(MODULE_COMM_LORA);
   // ModuleDisable(MODULE_COMM_CANISTER);
 }
@@ -184,6 +184,7 @@ void SystemEnablePrimary() {
   ModuleEnable(MODULE_BLACKBOX);
   ModuleEnable(MODULE_LORA);
   ModuleEnable(MODULE_COMM_LORA);
+  ModuleEnable(MODULE_CLOCK);
 }
 
 // Runs system check and compares active modules to required

@@ -83,8 +83,10 @@ void SetEncoderCountService(int value) {
 
 // Save current position as top position
 void SetEncoderTop() {
-  DEBUG_PRINT(F("Setting Top Position - "));
-  EncoderPrintPos();
+  DEBUG_PRINTLINE();
+  DEBUG_PRINT(F("Setting Top Position"));
+  DEBUG_PRINTLINE();
+  // EncoderPrintPos();
 
   encoderCount     = 0;
   encoderRotations = 0;

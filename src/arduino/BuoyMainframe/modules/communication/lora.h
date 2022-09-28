@@ -85,6 +85,8 @@ unsigned long millisLastLoraHeartbeat = -LORA_HEARTBEAT_PERIOD;
 void LoRaHeartbeat() {
   if (LoggingActive()) return;
 
+  if (!GetStatus(MODULE_COMM_LORA)) return;
+
   if (digitalRead(PO_MOTOR_DOWN) || digitalRead(PO_MOTOR_UP)) return;
 
   if (millis() - millisLastLoraHeartbeat < LORA_HEARTBEAT_PERIOD) return;
@@ -97,6 +99,8 @@ void LoRaHeartbeat() {
 // Send Low power message over LoRa, and next alarm hour
 void LoRaBroadcastLowPower() {
   if (!LoraStatus()) return;
+  if (!GetStatus(MODULE_COMM_LORA)) return;
+
   char cmd[128];
   char *cmdPtr = cmd;
   cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"2 %02X %02X %02X\"\r\n", BatteryLevelHex(), BatteryVoltageHex(), NextAlarm());
@@ -127,6 +131,7 @@ void LoRaBroadcastLowPower() {
 // Broadcast current power level
 void LoRaBroadcastPowerLevel() {
   if (!LoraStatus()) return;
+  if (!GetStatus(MODULE_COMM_LORA)) return;
 
   char cmd[128];
   char *cmdPtr = cmd;
@@ -158,6 +163,8 @@ void LoRaBroadcastPowerLevel() {
 // Send Log begin over LoRa along with current time stamp
 void LoRaBroadcastLogBegin() {
   if (!LoraStatus()) return;
+  if (!GetStatus(MODULE_COMM_LORA)) return;
+
   char cmd[128];
   char *cmdPtr = cmd;
   cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"1 %02X %02X ", BatteryLevelHex(), BatteryVoltageHex());

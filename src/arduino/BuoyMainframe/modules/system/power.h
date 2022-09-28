@@ -17,6 +17,8 @@ const float batteryScaleA = 28.722f;
 const float batteryScaleB = -617.39f;
 const float batteryOffset = 3318.3f;
 
+const float batteryVoltageOffset = 0.1f;
+
 int BatteryLevel() {
   float batteryVoltage = BatteryVoltage();
 
@@ -49,7 +51,7 @@ float BatteryVoltage() {
 
   float voltageRead = voltageInt * 5.0f / 1024.0f;
 
-  float voltageBattery = voltageRead * 12.0f / 3.0f;
+  float voltageBattery = voltageRead * 12.0f / 3.0f + batteryVoltageOffset;
 
   return voltageBattery;
 }

@@ -124,8 +124,8 @@ void SetAlarmFrequency(uint8_t frequency) {
   UpdateAlarmTimings();
 }
 
-void SetAlarmStartHour(uint8_t startHourHex) {
-  alarmStartHour = startHourHex;
+void SetAlarmStartHour(uint8_t startHour) {
+  alarmStartHour = startHour;
   EEPROM_WRITE_INT(MEMADDR_ALARM_START, alarmStartHour);
 
   // DEBUG_PRINT(F("Alarm Start Hour Set: "));

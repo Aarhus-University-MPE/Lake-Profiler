@@ -21,6 +21,7 @@ void setup() {
 
   SystemEnablePrimary();
 
+  // Boot-up system check
   SystemCheck();
 
   // Strategy initialization
@@ -32,16 +33,21 @@ void setup() {
 //                          MAIN LOOP                           //
 // ------------------------------------------------------------ //
 void loop() {
+  // System strategy Updater
   ModeUpdater();
 
   // Reattempt LoRa connection
   ModuleEnable(MODULE_COMM_LORA);
 
+  // LoRa Power heartbeat
   LoRaHeartbeat();
 
+  // Primary Strategy
   strategyMethods[1][mode]();
 
+  // System Heartbeat
   HeartbeatBlackBox();
 
+  // USB debug commands
   DBG_ONLY(recvWithStartEndMarkers());
 }

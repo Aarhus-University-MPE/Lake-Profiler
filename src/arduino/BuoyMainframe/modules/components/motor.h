@@ -47,12 +47,13 @@ void MotorProcess() {
 
   lastMillisRead = millis();
 
-  if (setPos) MotorSetPos();
-
   // Both Buttons Pressed
-  else if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+  if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
     MotorMove(MOTOR_DIR_HALT);
-    MotorSetState();
+    delay(3000);
+    if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+      SetEncoderTop();
+    }
   }
   // Up Button Pressed
   else if (!digitalRead(PI_BUTTON_MOTOR_UP)) {

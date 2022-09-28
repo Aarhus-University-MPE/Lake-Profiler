@@ -328,9 +328,9 @@ void parseCommandAlarm() {
       break;
     case CMD_ALARM_START_HOUR:
       DEBUG_PRINT(F("Start Hour: "));
-      DEBUG_PRINT2(clockValueHex, HEX);
+      DEBUG_PRINT(clockValue);
       DEBUG_PRINT(F(":00"));
-      SetAlarmStartHour(clockValueHex);
+      SetAlarmStartHour(clockValue);
       break;
     case CMD_ALARM_BEGIN:
       DEBUG_PRINT(F("ON"));
