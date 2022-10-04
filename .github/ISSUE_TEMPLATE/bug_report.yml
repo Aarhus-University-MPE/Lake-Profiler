@@ -9,9 +9,9 @@ body:
       Please make sure to [search for existing issues](https://github.com/Aarhus-University-MPE/Ice-Nucleation-Controller/issues) before filing a new one!
 - type: input
   attributes:
-    label: Ice-Nucleation-Controller version
+    label: Lake Profiler Version
     placeholder: |
-      1.2.12
+      0.4.13
     description: |
       Check software description
   validations:
@@ -25,13 +25,13 @@ body:
     multiple: true
     options:
       - General
-      - Ice Nucleation Controller
-      - Thermal Camera Evaluation
-      - Thermal Camera Calibration
-      - Hardware Issue
-      - Freezing Point Detection
-      - Temperature Controller
-      - Performance
+      - Sensors
+      - Encoder
+      - Methane Sensor
+      - CO2 Sensor
+      - Buoy
+      - Canister
+      - Battery
       - Other
   validations:
     required: true
