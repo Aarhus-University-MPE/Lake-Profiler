@@ -113,6 +113,7 @@ void EEPROMSetMotorPos();
 
 void EncoderPrintPos();
 void EncoderPrintPos(uint8_t direction);
+bool EncoderWithinLimits();
 void EEPROMGetMotorPos();
 
 int GetEncoderPosition();
@@ -350,6 +351,7 @@ void LoRaBroadcastBegin();
 void LoRaBroadcastLowPower();
 void LoRaBroadcastLogBegin();
 void LoRaBroadcastPowerLevel();
+void LoRaBroadcastPosError();
 void LoRaHeartbeat();
 
 unsigned int IncrementSampleID();

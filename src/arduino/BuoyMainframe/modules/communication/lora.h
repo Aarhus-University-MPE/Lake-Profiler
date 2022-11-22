@@ -160,6 +160,38 @@ void LoRaBroadcastPowerLevel() {
   }
 }
 
+// Send Position Error message over LoRa
+void LoRaBroadcastPosError() {
+  if (!LoraStatus()) return;
+  if (!GetStatus(MODULE_COMM_LORA)) return;
+
+  char cmd[128];
+  char *cmdPtr = cmd;
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"4\"\r\n");
+
+  DEBUG_PRINTLN(F("Sending package: "));
+  DEBUG_PRINT(cmd);
+
+  int ret = 0;
+  while (ret < 5 && !at_send_check_response(false, "RXWIN1", 10000, cmd)) {
+    if (ret == 0) {
+      DEBUG_PRINT(F("Failed, retrying attempt: "));
+    }
+    DEBUG_PRINT(F("("));
+    DEBUG_PRINT(ret + 1);
+    DEBUG_PRINT(F("/5)..."));
+
+    // Broadcast Delay
+    delay(LORA_BROADCAST_DELAY);
+    ret++;
+  }
+  if (ret == 5) {
+    DEBUG_PRINTLN(F("Failed"));
+  } else {
+    DEBUG_PRINTLN(F("Success"));
+  }
+}
+
 // Send Log begin over LoRa along with current time stamp
 void LoRaBroadcastLogBegin() {
   if (!LoraStatus()) return;

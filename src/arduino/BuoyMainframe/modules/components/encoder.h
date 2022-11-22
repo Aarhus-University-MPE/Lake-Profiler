@@ -29,6 +29,11 @@ void EncoderZInterrupt() {
   encoderCount = 0;
 }
 
+// Returns true if encoder rotations are within values
+bool EncoderWithinLimits() {
+  return encoderRotations <= GetEncoderRotationsTop() && encoderRotations >= GetEncoderRotationsBottom();
+}
+
 byte GetMotorDirection() {
   return motorDirection;
 }
