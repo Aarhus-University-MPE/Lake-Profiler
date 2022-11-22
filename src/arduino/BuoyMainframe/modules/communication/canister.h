@@ -240,7 +240,7 @@ void PrintCO2() {
   DEBUG_PRINTLN(pack.l);
 }
 
-// Print lates Depth Package values
+// Print lates Depth Package values m * 1000
 void PrintDepth() {
   union unpack pack;
 
@@ -304,8 +304,19 @@ void PrintPackageInfo(uint8_t size) {
   // PrintFullPackage(size);
   PrintCH4();
   // PrintCO2();
-  // PrintDepth();
+  PrintDepth();
   // PrintTemp();
   // PrintLum();
   // DEBUG_PRINTLINE();
+}
+
+long GetLatestDepth() {
+  union unpack pack;
+
+  pack.b[0] = receivedCMDCan[23];
+  pack.b[1] = receivedCMDCan[24];
+  pack.b[2] = receivedCMDCan[25];
+  pack.b[3] = receivedCMDCan[26];
+
+  return pack.l;
 }

@@ -52,6 +52,7 @@
 #include "../components/motor.h"
 #include "../components/rtc.h"
 #include "../components/sdReader.h"
+#include "../components/time_encoder.h"
 
 // Alarm functionalities
 #include "../components/alarm.h"

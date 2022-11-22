@@ -29,6 +29,10 @@ void EncoderZInterrupt() {
   encoderCount = 0;
 }
 
+void EncoderActivate() {
+  EEPROM_WRITE_INT(MEMADDR_ENCODER_MODE, ENCODERMODE_SICK);
+}
+
 // Returns true if encoder rotations are within values
 bool EncoderWithinLimits() {
   return encoderRotations <= GetEncoderRotationsTop() && encoderRotations >= GetEncoderRotationsBottom();
@@ -211,4 +215,20 @@ void EEPROMGetMotorPos() {
   encoderCount     = EEPROM_READ_INT(MEMADDR_ENCODER_COUNT);
   encoderRotations = EEPROM_READ_INT(MEMADDR_ENCODER_ROTATION);
   // EncoderPrintPos();
+}
+
+bool MotorPositionReachedEncoder(uint8_t dir) {
+  switch (dir) {
+    case MOTOR_DIR_UP:
+      return GetEncoderPosition() >= GetEncoderPositionTop();
+      break;
+    case MOTOR_DIR_DOWN:
+      return GetEncoderPosition() <= GetEncoderPositionBottom();
+      break;
+    case MOTOR_DIR_SERVICE:
+      return GetEncoderPosition() >= GetEncoderPositionService();
+      break;
+    default:
+      break;
+  }
 }

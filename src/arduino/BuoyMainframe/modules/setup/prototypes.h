@@ -29,6 +29,7 @@ void parseCommandFiles();
 void parseCommandStrategy();
 void parseCommandModule();
 void parseCommandEncoder();
+void parseCommandTimeEncoder();
 void parseCommandPower();
 void parseCommandLogging();
 void parseCommandSample();
@@ -75,18 +76,21 @@ functionPtr strategyMethods[4][MODES_MAX];
 
 // Motors
 void MotorMove(byte dir);
-bool MotorStall();
-bool GetMotorState();
+byte GetMotorState();
 bool MotorStatus();
 bool MotorPositionReached(uint8_t dir);
 bool MotorPositionReached();
-void MotorSetState();
+bool MotorPositionReachedEncoder(uint8_t dir);
+bool MotorPositionReachedTimeEncoder(uint8_t dir);
 void MotorSetPos();
+int GetEncoderMode();
 
 // Encoder
 void EncoderAInterrupt();
 void EncoderBInterrupt();
 void EncoderZInterrupt();
+
+void EncoderActivate();
 
 int GetEncoderRotations();
 int GetEncoderCount();
@@ -120,6 +124,38 @@ int GetEncoderPosition();
 int GetEncoderPositionTop();
 int GetEncoderPositionBottom();
 int GetEncoderPositionService();
+
+// Time Encoder
+unsigned long GetTimeEncoderPosition();
+unsigned long GetTimeEncoderTop();
+unsigned long GetTimeEncoderBottom();
+unsigned long GetTimeEncoderService();
+
+int GetTimeMotorDirection();
+
+void TimeEncoderActivate();
+void TimeEncoderStart();
+void TimeEncoderUpdate();
+
+void UpdateMotorCompensation();
+void SetTimeEncoderCompensationScale(float scale);
+float GetTimeEncoderCompensationScale();
+
+unsigned long GetTargetTimePosition();
+
+void SetTimeEncoderTop();
+void SetTimeEncoderBottom(unsigned long value);
+void SetTimeEncoderService(unsigned long value);
+void SetTimeEncoderBottom();
+
+void SetTimeEncoderDepth(float depth);
+void SetTimeEncoderServiceDepth(float depth);
+
+void EEPROMSetTimeMotorPos();
+void EEPROMGetTimeMotorPos();
+
+void TimeEncoderPrintPos();
+void TimeEncoderPrintPos(uint8_t direction);
 
 // Power
 bool VoltageCheck();
@@ -358,3 +394,5 @@ unsigned int IncrementSampleID();
 unsigned int GetSampleID();
 void SetSampleID(unsigned int idValue);
 void IdStampData();
+
+long GetLatestDepth();

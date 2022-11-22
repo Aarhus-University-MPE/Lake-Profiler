@@ -1,4 +1,3 @@
-
 /*
   Lake Profiler Power control
 

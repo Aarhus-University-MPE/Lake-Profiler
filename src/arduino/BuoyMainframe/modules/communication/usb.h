@@ -93,6 +93,9 @@ void parseCommand() {
     case CMD_ENCODER:
       parseCommandEncoder();
       break;
+    case CMD_TIMEENCODER:
+      parseCommandTimeEncoder();
+      break;
     case CMD_POWER:
       parseCommandPower();
       break;
@@ -365,6 +368,9 @@ void parseCommandEncoder() {
     case CMD_ENCODER_PRINT_POS:
       EncoderPrintPos();
       break;
+    case CMD_ENCODER_ACTIVATE:
+      EncoderActivate();
+      break;
     case CMD_ENCODER_PRINT_BOTTOM:
       EncoderPrintPos(MOTOR_DIR_DOWN);
       break;
@@ -383,6 +389,45 @@ void parseCommandEncoder() {
     case CMD_ENCODER_SET_SERVICE:
       SetEncoderServiceDepth(depthFloat);
       break;
+    default:
+      break;
+  }
+}
+
+void parseCommandTimeEncoder() {
+  char *depthPtr           = receivedCMD + 2;
+  char depthChar[numChars] = {0};
+  strcpy(depthChar, depthPtr);
+
+  int depthInt     = atoi(depthChar);
+  float depthFloat = (float)(depthInt / 100.0f);
+
+  switch (receivedCMD[1]) {
+    case CMD_TIMEENCODER_PRINT_POS:
+      TimeEncoderPrintPos();
+      break;
+    case CMD_TIMEENCODER_ACTIVATE:
+      TimeEncoderActivate();
+      break;
+    case CMD_TIMEENCODER_PRINT_BOTTOM:
+      TimeEncoderPrintPos(MOTOR_DIR_DOWN);
+      break;
+    case CMD_TIMEENCODER_SET_BOTTOM:
+      SetTimeEncoderBottom();
+      break;
+    case CMD_TIMEENCODER_SET_DEPTH:
+      SetTimeEncoderDepth(depthFloat);
+      break;
+    case CMD_TIMEENCODER_SET_SERVICE:
+      SetTimeEncoderServiceDepth(depthFloat);
+      break;
+    case CMD_TIMEENCODER_SET_COMPENSATIONSCALE:
+      SetTimeEncoderCompensationScale(depthFloat);
+      break;
+    case CMD_TIMEENCODER_SET_DEPTHSENSOR_TOPPOS:
+      SetDepthSensorTopPosition(depthInt);
+      break;
+
     default:
       break;
   }

@@ -25,6 +25,7 @@
         "*.tcc": "cpp",
         "random": "cpp",
         "cstdarg": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "xtr1common": "cpp"
     }
 }

@@ -11,8 +11,8 @@
 #include "../setup/modules.h"
 
 byte motorState;
+byte encoderMode;
 unsigned long lastMillisRead, setStateStart;
-bool setPos = false;
 
 // Initialize motors and turns on encoder power
 bool InitializeMotors() {
@@ -20,9 +20,10 @@ bool InitializeMotors() {
   digitalWrite(PO_MOTOR_DOWN, false);
   digitalWrite(PO_MOTOR_UP, false);
 
-  setPos = false;
+  GetEncoderMode();
 
   EEPROMGetMotorPos();
+  EEPROMGetTimeMotorPos();
   return true;
 }
 
@@ -30,15 +31,18 @@ bool InitializeMotors() {
 void TerminateMotors() {
   // Save current position to EEPROM
   EEPROMSetMotorPos();
+  EEPROMSetTimeMotorPos();
+
+  MotorMove(MOTOR_DIR_HALT);
 
   // Motor termination
   digitalWrite(PO_MOTOR_DOWN, false);
   digitalWrite(PO_MOTOR_UP, false);
 }
 
-// Returns true if motor is moving
-bool MotorState() {
-  return digitalRead(PO_MOTOR_DOWN) || digitalRead(PO_MOTOR_UP);
+// Returns current motor State
+byte MotorState() {
+  return motorState;
 }
 
 // Moves motor based on input buttons
@@ -53,6 +57,7 @@ void MotorProcess() {
     delay(3000);
     if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
       SetEncoderTop();
+      SetTimeEncoderTop();
     }
   }
   // Up Button Pressed
@@ -89,26 +94,22 @@ void MotorMove(uint8_t dir) {
   // Save current position to EEPROM
   EEPROMSetMotorPos();
 
-  if (motorState == MOTOR_DIR_UP || motorState == MOTOR_DIR_DOWN) {
-    digitalWrite(PO_MOTOR_DOWN, false);
-    digitalWrite(PO_MOTOR_UP, false);
-    // DEBUG_PRINTLN(F("Moving Halt"));
-    motorState = MOTOR_DIR_HALT;
-    // delay(500);
-    return;
-  }
-
   // Print current encoder position
-  // EncoderPrintPos();
-
-  motorState = dir;
-  DEBUG_PRINT(F("Current Position: "));
+  DEBUG_PRINTLN(F("Current Position: "));
   EncoderPrintPos();
+  TimeEncoderPrintPos();
 
+  // Update Time Encoder
+  TimeEncoderUpdate();
+
+  // Process direction command
   switch (dir) {
     case MOTOR_DIR_UP:
       DEBUG_PRINT(F("Moving towards: "));
       EncoderPrintPos(dir);
+      TimeEncoderPrintPos(dir);
+
+      TimeEncoderStart();
       digitalWrite(PO_MOTOR_DOWN, false);
       digitalWrite(PO_MOTOR_UP, true);
       digitalWrite(LED_BUILTIN, true);
@@ -116,6 +117,9 @@ void MotorMove(uint8_t dir) {
     case MOTOR_DIR_DOWN:
       DEBUG_PRINT(F("Moving towards: "));
       EncoderPrintPos(dir);
+      TimeEncoderPrintPos(dir);
+
+      TimeEncoderStart();
       digitalWrite(PO_MOTOR_DOWN, true);
       digitalWrite(PO_MOTOR_UP, false);
       digitalWrite(LED_BUILTIN, true);
@@ -123,11 +127,15 @@ void MotorMove(uint8_t dir) {
     case MOTOR_DIR_SERVICE:
       DEBUG_PRINT(F("Moving towards: "));
       EncoderPrintPos(dir);
+      TimeEncoderPrintPos(dir);
+
+      TimeEncoderStart();
       digitalWrite(PO_MOTOR_DOWN, false);
       digitalWrite(PO_MOTOR_UP, true);
       digitalWrite(LED_BUILTIN, true);
       break;
     case MOTOR_DIR_HALT:
+      TimeEncoderUpdate();
       digitalWrite(PO_MOTOR_UP, false);
       digitalWrite(PO_MOTOR_DOWN, false);
       // DEBUG_PRINTLN(F("Moving Halt"));
@@ -136,44 +144,9 @@ void MotorMove(uint8_t dir) {
     default:
       break;
   }
-}
 
-// Next button input (longer than 500 ms) will save that direction
-void MotorSetPos() {
-  if (millis() - setStateStart > TIMEOUT_SET_POS) {
-    DEBUG_PRINTLINE();
-    DEBUG_PRINTLN(F("Set State TIMEOUT"));
-    DEBUG_PRINTLINE();
-    setPos = false;
-  }
-  if (!digitalRead(PI_BUTTON_MOTOR_DOWN) && !digitalRead(PI_BUTTON_MOTOR_UP)) return;
-
-  if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
-    delay(500);
-    if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
-      SetEncoderTop();
-      setPos = false;
-    }
-  } else if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
-    delay(500);
-    if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
-      SetEncoderBottom();
-      setPos = false;
-    }
-  }
-}
-
-void MotorSetState() {
-  delay(2000);
-
-  // Both Buttons Still Pressed?
-  if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
-    DEBUG_PRINTLINE();
-    DEBUG_PRINTLN(F("Set State, next button press sets new endpositions"));
-    DEBUG_PRINTLINE();
-    setPos        = true;
-    setStateStart = millis();
-  }
+  // Update current motor State
+  motorState = dir;
 }
 
 unsigned long millisPrintMotorPos = 0;
@@ -184,15 +157,13 @@ bool MotorPositionReached(uint8_t dir) {
     millisPrintMotorPos = millis();
     // EncoderPrintPos();
   }
-  switch (dir) {
-    case MOTOR_DIR_UP:
-      return GetEncoderPosition() >= GetEncoderPositionTop();
+
+  switch (encoderMode) {
+    case ENCODERMODE_SICK:
+      return MotorPositionReachedEncoder(dir);
       break;
-    case MOTOR_DIR_DOWN:
-      return GetEncoderPosition() <= GetEncoderPositionBottom();
-      break;
-    case MOTOR_DIR_SERVICE:
-      return GetEncoderPosition() >= GetEncoderPositionService();
+    case ENCODERMODE_TIME:
+      return MotorPositionReachedTimeEncoder(dir);
       break;
     default:
       break;
@@ -207,4 +178,9 @@ bool MotorPositionReached() {
 // Motors operational?
 bool MotorStatus() {
   return GetStatus(MODULE_MOTOR) && GetStatus(MODULE_PWR_MOTOR);
+}
+
+int GetEncoderMode() {
+  encoderMode = EEPROM_READ_INT(MEMADDR_ENCODER_MODE);
+  return encoderMode;
 }

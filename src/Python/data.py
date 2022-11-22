@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
 
-bashCommand = "curl -o \"C:/Projects/Lake-Profiler/data/LoRa/battery.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
-bashCommand += "2d\""
+bashCommand = "curl -o \"D:/Projects/Lake-Profiler/data/LoRa/battery.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
+bashCommand += "400d\""
 
 os.system(bashCommand)
 
