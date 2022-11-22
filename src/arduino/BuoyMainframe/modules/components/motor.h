@@ -57,18 +57,28 @@ void MotorProcess() {
   }
   // Up Button Pressed
   else if (!digitalRead(PI_BUTTON_MOTOR_UP)) {
-    MotorMove(MOTOR_DIR_SERVICE);
-    delay(250);
+    if (motorState == MOTOR_DIR_DOWN) {
+      MotorMove(MOTOR_DIR_HALT);
+    } else {
+      MotorMove(MOTOR_DIR_SERVICE);
+    }
+    delay(500);
   }
   // Down Button Pressed
   else if (!digitalRead(PI_BUTTON_MOTOR_DOWN)) {
-    MotorMove(MOTOR_DIR_DOWN);
-    delay(250);
+    if (motorState == MOTOR_DIR_SERVICE || motorState == MOTOR_DIR_UP) {
+      MotorMove(MOTOR_DIR_HALT);
+    } else {
+      MotorMove(MOTOR_DIR_DOWN);
+    }
+    delay(500);
   }
   // End position reached
-  else if (MotorPositionReached() && motorState != MOTOR_DIR_HALT) {
-    DEBUG_PRINTLN(F("End position reached!"));
-    MotorMove(MOTOR_DIR_HALT);
+  else if (motorState != MOTOR_DIR_HALT) {
+    if (MotorPositionReached()) {
+      DEBUG_PRINTLN(F("End position reached!"));
+      MotorMove(MOTOR_DIR_HALT);
+    }
   }
 }
 
@@ -92,27 +102,30 @@ void MotorMove(uint8_t dir) {
   // EncoderPrintPos();
 
   motorState = dir;
+  DEBUG_PRINT(F("Current Position: "));
+  EncoderPrintPos();
+
   switch (dir) {
     case MOTOR_DIR_UP:
       DEBUG_PRINT(F("Moving towards: "));
+      EncoderPrintPos(dir);
       digitalWrite(PO_MOTOR_DOWN, false);
       digitalWrite(PO_MOTOR_UP, true);
       digitalWrite(LED_BUILTIN, true);
-      EncoderPrintPos(dir);
       break;
     case MOTOR_DIR_DOWN:
+      DEBUG_PRINT(F("Moving towards: "));
+      EncoderPrintPos(dir);
       digitalWrite(PO_MOTOR_DOWN, true);
       digitalWrite(PO_MOTOR_UP, false);
       digitalWrite(LED_BUILTIN, true);
-      DEBUG_PRINT(F("Moving towards: "));
-      EncoderPrintPos(dir);
       break;
     case MOTOR_DIR_SERVICE:
+      DEBUG_PRINT(F("Moving towards: "));
+      EncoderPrintPos(dir);
       digitalWrite(PO_MOTOR_DOWN, false);
       digitalWrite(PO_MOTOR_UP, true);
       digitalWrite(LED_BUILTIN, true);
-      DEBUG_PRINT(F("Moving towards: "));
-      EncoderPrintPos(dir);
       break;
     case MOTOR_DIR_HALT:
       digitalWrite(PO_MOTOR_UP, false);
@@ -167,19 +180,19 @@ unsigned long millisPrintMotorPos = 0;
 
 // Returns true if endposition reached for specified direction
 bool MotorPositionReached(uint8_t dir) {
-  if (millis() - millisPrintMotorPos > 1000) {
+  if (millis() - millisPrintMotorPos > 5000) {
     millisPrintMotorPos = millis();
     // EncoderPrintPos();
   }
   switch (dir) {
     case MOTOR_DIR_UP:
-      return GetEncoderRotations() >= GetEncoderRotationsTop() && GetEncoderCount() >= GetEncoderCountTop();
+      return GetEncoderPosition() >= GetEncoderPositionTop();
       break;
     case MOTOR_DIR_DOWN:
-      return GetEncoderRotations() <= GetEncoderRotationsBottom() && GetEncoderCount() <= GetEncoderCountBottom();
+      return GetEncoderPosition() <= GetEncoderPositionBottom();
       break;
     case MOTOR_DIR_SERVICE:
-      return GetEncoderRotations() >= GetEncoderRotationsService() && GetEncoderCount() >= GetEncoderCountService();
+      return GetEncoderPosition() >= GetEncoderPositionService();
       break;
     default:
       break;

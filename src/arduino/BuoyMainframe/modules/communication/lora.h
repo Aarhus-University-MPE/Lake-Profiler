@@ -73,7 +73,7 @@ bool LoRaJoin() {
     if (at_send_check_response(false, "+JOIN: Network joined", 12000, "AT+JOIN\r\n")) {
       return true;
     } else {
-      DEBUG_PRINT(F(" failed, retrying.. "));
+      DEBUG_PRINT(F(" failed, retrying.."));
     }
     ret++;
   }

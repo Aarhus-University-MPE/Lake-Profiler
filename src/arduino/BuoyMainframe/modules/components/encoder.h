@@ -140,33 +140,61 @@ void EEPROMSetMotorPos() {
   // EncoderPrintPos();
 }
 
+int ConvertEncoderSignal(int rotations, int counts) {
+  return rotations * 100 + counts;
+}
+
+int GetEncoderPosition() {
+  return ConvertEncoderSignal(GetEncoderRotations(), GetEncoderCount());
+}
+
+int GetEncoderPositionTop() {
+  return ConvertEncoderSignal(GetEncoderRotationsTop(), GetEncoderCountTop());
+}
+
+int GetEncoderPositionBottom() {
+  return ConvertEncoderSignal(GetEncoderRotationsBottom(), GetEncoderCountBottom());
+}
+
+int GetEncoderPositionService() {
+  return ConvertEncoderSignal(GetEncoderRotationsService(), GetEncoderCountService());
+}
+
 // Prints current position
 void EncoderPrintPos() {
-  DEBUG_PRINT(F("Encoder Position, Count: "));
-  DEBUG_PRINT(encoderCount);
-  DEBUG_PRINT(F(", Rotations: "));
-  DEBUG_PRINTLN(encoderRotations);
+  DEBUG_PRINT(F("Encoder Position: "));
+  DEBUG_PRINTLN(GetEncoderPosition());
+  // DEBUG_PRINT(F(", count: "));
+  // DEBUG_PRINT(encoderCount);
+  // DEBUG_PRINT(F(", Rotations: "));
+  // DEBUG_PRINTLN(encoderRotations);
 }
 
 void EncoderPrintPos(uint8_t direction) {
   switch (direction) {
     case MOTOR_DIR_UP:
-      DEBUG_PRINT(F("Top Position - Count: "));
-      DEBUG_PRINT(GetEncoderCountTop());
-      DEBUG_PRINT(F(", Rotations: "));
-      DEBUG_PRINTLN(GetEncoderRotationsTop());
+      DEBUG_PRINT(F("Top Position: "));
+      DEBUG_PRINTLN(GetEncoderPositionTop());
+      // DEBUG_PRINT(F(", count: "));
+      // DEBUG_PRINT(GetEncoderCountTop());
+      // DEBUG_PRINT(F(", Rotations: "));
+      // DEBUG_PRINT(GetEncoderRotationsTop());
       break;
     case MOTOR_DIR_DOWN:
-      DEBUG_PRINT(F("Bottom Position - Count: "));
-      DEBUG_PRINT(GetEncoderCountBottom());
-      DEBUG_PRINT(F(", Rotations: "));
-      DEBUG_PRINTLN(GetEncoderRotationsBottom());
+      DEBUG_PRINT(F("Bottom Position: "));
+      DEBUG_PRINTLN(GetEncoderPositionBottom());
+      // DEBUG_PRINT(F(",  Count: "));
+      // DEBUG_PRINT(GetEncoderCountBottom());
+      // DEBUG_PRINT(F(", Rotations: "));
+      // DEBUG_PRINT(GetEncoderRotationsBottom());
       break;
     case MOTOR_DIR_SERVICE:
-      DEBUG_PRINT(F("Service Position - Count: "));
-      DEBUG_PRINT(GetEncoderCountService());
-      DEBUG_PRINT(F(", Rotations: "));
-      DEBUG_PRINTLN(GetEncoderRotationsService());
+      DEBUG_PRINT(F("Service Position: "));
+      DEBUG_PRINTLN(GetEncoderPositionService());
+      // DEBUG_PRINT(F(",  Count: "));
+      // DEBUG_PRINT(GetEncoderCountService());
+      // DEBUG_PRINT(F(", Rotations: "));
+      // DEBUG_PRINT(GetEncoderRotationsService());
       break;
     default:
       break;

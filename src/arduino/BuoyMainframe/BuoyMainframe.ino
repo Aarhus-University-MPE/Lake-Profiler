@@ -16,8 +16,12 @@ void setup() {
   SetStatus(false);
   DBG_ONLY(ModuleEnable(MODULE_COMM_DBG));
 
+  delay(150);
+
   // System initialization
   InitAllPins();
+
+  delay(150);
 
   SystemEnablePrimary();
 
@@ -37,7 +41,7 @@ void loop() {
   ModeUpdater();
 
   // Reattempt LoRa connection
-  ModuleEnable(MODULE_COMM_LORA);
+  if (LORA_ACTIVE) ModuleEnable(MODULE_COMM_LORA);
 
   // LoRa Power heartbeat
   LoRaHeartbeat();

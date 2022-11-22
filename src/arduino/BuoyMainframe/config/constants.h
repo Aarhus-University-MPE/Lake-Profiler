@@ -78,7 +78,7 @@
 // ------------------------------------------------------------ //
 //                           SYSTEM                             //
 // ------------------------------------------------------------ //
-#define SystemVersion            "0.4.13"
+#define SystemVersion            "0.5.44"
 
 // Button debounce
 #define BUTTON_DBOUNCE_TIME      50
@@ -159,3 +159,4 @@
 #define MAX_LORA_BROADCAST       10
 #define LORA_BROADCAST_DELAY     5000
 #define LORA_HEARTBEAT_PERIOD    900000L  // 15 min
+#define LORA_ACTIVE              true     // TODO:

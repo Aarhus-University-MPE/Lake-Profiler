@@ -182,8 +182,8 @@ void ModuleDisable() {
 void SystemEnablePrimary() {
   ModuleEnable(MODULE_SD);
   ModuleEnable(MODULE_BLACKBOX);
-  ModuleEnable(MODULE_LORA);
-  ModuleEnable(MODULE_COMM_LORA);
+  if (LORA_ACTIVE) ModuleEnable(MODULE_LORA);
+  if (LORA_ACTIVE) ModuleEnable(MODULE_COMM_LORA);
   ModuleEnable(MODULE_CLOCK);
 }
 

@@ -92,9 +92,11 @@ int GetEncoderRotations();
 int GetEncoderCount();
 
 int GetEncoderRotationsTop();
+int GetEncoderRotationsService();
 int GetEncoderRotationsBottom();
 
 int GetEncoderCountTop();
+int GetEncoderCountService();
 int GetEncoderCountBottom();
 
 void SetEncoderRotationsTop(int value);
@@ -112,6 +114,11 @@ void EEPROMSetMotorPos();
 void EncoderPrintPos();
 void EncoderPrintPos(uint8_t direction);
 void EEPROMGetMotorPos();
+
+int GetEncoderPosition();
+int GetEncoderPositionTop();
+int GetEncoderPositionBottom();
+int GetEncoderPositionService();
 
 // Power
 bool VoltageCheck();
