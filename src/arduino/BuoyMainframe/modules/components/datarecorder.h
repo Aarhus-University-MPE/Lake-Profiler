@@ -130,6 +130,14 @@ void AppendToData(uint8_t *dataInput, uint8_t size) {
   AppendToData(dataInput, size, false);
 }
 
+// Append Package Identifier
+void AppendPackageIdentifierToData() {
+  uint8_t identifierData[1];
+  identifierData[0] = 'A';
+
+  AppendToData(identifierData, 1, false);
+}
+
 // Append and incre
 void AppendIndexToData() {
   uint8_t indexData[4];

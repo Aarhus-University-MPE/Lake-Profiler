@@ -84,6 +84,8 @@ bool MotorPositionReachedEncoder(uint8_t dir);
 bool MotorPositionReachedTimeEncoder(uint8_t dir);
 void MotorSetPos();
 int GetEncoderMode();
+float GetTimeEncoderMotorSpeed();
+void SetTimeEncoderMotorSpeed(float speed);
 
 // Encoder
 void EncoderAInterrupt();
@@ -134,14 +136,14 @@ unsigned long GetTimeEncoderService();
 int GetTimeMotorDirection();
 
 void TimeEncoderActivate();
-void TimeEncoderStart();
+void TimeEncoderStart(uint8_t dir);
 void TimeEncoderUpdate();
 
-void UpdateMotorCompensation();
+void UpdateMotorCompensation(uint8_t dir);
 void SetTimeEncoderCompensationScale(float scale);
 float GetTimeEncoderCompensationScale();
 
-unsigned long GetTargetTimePosition();
+unsigned long GetTargetTimePosition(uint8_t dir);
 
 void SetTimeEncoderTop();
 void SetTimeEncoderBottom(unsigned long value);
@@ -156,6 +158,12 @@ void EEPROMGetTimeMotorPos();
 
 void TimeEncoderPrintPos();
 void TimeEncoderPrintPos(uint8_t direction);
+
+void SetDepthSensorTopPosition(int topDepth);
+long GetDepthSensorTopPosition();
+
+void TimeEncoderPrintTarget(uint8_t dir);
+unsigned long GetTimeEncoderTarget(uint8_t dir);
 
 // Power
 bool VoltageCheck();
@@ -273,6 +281,7 @@ void AppendToData(char *dataInput, bool endLine);
 void AppendToData(char *dataInput);
 void AppendToData(uint8_t *dataInput, uint8_t size, bool endLine);
 void AppendToData(uint8_t *dataInput, uint8_t size);
+void AppendPackageIdentifierToData();
 unsigned long GetDataLines();
 void AppendIndexToData();
 void AppendData(uint8_t size);

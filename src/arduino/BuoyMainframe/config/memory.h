@@ -51,3 +51,5 @@
 #define MEMADDR_TIMEENCODER_COMPENSATION_SCALE 40
 
 #define MEMADDR_DEPTH_TOP_POSITION             44
+
+#define MEMADDR_MOTOR_SPEED                    48

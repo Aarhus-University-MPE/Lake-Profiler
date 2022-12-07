@@ -415,7 +415,7 @@ bool LoRaBroadcastData() {
   bool endOfPackage = DataReadLine(package, size);
 
   // Build Lora package
-  char cmd[128];
+  char cmd[129];
   LoRaBuildCommand(package, cmd, size);
 
   DEBUG_PRINT(F("Sending package ("));

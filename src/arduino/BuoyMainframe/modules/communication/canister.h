@@ -93,6 +93,9 @@ void recvWithStartEndMarkersCanister() {
 
 // Parse read Command
 void parseCommandCan(uint8_t size) {
+  // DEBUG_PRINT(F("Canister Message: "));
+  // Serial.write(receivedCMDCan, size, HEX);
+  // DEBUG_PRINTLN();
   switch (receivedCMDCan[0]) {
     case 'H':
       DEBUG_PRINTLN(F("Handshake Received"));
@@ -178,7 +181,7 @@ void parseLogStart() {
 void AppendData(uint8_t size) {
   // Array pointer (include/skip indicator)
   uint8_t *dataPtr = receivedCMDCan + 2;
-
+  AppendPackageIdentifierToData();
   AppendIndexToData();
   AppendToData(dataPtr, size - 2);
 }

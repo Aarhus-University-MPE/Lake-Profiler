@@ -21,7 +21,7 @@ bool InitializeDebugComm() {
     DEBUG_PRINTLN(F("#--------------------------------#"));
     DEBUG_PRINTLN(F("#     Lake-Profiler Firmware     #"));
     DBG_ONLY(DEBUG_PRINTLN(F("#          #DEBUG MODE#          #")));
-    DEBUG_PRINT(F("#       System Version: "));
+    DEBUG_PRINT(F("#      System Version: "));
     DEBUG_PRINT(SystemVersion);
     DEBUG_PRINTLN(F("   #"));
     DEBUG_PRINTLN(F("#--------------------------------#"));
@@ -412,6 +412,9 @@ void parseCommandTimeEncoder() {
     case CMD_TIMEENCODER_PRINT_BOTTOM:
       TimeEncoderPrintPos(MOTOR_DIR_DOWN);
       break;
+    case CMD_TIMEENCODER_PRINT_SERVICE:
+      TimeEncoderPrintPos(MOTOR_DIR_SERVICE);
+      break;
     case CMD_TIMEENCODER_SET_BOTTOM:
       SetTimeEncoderBottom();
       break;
@@ -424,8 +427,19 @@ void parseCommandTimeEncoder() {
     case CMD_TIMEENCODER_SET_COMPENSATIONSCALE:
       SetTimeEncoderCompensationScale(depthFloat);
       break;
+    case CMD_TIMEENCODER_GET_COMPENSATIONSCALE:
+      DEBUG_PRINT(F("Time Encoder Compensation Scale: "));
+      DEBUG_PRINTLN(GetTimeEncoderCompensationScale());
+      break;
     case CMD_TIMEENCODER_SET_DEPTHSENSOR_TOPPOS:
       SetDepthSensorTopPosition(depthInt);
+      break;
+    case CMD_TIMEENCODER_SET_MOTORSPEED:
+      SetTimeEncoderMotorSpeed(depthFloat);
+      break;
+    case CMD_TIMEENCODER_GET_MOTORSPEED:
+      DEBUG_PRINT(F("Time Encoder Motor speed: "));
+      DEBUG_PRINTLN(GetTimeEncoderMotorSpeed());
       break;
 
     default:

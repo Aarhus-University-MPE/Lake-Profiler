@@ -86,7 +86,10 @@
 #define CMD_TIMEENCODER_SET_DEPTH              'D'  // Service depth in cm offset from 0 position (top logging position)
 #define CMD_TIMEENCODER_SET_SERVICE            'S'  // Service depth in cm offset from 0 position (top logging position)
 #define CMD_TIMEENCODER_SET_COMPENSATIONSCALE  'C'
+#define CMD_TIMEENCODER_GET_COMPENSATIONSCALE  'c'
 #define CMD_TIMEENCODER_SET_DEPTHSENSOR_TOPPOS 'T'
+#define CMD_TIMEENCODER_SET_MOTORSPEED         'V'
+#define CMD_TIMEENCODER_GET_MOTORSPEED         'v'
 
 // Power
 #define CMD_POWER                              'P'

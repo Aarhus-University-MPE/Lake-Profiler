@@ -78,7 +78,7 @@
 // ------------------------------------------------------------ //
 //                           SYSTEM                             //
 // ------------------------------------------------------------ //
-#define SystemVersion             "0.5.44"
+#define SystemVersion             "0.24.21"
 
 // Button debounce
 #define BUTTON_DBOUNCE_TIME       50
@@ -131,7 +131,7 @@
 #define MOTOR_DIR_SERVICE         3
 #define MOTOR_DIR_HALT            0
 
-#define MOTOR_SPEED               0.6f  // centimeter per second approximated (2*pi*95 mm)
+#define MOTOR_SPEED               0.72f  // centimeter per second approximated (2*pi*95 mm)
 
 #define ENCODER_UPDATE_PERIOD     250
 #define TIMEOUT_SET_POS           5000

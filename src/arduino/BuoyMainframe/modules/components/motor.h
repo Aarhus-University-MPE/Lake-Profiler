@@ -56,6 +56,9 @@ void MotorProcess() {
     MotorMove(MOTOR_DIR_HALT);
     delay(3000);
     if (!digitalRead(PI_BUTTON_MOTOR_UP) && !digitalRead(PI_BUTTON_MOTOR_DOWN)) {
+      DEBUG_PRINTLINE();
+      DEBUG_PRINTLN(F("Setting Top Position"));
+      DEBUG_PRINTLINE();
       SetEncoderTop();
       SetTimeEncoderTop();
     }
@@ -95,12 +98,9 @@ void MotorMove(uint8_t dir) {
   EEPROMSetMotorPos();
 
   // Print current encoder position
-  DEBUG_PRINTLN(F("Current Position: "));
-  EncoderPrintPos();
-  TimeEncoderPrintPos();
-
-  // Update Time Encoder
-  TimeEncoderUpdate();
+  // DEBUG_PRINTLN(F("Current Position: "));
+  // EncoderPrintPos();
+  // TimeEncoderPrintPos();
 
   // Process direction command
   switch (dir) {
@@ -109,7 +109,7 @@ void MotorMove(uint8_t dir) {
       EncoderPrintPos(dir);
       TimeEncoderPrintPos(dir);
 
-      TimeEncoderStart();
+      TimeEncoderStart(dir);
       digitalWrite(PO_MOTOR_DOWN, false);
       digitalWrite(PO_MOTOR_UP, true);
       digitalWrite(LED_BUILTIN, true);
@@ -119,7 +119,7 @@ void MotorMove(uint8_t dir) {
       EncoderPrintPos(dir);
       TimeEncoderPrintPos(dir);
 
-      TimeEncoderStart();
+      TimeEncoderStart(dir);
       digitalWrite(PO_MOTOR_DOWN, true);
       digitalWrite(PO_MOTOR_UP, false);
       digitalWrite(LED_BUILTIN, true);
@@ -129,7 +129,7 @@ void MotorMove(uint8_t dir) {
       EncoderPrintPos(dir);
       TimeEncoderPrintPos(dir);
 
-      TimeEncoderStart();
+      TimeEncoderStart(dir);
       digitalWrite(PO_MOTOR_DOWN, false);
       digitalWrite(PO_MOTOR_UP, true);
       digitalWrite(LED_BUILTIN, true);
@@ -156,6 +156,8 @@ bool MotorPositionReached(uint8_t dir) {
   if (millis() - millisPrintMotorPos > 5000) {
     millisPrintMotorPos = millis();
     // EncoderPrintPos();
+    TimeEncoderPrintPos();
+    TimeEncoderPrintTarget(dir);
   }
 
   switch (encoderMode) {

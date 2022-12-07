@@ -31,6 +31,7 @@ void EncoderZInterrupt() {
 
 void EncoderActivate() {
   EEPROM_WRITE_INT(MEMADDR_ENCODER_MODE, ENCODERMODE_SICK);
+  DEBUG_PRINTLN(F("Encoder Mode: Sick"));
 }
 
 // Returns true if encoder rotations are within values
@@ -92,11 +93,6 @@ void SetEncoderCountService(int value) {
 
 // Save current position as top position
 void SetEncoderTop() {
-  DEBUG_PRINTLINE();
-  DEBUG_PRINT(F("Setting Top Position"));
-  DEBUG_PRINTLINE();
-  // EncoderPrintPos();
-
   encoderCount     = 0;
   encoderRotations = 0;
 
@@ -171,6 +167,7 @@ int GetEncoderPositionService() {
 
 // Prints current position
 void EncoderPrintPos() {
+  if (GetEncoderMode() != ENCODERMODE_SICK) return;
   DEBUG_PRINT(F("Encoder Position: "));
   DEBUG_PRINTLN(GetEncoderPosition());
   // DEBUG_PRINT(F(", count: "));
@@ -180,6 +177,7 @@ void EncoderPrintPos() {
 }
 
 void EncoderPrintPos(uint8_t direction) {
+  if (GetEncoderMode() != ENCODERMODE_SICK) return;
   switch (direction) {
     case MOTOR_DIR_UP:
       DEBUG_PRINT(F("Top Position: "));
