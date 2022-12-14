@@ -316,10 +316,10 @@ void PrintPackageInfo(uint8_t size) {
 long GetLatestDepth() {
   union unpack pack;
 
-  pack.b[0] = receivedCMDCan[23];
-  pack.b[1] = receivedCMDCan[24];
-  pack.b[2] = receivedCMDCan[25];
-  pack.b[3] = receivedCMDCan[26];
+  pack.b[0] = receivedCMDCan[19];
+  pack.b[1] = receivedCMDCan[20];
+  pack.b[2] = receivedCMDCan[21];
+  pack.b[3] = receivedCMDCan[22];
 
   return pack.l;
 }
