@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import os
 
 bashCommand = "curl -o \"D:/Projects/Lake-Profiler/data/LoRa/battery.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
-bashCommand += "4d\""
+bashCommand += "6d\""
 
 os.system(bashCommand)
 

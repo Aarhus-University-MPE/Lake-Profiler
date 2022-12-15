@@ -26,7 +26,7 @@
 
 const byte numCharsCH4         = 200;
 const byte ppmEstimateIndexCH4 = 29;
-const byte ppmIndexCH4         = 30;
+const byte ppmIndexCH4         = 31;
 long ch4Concentration          = -3.0f;
 long ch4ConcentrationEstimate  = -4.0f;
 char dataCH4[numCharsCH4]      = "$CODB4,0,0,D,0,0,2021-03-31,06:18:13,,3,2996,2500000,104594,102668,,,314375,24624172,0,0,1,1334,0,0,0,426987,11338,962,40,7020,341271,342068,337591";
