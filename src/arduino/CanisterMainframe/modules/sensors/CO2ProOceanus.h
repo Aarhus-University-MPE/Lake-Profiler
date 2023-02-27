@@ -24,8 +24,8 @@
 const byte numCharsCO2    = 200;
 const byte ppmIndexCO2Raw = 10;
 const byte ppmIndexCO2    = 11;
-long co2Concentration     = -1.0;
-long co2Raw               = -2.0;
+long co2Concentration     = -1;
+long co2Raw               = -2;
 
 char dataCO2[numCharsCO2] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.697,1007.02,18.40,11.8,4095,2439,1895";
 
@@ -33,7 +33,7 @@ bool CO2Initialize() {
   COM_CO2.begin(COM_CO2_BAUDRATE);
 
   // delay(50);
-  // COM_CO2.write(0x1b);  // Initiate Communication
+  COM_CO2.write(0x1b);  // Initiate Communication
   delay(50);
   COM_CO2.write(0x31);  // Sensor ON
 
@@ -120,7 +120,7 @@ void parseDataCO2(uint8_t size) {
   co2Raw           = ExtractLongFromCharArray(dataCO2, ppmIndexCO2Raw, 1000.0f);
 
   // Print data package
-  DEBUG_PRINTLN(F("CO2 Data"));
+  // DEBUG_PRINTLN(F("CO2 Data"));
   // PrintCO2Payload(size);
   // PrintDataCO2();
 }

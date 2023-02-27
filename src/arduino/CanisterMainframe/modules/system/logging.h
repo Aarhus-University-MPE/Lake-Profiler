@@ -113,6 +113,22 @@ void InitializePackage() {
   packageIndex = 1;
 }
 
+void PrintData() {
+  DEBUG_PRINT(F("Package Data - CH4: "));
+  DEBUG_PRINT(GetCH4ConcentrationEstimate());
+  DEBUG_PRINT(F("\t"));
+  DEBUG_PRINT(GetCH4Concentration());
+  DEBUG_PRINT(F("\t CO2: "));
+  DEBUG_PRINT(GetCo2Raw());
+  DEBUG_PRINT(F("\t"));
+  DEBUG_PRINT(GetCo2Concentration());
+  DEBUG_PRINT(F("\t Depth: "));
+  DEBUG_PRINT(GetDepth());
+  DEBUG_PRINT(F("\t Temp: "));
+  DEBUG_PRINT(GetTemp());
+  DEBUG_PRINT(F("\t Lum: "));
+  DEBUG_PRINTLN(GetLumValue());
+}
 /* Bundle data into a package
  */
 void BuildPackage() {
@@ -124,6 +140,8 @@ void BuildPackage() {
   AppendLong(GetDepth());                     // Package 5 (4 bytes)
   AppendLong(GetTemp());                      // Package 6 (4 bytes)
   AppendInt(GetLumValue());                   // Package 7 (2 bytes)
+
+  PrintData();
 }
 
 // Read last configured sampleInterval from EEPROM

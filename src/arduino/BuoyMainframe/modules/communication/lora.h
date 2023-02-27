@@ -126,6 +126,7 @@ void LoRaBroadcastLowPower() {
   } else {
     DEBUG_PRINTLN(F("Success"));
   }
+  DEBUG_PRINTLINE();
 }
 
 // Broadcast current power level
@@ -158,6 +159,7 @@ void LoRaBroadcastPowerLevel() {
   } else {
     DEBUG_PRINTLN(F("Success"));
   }
+  DEBUG_PRINTLINE();
 }
 
 // Send Position Error message over LoRa
@@ -190,6 +192,7 @@ void LoRaBroadcastPosError() {
   } else {
     DEBUG_PRINTLN(F("Success"));
   }
+  DEBUG_PRINTLINE();
 }
 
 // Send Log begin over LoRa along with current time stamp
@@ -235,6 +238,7 @@ void LoRaBroadcastLogBegin() {
   } else {
     DEBUG_PRINTLN(F("Success"));
   }
+  DEBUG_PRINTLINE();
 }
 
 static int at_send_check_response(bool printResponse, String p_ack_str, unsigned long timeout_ms, String p_cmd_str, ...) {

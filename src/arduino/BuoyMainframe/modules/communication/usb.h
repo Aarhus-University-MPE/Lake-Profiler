@@ -149,6 +149,9 @@ void parseCommandFiles() {
     case CMD_FILES_BLCKBOXEMPTY:
       BlackBoxEmpty();
       break;
+    case CMD_FILES_WIPEDATA:
+      SDWipe();
+      break;
     case '\0':
       break;
     default:
@@ -321,18 +324,18 @@ void parseCommandAlarm() {
     case CMD_CLOCK_HOUR:
       DEBUG_PRINT(F("Hour "));
       DEBUG_PRINT2(clockValueHex, HEX);
-      DEBUG_PRINT(F(":00"));
+      DEBUG_PRINTLN(F(":00"));
       SetAlarmHour(clockValueHex);
       break;
     case CMD_ALARM_FREQUENCY:
       DEBUG_PRINT(F("Frequency: "));
-      DEBUG_PRINT(clockValue);
+      DEBUG_PRINTLN(clockValue);
       SetAlarmFrequency(clockValue);
       break;
     case CMD_ALARM_START_HOUR:
       DEBUG_PRINT(F("Start Hour: "));
       DEBUG_PRINT(clockValue);
-      DEBUG_PRINT(F(":00"));
+      DEBUG_PRINTLN(F(":00"));
       SetAlarmStartHour(clockValue);
       break;
     case CMD_ALARM_BEGIN:

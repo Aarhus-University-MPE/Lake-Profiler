@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
 
-bashCommand = "curl -o \"D:/Projects/Lake-Profiler/data/LoRa/payload.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
-bashCommand += "100d\""
+bashCommand = "curl -o \"C:/Projects/Lake-Profiler/data/LoRa/payload.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
+bashCommand += "1d\""
 
 os.system(bashCommand)
 
@@ -57,7 +57,7 @@ def parsePayloadInt(payload, startIndex, length=4):
 payloadDataFormatted = [["Index", "CH4 Estimate", "CH4 Concentration",
                          "CO2 Raw", "CO2 Concentration", "Depth", "Temperatures", "Luminesence", "Sample ID", "Timestamp"]]
 
-payloadDataFormatted.append(["-", "ppm x 1000", "micro atm x 1000",
+payloadDataFormatted.append(["-", "ppm x 1000", "ppm x 1000",
                              "ppm x 1000", "ppmv x 1000", "m x 1000", "deg C x 1000", "-", "-", "Unix ms"])
 
 for column in data.columns:

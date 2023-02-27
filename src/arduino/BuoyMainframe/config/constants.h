@@ -78,7 +78,7 @@
 // ------------------------------------------------------------ //
 //                           SYSTEM                             //
 // ------------------------------------------------------------ //
-#define SystemVersion             "0.24.21"
+#define SystemVersion             "1.02.15"
 
 // Button debounce
 #define BUTTON_DBOUNCE_TIME       50

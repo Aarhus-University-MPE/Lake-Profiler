@@ -11,11 +11,12 @@ void setup() {
   Serial.print(F("Initializing Communication... "));
 
   Serial3.begin(19200);
-  Serial.println(F("complete"));
 
-  // Serial3.write(0x1b); // Initiate Communication
+  Serial3.write(0x1b);  // Initiate Communication
   delay(50);
   Serial3.write(0x31);  // Sensor ON
+
+  Serial.println(F("complete"));
 }
 
 unsigned long lastMillisSent = 0;

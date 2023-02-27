@@ -39,6 +39,7 @@ void SDQuery() {
     dir.rewindDirectory();
     dir.close();
     delay(10);
+    DEBUG_PRINTLINE();
   }
 }
 
@@ -94,6 +95,28 @@ void printFiles(File dir) {
     entry.close();
   }
   DEBUG_PRINTLN(F(("End of storage")));
+  DEBUG_PRINTLINE();
+}
+
+// Wipes entire Data Folder
+void SDWipe() {
+  DEBUG_PRINTLN(F(("Clearing Data Files")));
+  File dir = SD.open("/data/");
+  dir.rewindDirectory();
+  while (true) {
+    File entry = dir.openNextFile();
+    if (!entry) {
+      break;
+    }
+    DEBUG_PRINT(entry.name());
+    DEBUG_PRINT("\t\t");
+
+    DEBUG_PRINT2(entry.size(), DEC);
+    DEBUG_PRINT("\t\t - Removed");
+    DEBUG_PRINTLN();
+    SD.remove("data/" + String(entry.name()));
+    entry.close();
+  }
   DEBUG_PRINTLINE();
 }
 

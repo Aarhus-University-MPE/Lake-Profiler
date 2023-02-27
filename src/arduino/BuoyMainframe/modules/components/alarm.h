@@ -62,8 +62,8 @@ int GetAlarmStartHour() {
 }
 
 void InitializeAlarm() {
-  SetAlarmFrequency(GetAlarmFrequency());
   SetAlarmStartHour(GetAlarmStartHour());
+  SetAlarmFrequency(GetAlarmFrequency());
   SetAlarm();
 }
 
@@ -137,10 +137,13 @@ void SetAlarmStartHour(uint8_t startHour) {
 
 void UpdateAlarmTimings() {
   uint8_t alarmIntervals = 24 / alarmFrequency;
-
+  DEBUG_PRINT(F("Alarm Hours: "));
   for (uint8_t i = 0; i < alarmFrequency; i++) {
     alarm[i] = HourToHex(alarmStartHour + alarmIntervals * i);
+    DEBUG_PRINT2(alarm[i], HEX);
+    DEBUG_PRINT(F(":00 \t"));
   }
+  DEBUG_PRINTLN();
 }
 
 /*
@@ -197,6 +200,9 @@ uint8_t NextAlarm() {
   int i                 = 0;
 
   hourDifference = HexToHour(alarm[i]) - hour;
+  if (alarmFrequency == 1) {
+    // TODO: Set for next day
+  }
 
   while (hourDifference < GetWarmupTime() + 1 && i < alarmFrequency - 1) {
     i++;

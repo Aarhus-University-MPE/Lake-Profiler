@@ -211,6 +211,7 @@ void SDDownload(char fileName[]);
 void SDDelete(char fileName[]);
 bool SDCreate(char fileName[]);
 bool SDCreate(char fileName[], bool customFileEnd);
+void SDWipe();
 void printFiles(File dir);
 void appendCharArray(char *s, char c);
 void appendCsv(char *s);

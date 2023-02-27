@@ -31,6 +31,7 @@
 #define CMD_FILES_QUIT                         'Q'
 #define CMD_FILES_BLCKBOX                      'B'
 #define CMD_FILES_BLCKBOXEMPTY                 'E'
+#define CMD_FILES_WIPEDATA                     'w'
 
 // Strategy functions
 #define CMD_STRATEGY                           'S'
@@ -116,4 +117,11 @@
 // 2022/09/28/12:25
 
 // Local storage Clear
-// <FRdata/22051915.csv><FRdata/22051915.log>
+// <FRdata/22072117.csv><FRdata/22072117.log>
+// <FRdata/22072123.csv><FRdata/22072123.log><FRdata/22072100.csv><FRdata/2207210o.l0g>
+// <FRdata/22072105.csv><FRdata/22072105.log>
+// <FRdata/22072106.csv><FRdata/22072106.log>
+// <FRdata/22072111.csv><FRdata/22072111.log>
+// <FRdata/22072115.csv><FRdata/22072115.log>'
+//
+// <FRdata/>½

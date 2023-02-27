@@ -34,10 +34,10 @@ void setup() {
 
 unsigned long lastMillisSent;
 void loop() {
-  if (millis() - lastMillisSent > 1000) {
-    lastMillisSent = millis();
-    Serial1.print("CODPV,0,0,R\r\n");
-  }
+  // if (millis() - lastMillisSent > 1000) {
+  //   lastMillisSent = millis();
+  //   Serial1.print("CODPV,0,0,R\r\n");
+  // }
   if (Serial2.available() > 0) {
     Serial.write(Serial2.read());
   }

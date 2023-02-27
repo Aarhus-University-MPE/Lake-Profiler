@@ -24,7 +24,7 @@ enum PackageIdentifier {
 };
 
 // Return integer value extracted from char array
-int ExtractLongFromCharArray(char charArray[200], size_t index) {
+long ExtractLongFromCharArray(char charArray[200], size_t index) {
   char tempChars[200];
   char *strtokIndx;
   strcpy(tempChars, charArray);
@@ -42,7 +42,7 @@ int ExtractLongFromCharArray(char charArray[200], size_t index) {
 }
 
 // Return integer value extracted from char array
-int ExtractLongFromCharArray(char charArray[200], size_t index, float scale) {
+long ExtractLongFromCharArray(char charArray[200], size_t index, float scale) {
   char tempChars[200];
   char *strtokIndx;
   strcpy(tempChars, charArray);
