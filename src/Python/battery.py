@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import os
 
 bashCommand = "curl -o \"D:/Projects/Lake-Profiler/data/LoRa/battery.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
-bashCommand += "6d\""
+bashCommand += "1d\""
 
 os.system(bashCommand)
 
@@ -38,7 +38,8 @@ for column in data.columns:
 
 # plotting the points
 fig, ax = plt.subplots()
-ax.plot(time, level)
+# ax.plot(time, level)
+ax.plot(time, voltage)
 
 myFmt = mdates.DateFormatter('%d/%m - %H:%M')
 ax.xaxis.set_major_formatter(myFmt)
@@ -51,7 +52,8 @@ plt.xlabel('Time')
 plt.ylabel('Charge Level [%]')
 # giving a title to my graph
 plt.title('Battery Level (Estimate)')
-plt.ylim(0, 101)
+# plt.ylim(0, 101)
+plt.ylim(10, 14)
 
 # ax.set_facecolor('xkcd:grey')
 

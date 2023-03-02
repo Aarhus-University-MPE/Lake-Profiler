@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import os
 
-bashCommand = "curl -o \"C:/Projects/Lake-Profiler/data/LoRa/payload.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
+bashCommand = "curl -o \"D:/Projects/Lake-Profiler/data/LoRa/payload.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
 bashCommand += "1d\""
 
 os.system(bashCommand)
@@ -74,7 +74,10 @@ for column in data.columns:
         try:
             if (payload[1] == "41"):
                 payloadData.append(payload)
-                payloadDataFormatted.append(parsePayload(payload))
+                formattedData = parsePayload(payload)
+                # check for duplicates
+                if (formattedData[0] != payloadDataFormatted[payloadDataFormatted.__len__()-1][0]):
+                    payloadDataFormatted.append(formattedData)
                 # level.append(int('0x'+payload[2], 0))
                 # voltage.append(int('0x'+payload[3], 0) / 10)
             else:
