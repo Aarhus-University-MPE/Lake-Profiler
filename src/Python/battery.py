@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import os
 
 bashCommand = "curl -o \"D:/Projects/Lake-Profiler/data/LoRa/battery.csv\" \"https://prototype.asap-forecast.com/logs/ormstrup-au?filter=ttn-payload&back="
-bashCommand += "1d\""
+bashCommand += "2d\""
 
 os.system(bashCommand)
 
@@ -46,11 +46,8 @@ ax.xaxis.set_major_formatter(myFmt)
 
 plt.gcf().autofmt_xdate()
 
-# naming the x axis
 plt.xlabel('Time')
-# naming the y axis
 plt.ylabel('Charge Level [%]')
-# giving a title to my graph
 plt.title('Battery Level (Estimate)')
 # plt.ylim(0, 101)
 plt.ylim(10, 14)
