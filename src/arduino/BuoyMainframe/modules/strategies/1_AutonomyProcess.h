@@ -8,6 +8,7 @@
 uint8_t autonomyState                 = 0;
 unsigned long lastMillisAutonomyState = 0;
 unsigned long millisAutonomyStart     = 0;
+unsigned long millisDelayedAlarmStart = 0;
 
 // Primary Autonomy Process for data logging
 void AutonomyProcess() {
@@ -24,6 +25,36 @@ void AutonomyProcess() {
 // Autonomy logging state machine
 void AutonomyState() {
   switch (autonomyState) {
+    case 20:
+      if (GetAlarmFrequency() > 1) {
+        SetAlarm();
+        autonomyState = 0;
+
+        DEBUG_PRINTLINE();
+        DEBUG_PRINT(F("Waiting for next timestamp - "));
+        PrintAlarmTime();
+        DEBUG_PRINTLINE();
+      } else {
+        // delay for 1 hr
+        DEBUG_PRINTLINE();
+        DEBUG_PRINTLN(F("Delaying alarm for 1 hour"));
+        DEBUG_PRINTLINE();
+        millisDelayedAlarmStart = millis();
+        autonomyState++;
+      }
+      break;
+    case 21:
+      if (millis() - millisDelayedAlarmStart > 3600000) {
+        autonomyState = 0;
+        SetAlarm();
+
+        DEBUG_PRINTLINE();
+        DEBUG_PRINT(F("Started Alarm, Waiting for next timestamp - "));
+        PrintAlarmTime();
+        DEBUG_PRINTLINE();
+      }
+      break;
+
     // Idle, await Warmup alarm
     // TODO: incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)
     case 0:
@@ -48,14 +79,8 @@ void AutonomyState() {
       if (AutonomyPowerCheck()) {
         autonomyState++;
       } else {
-        autonomyState = 0;
-        SetAlarm();
+        autonomyState = 20;
         LoRaBroadcastLowPower();
-
-        DEBUG_PRINTLINE();
-        DEBUG_PRINT(F("Waiting for next timestamp - "));
-        PrintAlarmTime();
-        DEBUG_PRINTLINE();
       }
       break;
     // Power Levels sufficient, power up canister

@@ -305,6 +305,8 @@ void SetStatus(int, bool);
 bool RTCStatus();
 bool LoraStatus();
 void SetAlarm();
+void SetAlarm(bool skipHour);
+int GetAlarmFrequency();
 
 void printTime(uint8_t);
 void RTCPrint();

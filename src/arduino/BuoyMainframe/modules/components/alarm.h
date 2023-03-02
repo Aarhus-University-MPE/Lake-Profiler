@@ -200,7 +200,7 @@ uint8_t NextAlarm() {
   int i                 = 0;
 
   hourDifference = HexToHour(alarm[i]) - hour;
-  if (alarmFrequency == 1) {
+  if (alarmFrequency == 1 && hourDifference < 0) {
     // TODO: Set for next day
   }
 
