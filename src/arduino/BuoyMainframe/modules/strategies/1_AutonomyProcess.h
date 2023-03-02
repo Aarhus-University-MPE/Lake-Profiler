@@ -25,36 +25,6 @@ void AutonomyProcess() {
 // Autonomy logging state machine
 void AutonomyState() {
   switch (autonomyState) {
-    case 20:
-      if (GetAlarmFrequency() > 1) {
-        SetAlarm();
-        autonomyState = 0;
-
-        DEBUG_PRINTLINE();
-        DEBUG_PRINT(F("Waiting for next timestamp - "));
-        PrintAlarmTime();
-        DEBUG_PRINTLINE();
-      } else {
-        // delay for 1 hr
-        DEBUG_PRINTLINE();
-        DEBUG_PRINTLN(F("Delaying alarm for 1 hour"));
-        DEBUG_PRINTLINE();
-        millisDelayedAlarmStart = millis();
-        autonomyState++;
-      }
-      break;
-    case 21:
-      if (millis() - millisDelayedAlarmStart > 3600000) {
-        autonomyState = 0;
-        SetAlarm();
-
-        DEBUG_PRINTLINE();
-        DEBUG_PRINT(F("Started Alarm, Waiting for next timestamp - "));
-        PrintAlarmTime();
-        DEBUG_PRINTLINE();
-      }
-      break;
-
     // Idle, await Warmup alarm
     // TODO: incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)
     case 0:
@@ -180,12 +150,44 @@ void AutonomyState() {
         DEBUG_PRINTLINE();
       }
       break;
+    // Full log complete
     case 15:
       DEBUG_PRINT(F("Logging Sample Complete, Waiting for next timestamp - "));
       PrintAlarmTime();
       RTCPrint();
       DEBUG_PRINTLINE();
       autonomyState = 0;
+      break;
+    // Low Power State, check if frequency == 1, set alarm for 1 hour to avoid continuously starting log due to ALARM hour triggering constantly.
+    case 20:
+      if (GetAlarmFrequency() > 1) {
+        SetAlarm();
+        autonomyState = 0;
+
+        DEBUG_PRINTLINE();
+        DEBUG_PRINT(F("Waiting for next timestamp - "));
+        PrintAlarmTime();
+        DEBUG_PRINTLINE();
+      } else {
+        // delay for 1 hr
+        DEBUG_PRINTLINE();
+        DEBUG_PRINTLN(F("Delaying alarm for 1 hour"));
+        DEBUG_PRINTLINE();
+        millisDelayedAlarmStart = millis();
+        autonomyState++;
+      }
+      break;
+    // Wait for frequency = 1 alarm to trigger before starting alarm
+    case 21:
+      if (millis() - millisDelayedAlarmStart > 3600000) {
+        autonomyState = 0;
+        SetAlarm();
+
+        DEBUG_PRINTLINE();
+        DEBUG_PRINT(F("Started Alarm, Waiting for next timestamp - "));
+        PrintAlarmTime();
+        DEBUG_PRINTLINE();
+      }
       break;
     default:
       autonomyState = 0;
