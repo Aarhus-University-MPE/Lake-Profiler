@@ -56,7 +56,7 @@ for column in data.columns:
 fig, ax = plt.subplots()
 ax.plot(time, level)
 ax2 = ax.twinx()
-ax2.plot(time, voltage)
+ax2.plot(time, voltage, 'r')
 
 # Plot data (x-axis) format
 myFmt = mdates.DateFormatter('%d/%m - %H:%M')
