@@ -102,3 +102,4 @@ ax2.set_ylim(6, 15)        # 10 - 15V
 # fig.patch.set_facecolor('xkcd:grey')
 # function to show the plot
 plt.show()
+plt.savefig('./data/LoRa/battery')
