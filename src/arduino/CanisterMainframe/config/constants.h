@@ -73,7 +73,7 @@
 // ------------------------------------------------------------ //
 //                         System                            //
 // ------------------------------------------------------------ //
-#define SystemVersion               "0.4.83"
+#define SystemVersion               "0.5.11"
 
 // ------------------------------------------------------------ //
 //                        COMMUNICATION                         //
@@ -90,6 +90,9 @@
 // Logging
 #define LOGGING_SAMPLE_INTERVAL_MIN 2500   // 2.5 sec
 #define LOGGING_SAMPLE_INTERVAL_MAX 60000  // 1 min
+
+#define MAX_INITIALIZE_ATTEMPTS     5
+#define SENSOR_INITIALIZE_PERIOD    3000
 
 // Modules
 #define MODULE_COUNT                9

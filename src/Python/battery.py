@@ -5,7 +5,10 @@ import matplotlib.dates as mdates
 import os
 
 # Define duration going back
-duration = "3d"
+duration = "14d"
+
+# Enable Legacy payloads
+legacy = True
 
 # Raw payload directory
 directory = os.getcwd() + "/data/LoRa/battery.csv"
@@ -25,6 +28,23 @@ level = []
 voltage = []
 time = []
 
+
+# Extract integer from payload
+def parsePayloadInt(payload, startIndex, length=4):
+    # Add hex identifier
+    byteString = ['0x' + s for s in payload[startIndex:startIndex+length]]
+
+    # Convert to byteframe
+    frame = b""
+    for s in byteString:
+        frame += bytes(int(s, 16).to_bytes(1, "little"))
+
+    # Convert to integer values
+    intValue = int.from_bytes(frame, "little", signed=True)
+
+    return intValue
+
+
 # Extract payloads containing battery readings
 for column in data.columns:
     # Get LoRa message timestamp
@@ -43,7 +63,11 @@ for column in data.columns:
             # Battery reading message identifier
             if (payload[1] == "3"):
                 level.append(int('0x'+payload[2], 0))
-                voltage.append(int('0x'+payload[3], 0) / 10)
+                if (legacy):
+                    voltage.append(int('0x'+payload[3], 0) / 10)
+                else:
+                    voltage.append(parsePayloadInt(payload, 3, 2) / 100)
+
             # Message was not battery reading, remove last payload time
             else:
                 time.pop()
@@ -71,7 +95,7 @@ plt.title('Battery Level (Estimate)')
 
 # Axis limits
 ax.set_ylim(0, 101)         # 0 - 100%
-ax2.set_ylim(10, 15)        # 10 - 15V
+ax2.set_ylim(6, 15)        # 10 - 15V
 
 
 # ax.set_facecolor('xkcd:grey')

@@ -27,6 +27,7 @@ bool TempTest();
 bool BuoyCommStatus();
 bool CH4Status();
 bool CO2Status();
+void CO2Activate();
 bool LumStatus();
 bool DepthStatus();
 bool TempStatus();

@@ -174,6 +174,7 @@ uint8_t GetBatteryMinLevel();
 int BatteryLevel();
 uint8_t BatteryLevelHex();
 uint8_t BatteryVoltageHex();
+uint16_t BatteryVoltageHex100();
 
 // System Status
 bool SystemStatus[MODULE_COUNT];
@@ -393,6 +394,7 @@ static void recv_prase(char *p_msg);
 
 bool LoRaJoin();
 bool LoRaConfigure();
+void LoRaBroadcast(char cmd[128]);
 bool LoRaBroadcastLog();
 bool LoRaBroadcastData();
 void LoRaBroadcastBegin();

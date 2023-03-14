@@ -8,6 +8,9 @@ import os
 # Define duration going back
 duration = "5d"
 
+# Enable Legacy payloads
+legacy = True
+
 # Raw payload directory
 directory = os.getcwd() + "/data/LoRa/payload.csv"
 
@@ -89,8 +92,12 @@ for column in data.columns:
         loraMsg = column.split('"')[1]
         payload = loraMsg.split(' ')
         try:
-            # Profiling payload message identifier
-            if (payload[1] == "41"):
+            # Profiling payload message identifier (0xA)
+            if (legacy):
+                identifier = 'A'
+            else:
+                identifier = 10
+            if (payload[1] == 10):
                 # Extract and format payload
                 payloadData.append(payload)
                 formattedData = parsePayload(payload)

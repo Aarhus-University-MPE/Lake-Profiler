@@ -26,16 +26,16 @@ const byte ppmIndexCO2Raw = 10;
 const byte ppmIndexCO2    = 11;
 long co2Concentration     = -1;
 long co2Raw               = -2;
+int initializeAttempts    = 0;
+
+unsigned long lastMillisInit;
 
 char dataCO2[numCharsCO2] = "W M,2015,12,02,11,38,14,1676,2139,500.00,503.28,20.697,1007.02,18.40,11.8,4095,2439,1895";
 
 bool CO2Initialize() {
   COM_CO2.begin(COM_CO2_BAUDRATE);
 
-  // delay(50);
-  COM_CO2.write(0x1b);  // Initiate Communication
-  delay(50);
-  COM_CO2.write(0x31);  // Sensor ON
+  CO2Activate();
 
   return COM_CO2;
 }
@@ -52,8 +52,38 @@ bool CO2Test() {
   return true;
 }
 
+// Commands required to initialize CO2 sensor
+void CO2Activate() {
+  COM_CO2.write(0x1b);  // Initiate Communication
+  delay(50);
+  COM_CO2.write(0x31);  // Sensor ON
+}
+
+// Verify CO2 data stream is valid (new data acquired)
+void VerifyCO2Stream() {
+  // Check if data is already valid
+  if (co2Raw != -2) return;
+  // Only attempt to reinitialize MAX_INITIALIZE_ATTEMPTS times
+  if (initializeAttempts > MAX_INITIALIZE_ATTEMPTS) return;
+  // Throttle reinitialize attempts to once per SENSOR_INITIALIZE_PERIOD
+  if (millis() - lastMillisInit < SENSOR_INITIALIZE_PERIOD) return;
+
+  lastMillisInit = millis();
+  initializeAttempts++;
+
+  DEBUG_PRINTLINE();
+  DEBUG_PRINT(F("Attempting to reinitialize CO2 Sensor, attempt "));
+  DEBUG_PRINTLN(initializeAttempts);
+  DEBUG_PRINTLINE();
+
+  // Re-run activation commands
+  CO2Activate();
+}
+
 void CO2Read() {
   recvWithStartEndMarkersCO2();
+
+  VerifyCO2Stream();
 }
 
 // Receive Commands

@@ -12,12 +12,18 @@
 //                            SETUP                             //
 // ------------------------------------------------------------ //
 void setup() {
+  // Delay initialization to avoid overloading system during boot
+  delay(150);
+
   // System initialization
   InitAllPins();
 
   // Debug
   DBG_ONLY(SystemEnable(MODULE_COMM_DBG));
   DEBUG_PRINTLN(F("Debug mode. Entered Setup... "));
+
+  // Delay initialization to avoid overloading system during boot
+  delay(150);
 
   SystemEnable(MODULE_BUOY_COMM);
 

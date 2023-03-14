@@ -96,15 +96,8 @@ void LoRaHeartbeat() {
   LoRaBroadcastPowerLevel();
 }
 
-// Send Low power message over LoRa, and next alarm hour
-void LoRaBroadcastLowPower() {
-  if (!LoraStatus()) return;
-  if (!GetStatus(MODULE_COMM_LORA)) return;
-
-  char cmd[128];
-  char *cmdPtr = cmd;
-  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"2 %02X %02X %02X\"\r\n", BatteryLevelHex(), BatteryVoltageHex(), NextAlarm());
-
+// Broadcast message
+void LoRaBroadcast(char cmd[128]) {
   DEBUG_PRINTLN(F("Sending package: "));
   DEBUG_PRINT(cmd);
 
@@ -129,6 +122,23 @@ void LoRaBroadcastLowPower() {
   DEBUG_PRINTLINE();
 }
 
+// Send Low power message over LoRa, and next alarm hour
+void LoRaBroadcastLowPower() {
+  if (!LoraStatus()) return;
+  if (!GetStatus(MODULE_COMM_LORA)) return;
+
+  char cmd[128];
+  char *cmdPtr = cmd;
+
+  // High resolution Battery Voltage
+  uint16_t voltage = BatteryVoltageHex100();
+
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"2 %02X %02X %02X %02X\"\r\n", BatteryLevelHex(), voltage >> 8, (uint8_t)voltage, NextAlarm());
+
+  // Broadcast message
+  LoRaBroadcast(cmd);
+}
+
 // Broadcast current power level
 void LoRaBroadcastPowerLevel() {
   if (!LoraStatus()) return;
@@ -136,30 +146,14 @@ void LoRaBroadcastPowerLevel() {
 
   char cmd[128];
   char *cmdPtr = cmd;
-  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"3 %02X %02X\"\r\n", BatteryLevelHex(), BatteryVoltageHex());
 
-  DEBUG_PRINTLN(F("Sending package: "));
-  DEBUG_PRINT(cmd);
+  // High resolution Battery Voltage
+  uint16_t voltage = BatteryVoltageHex100();
 
-  int ret = 0;
-  while (ret < 5 && !at_send_check_response(false, "RXWIN1", 10000, cmd)) {
-    if (ret == 0) {
-      DEBUG_PRINT(F("Failed, retrying attempt: "));
-    }
-    DEBUG_PRINT(F("("));
-    DEBUG_PRINT(ret + 1);
-    DEBUG_PRINT(F("/5)..."));
+  cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"3 %02X %02X %02X\"\r\n", BatteryLevelHex(), voltage >> 8, (uint8_t)voltage);
 
-    // Broadcast Delay
-    delay(LORA_BROADCAST_DELAY);
-    ret++;
-  }
-  if (ret == 5) {
-    DEBUG_PRINTLN(F("Failed"));
-  } else {
-    DEBUG_PRINTLN(F("Success"));
-  }
-  DEBUG_PRINTLINE();
+  // Broadcast message
+  LoRaBroadcast(cmd);
 }
 
 // Send Position Error message over LoRa
@@ -171,28 +165,8 @@ void LoRaBroadcastPosError() {
   char *cmdPtr = cmd;
   cmdPtr += sprintf(cmdPtr, "AT+CMSGHEX=\"4\"\r\n");
 
-  DEBUG_PRINTLN(F("Sending package: "));
-  DEBUG_PRINT(cmd);
-
-  int ret = 0;
-  while (ret < 5 && !at_send_check_response(false, "RXWIN1", 10000, cmd)) {
-    if (ret == 0) {
-      DEBUG_PRINT(F("Failed, retrying attempt: "));
-    }
-    DEBUG_PRINT(F("("));
-    DEBUG_PRINT(ret + 1);
-    DEBUG_PRINT(F("/5)..."));
-
-    // Broadcast Delay
-    delay(LORA_BROADCAST_DELAY);
-    ret++;
-  }
-  if (ret == 5) {
-    DEBUG_PRINTLN(F("Failed"));
-  } else {
-    DEBUG_PRINTLN(F("Success"));
-  }
-  DEBUG_PRINTLINE();
+  // Broadcast message
+  LoRaBroadcast(cmd);
 }
 
 // Send Log begin over LoRa along with current time stamp
@@ -217,28 +191,8 @@ void LoRaBroadcastLogBegin() {
 
   cmdPtr += sprintf(cmdPtr, "\"\r\n");
 
-  DEBUG_PRINTLN(F("Sending package: "));
-  DEBUG_PRINT(cmd);
-
-  int ret = 0;
-  while (ret < 5 && !at_send_check_response(false, "RXWIN1", 10000, cmd)) {
-    if (ret == 0) {
-      DEBUG_PRINT(F("Failed, retrying attempt: "));
-    }
-    DEBUG_PRINT(F("("));
-    DEBUG_PRINT(ret + 1);
-    DEBUG_PRINT(F("/5)..."));
-
-    // Broadcast Delay
-    delay(LORA_BROADCAST_DELAY);
-    ret++;
-  }
-  if (ret == 5) {
-    DEBUG_PRINTLN(F("Failed"));
-  } else {
-    DEBUG_PRINTLN(F("Success"));
-  }
-  DEBUG_PRINTLINE();
+  // Broadcast message
+  LoRaBroadcast(cmd);
 }
 
 static int at_send_check_response(bool printResponse, String p_ack_str, unsigned long timeout_ms, String p_cmd_str, ...) {

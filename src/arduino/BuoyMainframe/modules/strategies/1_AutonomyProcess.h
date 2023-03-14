@@ -26,16 +26,19 @@ void AutonomyProcess() {
 void AutonomyState() {
   switch (autonomyState) {
     // Idle, await Warmup alarm
-    // TODO: incoorporate minutes into alarm (once alarm 1 triggers (hour) set alarm to minutes and await 2nd trigger)
     case 0:
-      if (AlarmStatus(RTCC_ALM0)) {
+      // Check if at bottom position before starting autonomy
+      if (!MotorPositionReached(MOTOR_DIR_DOWN)) {
+        autonomyState = 30;
+      }
+      // System at bottom position wait for alarm
+      else if (AlarmStatus(RTCC_ALM0)) {
         autonomyState++;
         DEBUG_PRINTLN(F("Alarm case 0"));
       }
       break;
     // Alarm triggered start logging process
     case 1:
-
       LoRaBroadcastLogBegin();
       if (AutonomyStartLog()) {
         autonomyState++;
@@ -191,6 +194,21 @@ void AutonomyState() {
       break;
     default:
       autonomyState = 0;
+      break;
+    // Move to bottom position
+    case 30:
+      DEBUG_PRINTLINE();
+      DEBUG_PRINTLN(F("Moving to Bottom Position"));
+      DEBUG_PRINTLINE();
+      MotorMove(MOTOR_DIR_DOWN);
+      autonomyState++;
+      break;
+    // Wait until bottom position is reached
+    case 31:
+      if (MotorPositionReached()) {
+        MotorMove(MOTOR_DIR_HALT);
+        autonomyState = 0;
+      }
       break;
   }
 }

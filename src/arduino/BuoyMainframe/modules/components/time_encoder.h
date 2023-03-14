@@ -251,11 +251,11 @@ void EEPROMGetTimeMotorPos() {
 // Returns true if motor has reached time based Encoder Positions
 bool MotorPositionReachedTimeEncoder(uint8_t dir) {
   // Sensor Depth Check TODO: Redundancy checking
-  // if (LoggingActive() && dir == MOTOR_DIR_UP) {
-  //   bool positionReached = GetLatestDepth() >= GetDepthSensorTopPosition();
-  //   if (positionReached) SetTimeEncoderTop();
-  //   return positionReached;
-  // }
+  if (LoggingActive() && dir == MOTOR_DIR_UP) {
+    //   bool positionReached = GetLatestDepth() >= GetDepthSensorTopPosition();
+    //   if (positionReached) SetTimeEncoderTop();
+    //   return positionReached;
+  }
   unsigned long currentPosition = GetTimeEncoderPosition();
   unsigned long endPosition     = 0UL;
 

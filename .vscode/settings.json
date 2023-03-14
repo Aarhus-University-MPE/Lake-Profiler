@@ -26,5 +26,8 @@
         "cstdarg": "cpp",
         "istream": "cpp",
         "xtr1common": "cpp"
+    },
+    "files.exclude": {
+        "**/test/**": true
     }
 }

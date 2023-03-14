@@ -133,7 +133,7 @@ void AppendToData(uint8_t *dataInput, uint8_t size) {
 // Append Package Identifier
 void AppendPackageIdentifierToData() {
   uint8_t identifierData[1];
-  identifierData[0] = 'A';
+  identifierData[0] = 0xA;
 
   AppendToData(identifierData, 1, false);
 }
