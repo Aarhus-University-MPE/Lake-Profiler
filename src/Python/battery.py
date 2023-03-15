@@ -5,10 +5,10 @@ import matplotlib.dates as mdates
 import os
 
 # Define duration going back
-duration = "14d"
+duration = "2h"
 
 # Enable Legacy payloads
-legacy = True
+legacy = False
 
 # Raw payload directory
 directory = os.getcwd() + "/data/LoRa/battery.csv"
@@ -37,10 +37,10 @@ def parsePayloadInt(payload, startIndex, length=4):
     # Convert to byteframe
     frame = b""
     for s in byteString:
-        frame += bytes(int(s, 16).to_bytes(1, "little"))
+        frame += bytes(int(s, 16).to_bytes(1, "big"))
 
     # Convert to integer values
-    intValue = int.from_bytes(frame, "little", signed=True)
+    intValue = int.from_bytes(frame, "big", signed=True)
 
     return intValue
 
@@ -52,7 +52,7 @@ for column in data.columns:
         loraMsg = column.split('"')[1]
         timeMsg = loraMsg.split('.')
         timeObject = pd.to_datetime(timeMsg[0], format='%Y-%m-%dT%H:%M:%S')
-        timeObject += timedelta(hours=2)
+        timeObject += timedelta(hours=1)
         time.append(timeObject)
 
     # Payload data
@@ -66,6 +66,7 @@ for column in data.columns:
                 if (legacy):
                     voltage.append(int('0x'+payload[3], 0) / 10)
                 else:
+                    print(parsePayloadInt(payload, 3, 2) / 100)
                     voltage.append(parsePayloadInt(payload, 3, 2) / 100)
 
             # Message was not battery reading, remove last payload time
@@ -78,9 +79,9 @@ for column in data.columns:
 
 # Plotting battery readings
 fig, ax = plt.subplots()
-ax.plot(time, level)
+handle1 = ax.plot(time, level, label='Battery Level [%]')
 ax2 = ax.twinx()
-ax2.plot(time, voltage, 'r')
+handle2 = ax2.plot(time, voltage, 'r', label='Battery Voltage [V]')
 
 # Plot data (x-axis) format
 myFmt = mdates.DateFormatter('%d/%m - %H:%M')
@@ -95,11 +96,15 @@ plt.title('Battery Level (Estimate)')
 
 # Axis limits
 ax.set_ylim(0, 101)         # 0 - 100%
-ax2.set_ylim(6, 15)        # 10 - 15V
+ax2.set_ylim(min(voltage)-1, max(voltage)+1)        # 10 - 15V
 
+handles = handle1 + handle2
+labels = [l.get_label() for l in handles]
+ax.legend(handles, labels, loc=0)
 
 # ax.set_facecolor('xkcd:grey')
 # fig.patch.set_facecolor('xkcd:grey')
 # function to show the plot
+# plt.legend(['Level', 'Voltage'])
 plt.show()
 plt.savefig('./data/LoRa/battery')
