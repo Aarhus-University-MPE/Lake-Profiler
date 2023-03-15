@@ -249,7 +249,7 @@ void EEPROMGetTimeMotorPos() {
 }
 
 // Returns true if motor has reached time based Encoder Positions
-bool MotorPositionReachedTimeEncoder(uint8_t dir, bool useDepthReading = false) {
+bool MotorPositionReachedTimeEncoder(uint8_t dir) {
   unsigned long currentPosition = GetTimeEncoderPosition();
   unsigned long endPosition     = 0UL;
 
