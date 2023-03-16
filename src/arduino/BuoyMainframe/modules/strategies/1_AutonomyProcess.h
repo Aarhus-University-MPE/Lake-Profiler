@@ -28,7 +28,7 @@ void AutonomyState() {
     // Idle, await Warmup alarm
     case 0:
       // Wait for alarm
-      else if (AlarmStatus(RTCC_ALM0)) {
+      if (AlarmStatus(RTCC_ALM0)) {
         autonomyState++;
         DEBUG_PRINTLN(F("Alarm case 0"));
       }
@@ -181,13 +181,16 @@ void AutonomyState() {
     // Move to bottom position
     case 30:
       DEBUG_PRINTLINE();
-      DEBUG_PRINTLN(F("Moving to Bottom Position"));
+      DEBUG_PRINTLN(F("Moving to Bottom Position!"));
       DEBUG_PRINTLINE();
       MotorMove(MOTOR_DIR_DOWN);
       autonomyState++;
       break;
     // Wait until bottom position is reached
     case 31:
+      DEBUG_PRINTLINE();
+      DEBUG_PRINTLN(F("Bottom Position Reached!"));
+      DEBUG_PRINTLINE();
       if (MotorPositionReached()) {
         MotorMove(MOTOR_DIR_HALT);
         autonomyState = 0;

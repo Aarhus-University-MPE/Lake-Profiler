@@ -2,10 +2,12 @@ from datetime import timedelta
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.ticker as ticker
+import numpy as np
 import os
 
 # Define duration going back
-duration = "6h"
+duration = "27h"
 
 # Enable Legacy payloads
 legacy = False
@@ -66,7 +68,6 @@ for column in data.columns:
                 if (legacy):
                     voltage.append(int('0x'+payload[3], 0) / 10)
                 else:
-                    print(parsePayloadInt(payload, 3, 2) / 100)
                     voltage.append(parsePayloadInt(payload, 3, 2) / 100)
 
             # Message was not battery reading, remove last payload time
@@ -83,6 +84,7 @@ handle1 = ax.plot(time, level, label='Battery Level [%]')
 ax2 = ax.twinx()
 handle2 = ax2.plot(time, voltage, 'r', label='Battery Voltage [V]')
 
+
 # Plot data (x-axis) format
 myFmt = mdates.DateFormatter('%d/%m - %H:%M')
 ax.xaxis.set_major_formatter(myFmt)
@@ -95,12 +97,25 @@ ax2.set_ylabel('Battery Voltage [V]')
 plt.title('Battery Level (Estimate)')
 
 # Axis limits
-ax.set_ylim(0, 101)         # 0 - 100%
-ax2.set_ylim(min(voltage)-1, max(voltage)+1)        # 10 - 15V
+ax.set_ylim(0, 100)         # 0 - 100%
+ax2.set_ylim(np.floor(min(voltage)-1),
+             np.ceil(max(voltage)+1))        # 10 - 15V
 
+# Set y-axis tick labels on ax and ax2
+ax.set_yticks(np.linspace(0, 100, 9))
+ax2.set_yticks(np.linspace(ax2.get_ylim()[0], ax2.get_ylim()[1], 9))
+
+# Add grid to both axes
+ax.grid(color='lightgray', linewidth=0.5)
+ax2.grid(color='lightgray', linewidth=0.5)
+
+# Plot Legend
 handles = handle1 + handle2
 labels = [l.get_label() for l in handles]
 ax.legend(handles, labels, loc=0)
+
+
+# Plot Grid
 
 # ax.set_facecolor('xkcd:grey')
 # fig.patch.set_facecolor('xkcd:grey')
