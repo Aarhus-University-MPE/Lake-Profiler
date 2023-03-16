@@ -27,11 +27,7 @@ void AutonomyState() {
   switch (autonomyState) {
     // Idle, await Warmup alarm
     case 0:
-      // Check if at bottom position before starting autonomy
-      if (!MotorPositionReached(MOTOR_DIR_DOWN)) {
-        autonomyState = 30;
-      }
-      // System at bottom position wait for alarm
+      // Wait for alarm
       else if (AlarmStatus(RTCC_ALM0)) {
         autonomyState++;
         DEBUG_PRINTLN(F("Alarm case 0"));
@@ -213,8 +209,9 @@ void AutonomyState() {
   }
 }
 
+// Initialize Autonomy, which puts system at bottom position
 void AutonomyReset() {
-  autonomyState = 0;
+  autonomyState = 30;
 }
 
 // Start new data log

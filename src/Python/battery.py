@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import os
 
 # Define duration going back
-duration = "2h"
+duration = "6h"
 
 # Enable Legacy payloads
 legacy = False
