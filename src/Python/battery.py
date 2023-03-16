@@ -2,7 +2,6 @@ from datetime import timedelta
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import matplotlib.ticker as ticker
 import numpy as np
 import os
 
@@ -79,10 +78,12 @@ for column in data.columns:
 
 
 # Plotting battery readings
-fig, ax = plt.subplots()
+plt.style.use('bmh')
+fig, ax = plt.subplots(figsize=(10, 6))
 handle1 = ax.plot(time, level, label='Battery Level [%]')
 ax2 = ax.twinx()
-handle2 = ax2.plot(time, voltage, 'r', label='Battery Voltage [V]')
+handle2 = ax2.plot(
+    time, voltage, color=plt.rcParams['axes.prop_cycle'].by_key()['color'][1], label='Battery Voltage [V]')
 
 
 # Plot data (x-axis) format
@@ -107,19 +108,13 @@ ax2.set_yticks(np.linspace(ax2.get_ylim()[0], ax2.get_ylim()[1], 9))
 
 # Add grid to both axes
 ax.grid(color='lightgray', linewidth=0.5)
-ax2.grid(color='lightgray', linewidth=0.5)
 
 # Plot Legend
 handles = handle1 + handle2
 labels = [l.get_label() for l in handles]
-ax.legend(handles, labels, loc=0)
+ax.legend(handles, labels, loc='upper center',
+          bbox_to_anchor=(0.5, 1.00), shadow=True, ncol=2)
 
-
-# Plot Grid
-
-# ax.set_facecolor('xkcd:grey')
-# fig.patch.set_facecolor('xkcd:grey')
 # function to show the plot
-# plt.legend(['Level', 'Voltage'])
+plt.savefig('./data/LoRa/battery.pdf')
 plt.show()
-plt.savefig('./data/LoRa/battery')
