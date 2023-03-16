@@ -119,19 +119,6 @@ void AutonomyState() {
       AutonomyStopLog();
       autonomyState++;
       break;
-    // Start Broadcasting log file
-    // case 13:
-    //   if (LoRaInitializeBroadcastLog()) {
-    //     autonomyState++;
-    //   } else {
-    //     // TODO: Log Stop Error
-    //     autonomyState = 0;
-    //   }
-    //   break;
-    // // Await Log Broadcast to finish
-    // case 14:
-    //   if (LoRaBroadcastLog()) autonomyState++;
-    //   break;
     // Start Broadcast data file
     case 13:
       if (LoRaInitializeBroadcastData()) {
