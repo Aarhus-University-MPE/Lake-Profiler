@@ -77,9 +77,11 @@ for column in data.columns:
             time.pop()
 
 
-# Plotting battery readings
+# Set style and Create figure
 plt.style.use('bmh')
 fig, ax = plt.subplots(figsize=(10, 6))
+
+# Plot Values
 handle1 = ax.plot(time, level, label='Battery Level [%]')
 ax2 = ax.twinx()
 handle2 = ax2.plot(
