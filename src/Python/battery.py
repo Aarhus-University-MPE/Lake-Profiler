@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 # Define duration going back
-duration = "27h"
+duration = "5d"
 
 # Enable Legacy payloads
 legacy = False

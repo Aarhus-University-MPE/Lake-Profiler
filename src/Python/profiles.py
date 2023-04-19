@@ -9,7 +9,7 @@ import os
 duration = "5d"
 
 # Enable Legacy payloads
-legacy = True
+legacy = False
 
 # Raw payload directory
 directory = os.getcwd() + "/data/LoRa/payload.csv"
@@ -96,8 +96,8 @@ for column in data.columns:
             if (legacy):
                 identifier = 'A'
             else:
-                identifier = 10
-            if (payload[1] == 10):
+                identifier = 'a'
+            if (payload[1] == identifier):
                 # Extract and format payload
                 payloadData.append(payload)
                 formattedData = parsePayload(payload)
