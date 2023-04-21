@@ -124,4 +124,4 @@
 // <FRdata/22072111.csv><FRdata/22072111.log>
 // <FRdata/22072115.csv><FRdata/22072115.log>'
 //
-// <FRdata/>½
+// <FRdata/>
