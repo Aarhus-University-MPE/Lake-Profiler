@@ -7,6 +7,7 @@
 #include <SPI.h>
 #include <TimeLib.h>
 #include <Wire.h>
+#include <sleep.h>
 
 // Config
 #include "../../config/commandlist.h"

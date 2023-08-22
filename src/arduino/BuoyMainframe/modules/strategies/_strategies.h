@@ -80,3 +80,23 @@ void ModeSwitchInterrupt() {
 
   isModeUpdated = true;
 }
+
+bool SleepDisturbed() {
+  return sleepDisturbed;
+}
+
+// Sleep for 5 minutes
+void SleepMode() {
+  if (!sleepActive) {
+    sleepDisturbed = false;
+  }
+  sleepActive = true;
+  for (size_t i = 0; i < TOTAL_SLEEP_COUNT; i++) {
+    if (SleepDisturbed()) {
+      sleepActive = false;
+      break;
+    }
+    Sleep();  // 8 sec
+  }
+  sleepActive = false;
+}

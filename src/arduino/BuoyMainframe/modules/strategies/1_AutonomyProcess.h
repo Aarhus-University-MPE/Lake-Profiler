@@ -32,6 +32,8 @@ void AutonomyState() {
         autonomyState++;
         DEBUG_PRINTLN(F("Alarm case 0"));
       }
+      // Sleep for 5 minutes
+      SleepMode();
       break;
     // Alarm triggered start logging process
     case 1:

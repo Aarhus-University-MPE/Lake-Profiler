@@ -6,7 +6,7 @@ import matplotlib.dates as mdates
 import os
 
 # Define duration going back
-duration = "80d"
+duration = "5d"
 
 # Enable Legacy payloads
 legacy = False
@@ -54,7 +54,6 @@ def parsePayload(payload):
 def parsePayloadInt(payload, startIndex, length=4):
     # Add hex identifier
     byteString = ['0x' + s for s in payload[startIndex:startIndex+length]]
-    print(byteString)
 
     # Convert to byteframe
     frame = b""
@@ -91,9 +90,7 @@ for column in data.columns:
     # Payload data
     if ("payload_hex:" in column):
         loraMsg = column.split('"')[1]
-        print(loraMsg)
         payload = loraMsg.split(' ')
-        print(payload)
 
         try:
             # Profiling payload message identifier (0xA)
